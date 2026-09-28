@@ -49,6 +49,10 @@ Gebruik alleen bestanden met een licentie die verspreiden toestaat (CC0, of CC-B
 
 De app staat op **https://www.hoorspelstudio.nl**. Het bestand `CNAME` koppelt dat webadres aan GitHub Pages.
 
+## Nieuwe versie online zetten
+
+Verhoog bij elke wijziging het versienummer `?v=...` achter de css- en js-bestanden in `index.html`. Dan laadt de browser de pagina en de scripts altijd samen opnieuw, en niet een mengsel van oud en nieuw.
+
 ## Lokaal testen
 
 ```bash
