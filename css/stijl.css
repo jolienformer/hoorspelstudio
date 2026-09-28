@@ -327,11 +327,16 @@ body.neemt-op .clip{cursor:default}
 .vak{position:relative;display:flex}
 .vak-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:var(--line);background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:.5rem .6rem .7rem;text-align:center;min-height:132px}
 .vak.open .vak-tab{background:var(--yellow);color:var(--on)}
+.vak.samen .vak-tab{background:var(--yellow);color:var(--on)}
 .vak.doel .vak-tab{outline:4px dashed var(--accent);outline-offset:3px}
 .vak-kop{font-family:var(--f-head);font-size:2.1rem;line-height:1}
 .vak-vraag{font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
 .vak-inhoud{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:6px}
-.vak-inhoud .gezicht{width:52px;border-width:2px;box-shadow:2px 2px 0 var(--edge)}
+.vak-play{position:relative;display:block;border:0;background:none;padding:0}
+.vak-play .gezicht{width:52px;border-width:2px;box-shadow:2px 2px 0 var(--edge)}
+.vak-play .badge{position:absolute;right:-6px;bottom:-6px;width:24px;height:24px;border-radius:50%;border:2px solid var(--edge);background:var(--paper);color:var(--ink);font-size:.68rem;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1}
+.vak-play.speelt .badge{background:var(--accent);color:#fff}
+.vak-play.speelt .gezicht{animation:wiebel .6s ease-in-out infinite alternate}
 .vak-inhoud b{font-weight:900;font-size:.9rem;line-height:1.15}
 .vak-inhoud .leeg{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border:2.5px dashed var(--muted);border-radius:10px;font-size:0}
 .vak-inhoud .leeg::before{content:"?";font-size:1.4rem;font-weight:900;color:var(--muted)}

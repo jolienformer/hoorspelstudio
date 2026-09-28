@@ -78,7 +78,9 @@ function renderMuziek(){ renderVakken(); renderRaster(); }
 function renderVakken(){
   [['gevoel', 'muziek', '#vak-m', '#weg-m'], ['plek', 'sfeer', '#vak-s', '#weg-s']].forEach(([soort, slot, vak, weg]) => {
     const s = S[slot] && Bibliotheek.zoek(S[slot]);
-    $(vak).innerHTML = s ? stukGezicht(s) + '<b>' + esc(s.titel) + '</b>' : '<span class="leeg">nog leeg</span>';
+    $(vak).innerHTML = s
+      ? '<button type="button" class="vak-play" data-speel="' + s.id + '" aria-label="' + esc(s.titel) + ' afspelen">' + stukGezicht(s) + '<span class="badge" aria-hidden="true"></span></button><b>' + esc(s.titel) + '</b>'
+      : '<span class="leeg">nog leeg</span>';
     $(weg).hidden = !s;
     const el = document.querySelector('.vak[data-soort="' + soort + '"]');
     el.classList.toggle('open', S.soort === soort);
@@ -88,9 +90,24 @@ function renderVakken(){
   $('#samen').hidden = !(S.muziek && S.sfeer);
   renderSpeelknoppen();
 }
-document.querySelectorAll('.vak-tab').forEach(b => b.onclick = () => {
-  if(S.soort === b.dataset.soort) return;
-  S.soort = b.dataset.soort; bewaar(); renderMuziek();
+document.querySelectorAll('.vak-tab').forEach(b => {
+  b.addEventListener('click', e => {
+    if(e.target.closest('.vak-play')) return;
+    if(S.soort === b.dataset.soort) return;
+    S.soort = b.dataset.soort; bewaar(); renderMuziek();
+  });
+  b.addEventListener('keydown', e => {
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    if(S.soort === b.dataset.soort) return;
+    S.soort = b.dataset.soort; bewaar(); renderMuziek();
+  });
+});
+document.querySelector('.vakken').addEventListener('click', e => {
+  const p = e.target.closest('.vak-play'); if(!p) return;
+  e.stopPropagation();
+  const id = p.dataset.speel;
+  (speelt && speelt.id === id) ? stopAlles() : speelStuk(id);
 });
 $('#weg-m').onclick = () => { if(speelt) stopAlles(); S.muziek = null; bewaar(); render(); };
 $('#weg-s').onclick = () => { if(speelt) stopAlles(); S.sfeer = null; bewaar(); render(); };
@@ -113,7 +130,7 @@ function renderRaster(){
   renderSpeelknoppen();
 }
 function renderSpeelknoppen(){
-  document.querySelectorAll('[data-speel]').forEach(b => {
+  document.querySelectorAll('#kiesraster [data-speel]').forEach(b => {
     const s = Bibliotheek.zoek(b.dataset.speel);
     const aan = speelt && speelt.wat === 'stuk' && speelt.id === b.dataset.speel;
     const laadt = speelt && speelt.wat === 'laden' && speelt.id === b.dataset.speel;
@@ -123,9 +140,16 @@ function renderSpeelknoppen(){
     b.setAttribute('aria-pressed', String(!!gekozen));
     b.setAttribute('aria-label', (s ? s.titel : '') + (aan ? ', speelt. Tik om te stoppen.' : gekozen ? ', gekozen' : ', luisteren en kiezen'));
   });
+  document.querySelectorAll('.vak-play').forEach(b => {
+    const aan = speelt && (speelt.wat === 'stuk' || speelt.wat === 'samen') && (speelt.id === b.dataset.speel || speelt.wat === 'samen');
+    const laadt = speelt && speelt.wat === 'laden' && speelt.id === b.dataset.speel;
+    b.classList.toggle('speelt', !!aan);
+    const badge = b.querySelector('.badge'); if(badge) badge.textContent = laadt ? '…' : aan ? '■' : '▶';
+  });
+  const samenAan = speelt && speelt.wat === 'samen';
+  document.querySelectorAll('.vak').forEach(el => el.classList.toggle('samen', !!samenAan));
   const samen = $('#samen');
-  const aan = speelt && speelt.wat === 'samen';
-  samen.textContent = aan ? '■ Stoppen' : '▶ Samen luisteren';
+  samen.textContent = samenAan ? '■ Stoppen' : '▶ Samen luisteren';
 }
 /* één tik: luisteren én kiezen; nog een tik: stil */
 function tikStuk(s){
