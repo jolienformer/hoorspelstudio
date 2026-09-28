@@ -319,7 +319,6 @@ function renderOpnemen(){
   $('#o-afzetten').hidden = !(heeft && !bezig && afzetten);
   $('#o-daarna').hidden = !heeft || bezig;
   $('#tijdlijn').hidden = !heeft && !bezig;
-  $('#o-tip').hidden = !heeft || bezig;
   if(heeft && !bezig) tekenTijdlijn();
   if(!heeft && !bezig) $('#o-klok').textContent = '';
   if(heeft && !bezig) $('#o-klok').textContent = 'Jullie hoorspel duurt ' + fmt(S.opname.duur);
@@ -327,7 +326,7 @@ function renderOpnemen(){
 
   $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : heeft ? 'Geluid erbij zetten' : 'Jullie eigen geluiden';
   $('#o-geluiden-uitleg').textContent = bezig ? '' : heeft
-    ? (matchMedia('(hover: hover)').matches ? 'Sleep een geluid naar de balk, of tik erop tijdens Luisteren.' : 'Tik tijdens Luisteren op een geluid om het erbij te zetten.')
+    ? (matchMedia('(hover: hover)').matches ? 'Sleep een geluid naar de balk.' : 'Tik op een geluid tijdens Luisteren.')
     : oefent ? 'Tik op een geluid. Iedereen hoort het.' : 'Tik op een geluid om het te horen.';
   const el = $('#o-lijst'); el.innerHTML = '';
   if(!S.geluiden.length){ el.innerHTML = '<div class="leeg-vak">Nog geen geluiden. Die maak je bij stap 02. Zonder geluiden kun je ook opnemen.</div>'; return; }

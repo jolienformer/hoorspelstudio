@@ -401,3 +401,4 @@ body.compact #o-lijst .tegel{min-height:0}
 #s-opnemen.heeft #o-afzetten{order:5}
 #s-opnemen.heeft #o-daarna{order:5}
 #s-opnemen.heeft .toetsen{display:none}
+#s-opnemen.heeft #o-lijst .toets{display:none}
