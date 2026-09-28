@@ -57,7 +57,7 @@ function render(){
   const i = STAPPEN.indexOf(S.stap);
   $('#terug').hidden = i === 0;
   $('#verder').hidden = i === STAPPEN.length - 1;
-  $('#verder').textContent = i === 0 ? 'Naar stap 02 →' : 'Naar stap 03 →';
+  $('#verder').textContent = i === 0 ? 'Naar stap 2 →' : 'Naar stap 3 →';
   if(S.stap !== 'opnemen') $('#o-bewaar').hidden = true;
   $('#groep-naam').textContent = S.groep || 'Ons groepje';
   if(S.stap === 'muziek') renderMuziek();
@@ -312,11 +312,11 @@ async function bewaarGeluid(){
   S.geluiden.push(g); bewaar();
   $('#g-naamvak').hidden = true; $('#g-knop').hidden = false; melding($('#g-melding'), '');
   render();
-  toast(ok ? '"' + naam + '" staat bij jullie geluiden. Maak er nog een, of tik op Naar stap 03.' : '"' + naam + '" werkt zolang deze pagina open blijft. Bewaren op dit apparaat lukte niet.', 5000);
+  toast(ok ? '"' + naam + '" staat bij jullie geluiden. Maak er nog een, of tik op Naar stap 3.' : '"' + naam + '" werkt zolang deze pagina open blijft. Bewaren op dit apparaat lukte niet.', 5000);
 }
 
 /* ================= 03 opnemen ================= */
-/* Stap 03 is één montagescherm: een knoppenbalk en een tijdlijn met sporen.
+/* Stap 3 is één montagescherm: een knoppenbalk en een tijdlijn met sporen.
    S.opname = {stemmen:[{id, t, duur, pieken, perSec}], tikken:[{g, t}]}
    S.bedden = {muziek:{van, tot, uit}, sfeer:{van, tot, uit}}; tot = null: loopt mee met de stemmen */
 let oRec = null, mixCache = null, oefent = false;
@@ -465,7 +465,7 @@ function tekenBedden(bewerkbaar = true){
     const s = S[slot] && Bibliotheek.zoek(S[slot]);
     if(!s){
       const leeg = document.createElement('button'); leeg.type = 'button'; leeg.className = 'spoor-leeg';
-      leeg.textContent = (slot === 'muziek' ? 'Geen muziek gekozen' : 'Geen plek gekozen') + ' · kies bij stap 01';
+      leeg.textContent = (slot === 'muziek' ? 'Geen muziek gekozen' : 'Geen plek gekozen') + ' · kies bij stap 1';
       leeg.onclick = () => { S.soort = slot === 'muziek' ? 'gevoel' : 'plek'; ga('muziek'); };
       spoor.append(leeg); return;
     }
