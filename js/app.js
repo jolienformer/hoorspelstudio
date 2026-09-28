@@ -58,7 +58,7 @@ function render(){
   const i = STAPPEN.indexOf(S.stap);
   $('#terug').hidden = i === 0;
   $('#verder').hidden = i === STAPPEN.length - 1;
-  $('#verder').textContent = i === 0 ? 'Naar geluiden →' : 'Naar opnemen →';
+  $('#verder').textContent = i === 0 ? 'Naar stap 02 →' : 'Naar stap 03 →';
   $('#groep-naam').textContent = S.groep || 'Ons groepje';
   if(S.stap === 'muziek') renderMuziek();
   if(S.stap === 'geluiden') renderGeluiden();
@@ -79,8 +79,8 @@ function renderKeuze(){
     const s = id && Bibliotheek.zoek(id);
     el.innerHTML = s ? '<span class="mini">' + stukGezicht(s) + '<b>' + esc(s.titel) + '</b></span>' : '<span class="leeg">' + hint + '</span>';
   };
-  zet($('#keuze-m'), S.muziek, 'nog niet gekozen, kies bij Gevoel');
-  zet($('#keuze-s'), S.sfeer, 'nog niet gekozen, kies bij Plek');
+  zet($('#keuze-m'), S.muziek, 'nog niets gekozen');
+  zet($('#keuze-s'), S.sfeer, 'nog niets gekozen');
   $('#weg-m').hidden = !S.muziek; $('#weg-s').hidden = !S.sfeer;
   $('#samen').hidden = !S.muziek && !S.sfeer;
   renderSpeelknoppen();
@@ -123,7 +123,7 @@ function renderStukken(){
   g.stukken.forEach(s => {
     const rij = document.createElement('div'); rij.className = 'stuk' + (S[slot] === s.id ? ' gekozen' : '');
     rij.innerHTML = '<button type="button" class="speel" data-speel="' + s.id + '">' + stukGezicht(s) + '<span class="badge" aria-hidden="true"></span></button>' +
-      '<div><div class="t">' + esc(s.titel) + '</div><div class="d">' + (S.soort === 'gevoel' ? 'muziek' : 'sfeergeluid') + ' · herhaalt</div></div>' +
+      '<div><div class="t">' + esc(s.titel) + '</div></div>' +
       '<button type="button" class="kies">' + (S[slot] === s.id ? '✓ Gekozen' : 'Deze kiezen') + '</button>';
     rij.querySelector('.speel').onclick = () => speelStuk(s.id);
     rij.querySelector('.kies').onclick = () => kies(s, slot);
@@ -173,9 +173,9 @@ function kies(s, slot){
   if(speelt && speelt.wat === 'samen') stopAlles();
   render();
   if(!S[slot]) return;
-  if(slot === 'muziek' && !S.sfeer) toast('Muziek gekozen! Wil je er een sfeergeluid bij? Tik op Plek. Klaar? Tik op Naar geluiden.', 5200);
-  else if(slot === 'sfeer' && !S.muziek) toast('Sfeergeluid gekozen! Wil je er muziek bij? Tik op Gevoel. Klaar? Tik op Naar geluiden.', 5200);
-  else toast('Gekozen! Tik op Samen luisteren, of ga naar geluiden.');
+  if(slot === 'muziek' && !S.sfeer) toast('Muziek gekozen! Kies ook een plek bij Waar is het? Of tik op Naar stap 02.', 5200);
+  else if(slot === 'sfeer' && !S.muziek) toast('Plek gekozen! Kies ook muziek bij Hoe voelt het? Of tik op Naar stap 02.', 5200);
+  else toast('Gekozen! Luister samen, of tik op Naar stap 02.');
 }
 
 /* ================= 02 geluiden ================= */
@@ -208,7 +208,7 @@ function renderGeluiden(){
 function tegel(g, toets){
   const b = document.createElement('button'); b.type = 'button'; b.className = 'tegel';
   b.style.setProperty('--c', 'var(--c-' + g.kleur + ')');
-  b.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span><span class="naam">' + esc(g.naam) + '</span><span class="meta">' + fmtKort(g.duur) + '</span></span>' +
+  b.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span><span class="naam">' + esc(g.naam) + '</span><span class="meta">🎤 ' + fmtKort(g.duur) + '</span></span>' +
     (toets ? '<span class="toets" aria-hidden="true">' + toets + '</span>' : '');
   return b;
 }
@@ -285,7 +285,7 @@ async function bewaarGeluid(){
   S.geluiden.push(g); bewaar();
   $('#g-naamvak').hidden = true; $('#g-knop').hidden = false; melding($('#g-melding'), '');
   render();
-  toast(ok ? '"' + naam + '" staat bij jullie geluiden. Maak er nog een, of ga naar opnemen.' : '"' + naam + '" werkt zolang deze pagina open blijft. Bewaren op dit apparaat lukte niet.', 5000);
+  toast(ok ? '"' + naam + '" staat bij jullie geluiden. Maak er nog een, of tik op Naar stap 03.' : '"' + naam + '" werkt zolang deze pagina open blijft. Bewaren op dit apparaat lukte niet.', 5000);
 }
 
 /* ================= 03 opnemen ================= */
@@ -299,15 +299,15 @@ function renderOpnemen(){
   const m = S.muziek && Bibliotheek.zoek(S.muziek), s = S.sfeer && Bibliotheek.zoek(S.sfeer);
   $('#o-gekozen').innerHTML =
     '<div><span class="k">muziek</span>' + (m ? '<span class="mini">' + stukGezicht(m) + '<b>' + esc(m.titel) + '</b></span>' : '<b>geen</b>') + '</div>' +
-    '<div><span class="k">sfeergeluid</span>' + (s ? '<span class="mini">' + stukGezicht(s) + '<b>' + esc(s.titel) + '</b></span>' : '<b>geen</b>') + '</div>' +
+    '<div><span class="k">plek</span>' + (s ? '<span class="mini">' + stukGezicht(s) + '<b>' + esc(s.titel) + '</b></span>' : '<b>geen</b>') + '</div>' +
     '<span class="wijzig">Wijzigen bij stap 01 ›</span>';
 
   const heeft = !!S.opname, bezig = !!oRec;
   $('#o-kopvraag').hidden = kopGekozen;
   $('#o-stil').hidden = !kopGekozen;
   $('#o-stil').innerHTML = S.koptelefoon
-    ? '🎧 <b>Met koptelefoon.</b> De geluidstechnicus hoort de muziek en de geluiden. De rest hoort alleen de stemmen. <button type="button" class="linkknop" id="o-kop-wijzig">wijzig</button>'
-    : '🤫 <b>Zonder koptelefoon.</b> Tijdens het opnemen is het stil, anders neemt de microfoon de muziek mee op. Je ziet wel welk geluid er klinkt. <button type="button" class="linkknop" id="o-kop-wijzig">wijzig</button>';
+    ? '🎧 <b>Met koptelefoon.</b> Alleen de geluidstechnicus hoort de muziek. <button type="button" class="linkknop" id="o-kop-wijzig">wijzig</button>'
+    : '🤫 <b>Zonder koptelefoon.</b> Het is stil tijdens het opnemen. Bij Luisteren hoor je alles. <button type="button" class="linkknop" id="o-kop-wijzig">wijzig</button>';
   $('#o-kop-wijzig').onclick = () => { kopGekozen = false; render(); };
   $('#o-voor').hidden = heeft || bezig;
   $('#o-oefen').textContent = oefent ? '■ Klaar met oefenen' : '▶ Oefenen met muziek';
@@ -324,10 +324,10 @@ function renderOpnemen(){
   if(heeft && !bezig) $('#o-klok').textContent = 'Jullie hoorspel duurt ' + fmt(S.opname.duur);
   renderMee();
 
-  $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : heeft ? 'Geluid toevoegen' : 'Geluiden';
+  $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : heeft ? 'Geluid erbij zetten' : 'Jullie eigen geluiden';
   $('#o-geluiden-uitleg').textContent = bezig ? '' : heeft
-    ? 'Tik op Luisteren en tik op een geluid op het moment dat het moet klinken. Zo zet je het erbij.'
-    : oefent ? 'Tik op een geluid op het goede moment. Nu hoort iedereen het.' : 'Tik op een geluid om het te horen.';
+    ? 'Tik op Luisteren. Tik dan op een geluid, precies waar het moet klinken.'
+    : oefent ? 'Tik op een geluid. Iedereen hoort het.' : 'Tik op een geluid om het te horen.';
   const el = $('#o-lijst'); el.innerHTML = '';
   if(!S.geluiden.length){ el.innerHTML = '<div class="leeg-vak">Nog geen geluiden. Die maak je bij stap 02. Zonder geluiden kun je ook opnemen.</div>'; return; }
   S.geluiden.forEach((g, i) => {
@@ -349,11 +349,11 @@ function renderMee(){
   el.hidden = !zichtbaar;
   if(!zichtbaar) return;
   const stukken = [S.muziek, S.sfeer].filter(Boolean).map(id => Bibliotheek.zoek(id)).filter(Boolean);
-  const tekst = oefent ? 'Samen oefenen: de muziek speelt'
-    : S.koptelefoon ? 'De muziek speelt in de koptelefoon'
-    : 'De muziek speelt mee in de opname';
+  const tekst = oefent ? 'Samen oefenen: muziek speelt'
+    : S.koptelefoon ? 'Muziek speelt in de koptelefoon'
+    : 'Muziek speelt mee';
   el.innerHTML = '<span class="dansers">' + stukken.map(stukGezicht).join('') + '</span><span><b>' + tekst + '</b><small>' +
-    stukken.map(s => esc(s.titel)).join(' + ') + (oRec && !S.koptelefoon ? ' · je hoort het straks bij Luisteren' : '') + '</small></span>';
+    stukken.map(s => esc(s.titel)).join(' + ') + (oRec && !S.koptelefoon ? ' · je hoort het bij Luisteren' : '') + '</small></span>';
 }
 /* groot kaartje: dit geluid klinkt nu */
 let nuT = 0;
@@ -574,7 +574,7 @@ async function stopOpname(){
   bewaar(); render();
   $('#tijdlijn').scrollLeft = 0;
   $('#o-klok').scrollIntoView({block:'start', behavior:'smooth'});
-  if(!ok) toast('Let op: bewaren op dit apparaat lukte niet. Bewaar het hoorspel als mp3.', 5000);
+  if(!ok) toast('Let op: bewaren op dit apparaat lukte niet. Tik op Bewaren.', 5000);
   kopGekozen = false;
   if(S.koptelefoon){ afzetten = true; render(); toast('Opgenomen! Doe de koptelefoon af en tik samen op Luisteren.', 5000); }
   else luisterVanaf(0);   /* meteen samen terugluisteren */
@@ -606,7 +606,7 @@ function stopKop(){
 }
 async function luisterVanaf(vanaf){
   stopAlles();
-  const knop = $('#o-luister'); knop.textContent = 'Even mixen…'; knop.disabled = true;
+  const knop = $('#o-luister'); knop.textContent = 'Even samenvoegen…'; knop.disabled = true;
   let buf;
   try{ buf = await maakMix(); }
   catch(e){ knop.disabled = false; knop.textContent = '▶ Luisteren'; toast('De opname staat niet meer op dit apparaat. Neem opnieuw op.'); return; }
@@ -627,13 +627,13 @@ $('#o-luister').onclick = () => { if(afzetten){ afzetten = false; $('#o-afzetten
 let opnieuwZeker = 0;
 $('#o-opnieuw').onclick = () => {
   const b = $('#o-opnieuw');
-  if(!opnieuwZeker){ b.textContent = 'Zeker? Tik nog een keer'; b.classList.add('gevaar'); opnieuwZeker = setTimeout(() => { opnieuwZeker = 0; b.textContent = 'Opnieuw'; b.classList.remove('gevaar'); }, 3500); return; }
-  clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Opnieuw'; b.classList.remove('gevaar');
+  if(!opnieuwZeker){ b.textContent = 'Zeker? Tik nog een keer'; b.classList.add('gevaar'); opnieuwZeker = setTimeout(() => { opnieuwZeker = 0; b.textContent = 'Opnieuw inspreken'; b.classList.remove('gevaar'); }, 3500); return; }
+  clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Opnieuw inspreken'; b.classList.remove('gevaar');
   stopAlles();
   if(S.opname) Opslag.wisAudio(S.opname.id);
   S.opname = null; stemBuf = null; mixCache = null; gekozenTik = -1; kopGekozen = false; afzetten = false; bewaar();
   $('#golf').innerHTML = ''; render();
-  toast('Oefen gerust nog een keer, of neem opnieuw op.');
+  toast('Oefen nog een keer, of spreek het opnieuw in.');
 };
 $('#o-bewaar').onclick = async () => {
   const knop = $('#o-bewaar'); knop.disabled = true; knop.textContent = 'Bezig…';
@@ -649,7 +649,7 @@ $('#o-bewaar').onclick = async () => {
     setTimeout(() => URL.revokeObjectURL(url), 60000);
     toast(ext === 'mp3' ? 'Bewaard! Je vindt "' + naam + '.mp3" in de map Downloads.' : 'Bewaard als "' + naam + '.wav" in Downloads. (mp3 lukte niet zonder internet.)', 6000);
   }catch(e){ toast('Bewaren lukte niet. Probeer het nog een keer.'); }
-  knop.disabled = false; knop.textContent = 'Bewaren als mp3';
+  knop.disabled = false; knop.innerHTML = 'Bewaren<small>als mp3-bestand</small>';
 };
 
 /* toetsen 1 tot 9 bij opnemen */

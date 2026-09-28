@@ -302,3 +302,10 @@ body.compact #o-geluiden-uitleg{order:1}
 .kopvraag .linkknop{font-size:.9rem;color:var(--soft)}
 .stil .linkknop{font-size:.85rem;margin-left:4px}
 .afzetten{border:var(--line);background:var(--yellow);color:var(--on);border-radius:var(--radius);box-shadow:var(--shadow);padding:.7rem 1rem;font-weight:900;font-size:1.1rem;text-align:center;margin:0 0 14px}
+
+/* stapnamen met voorbeeld */
+.stap .l{font-size:1.7rem;text-align:center;text-wrap:balance}
+.stap .v{font-weight:700;font-size:.72rem;color:var(--soft);line-height:1.2;text-align:center}
+.stap[aria-current="step"] .v{color:#fff;opacity:.9}
+.daarna .bewaar small{display:block;font-size:.72rem;font-weight:700;opacity:.9}
+@media (max-width:440px){ .stap .l{font-size:1.35rem} .stap .v{font-size:.65rem} .soort b{font-size:1.7rem} }

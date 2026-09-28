@@ -23,25 +23,25 @@
 
 <main class="app">
   <nav class="stappen" aria-label="Stappen">
-    <button type="button" class="stap" data-stap="muziek"><span class="n">STAP 01 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Muziek</span></button>
-    <button type="button" class="stap" data-stap="geluiden"><span class="n">STAP 02 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Geluiden</span></button>
-    <button type="button" class="stap" data-stap="opnemen"><span class="n">STAP 03 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Opnemen</span></button>
+    <button type="button" class="stap" data-stap="muziek"><span class="n">STAP 01 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Muziek kiezen</span><span class="v">spannend, bos…</span></button>
+    <button type="button" class="stap" data-stap="geluiden"><span class="n">STAP 02 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Geluiden maken</span><span class="v">deur, miauw…</span></button>
+    <button type="button" class="stap" data-stap="opnemen"><span class="n">STAP 03 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Verhaal inspreken</span><span class="v">jullie stemmen</span></button>
   </nav>
 
   <!-- 01 MUZIEK -->
   <section class="scherm" id="s-muziek" hidden>
-    <h1>Kies jullie <em>muziek</em></h1>
-    <p class="lead">Kies muziek bij het gevoel van jullie verhaal. Kies een sfeergeluid bij de plek waar het gebeurt.</p>
+    <h1>Hoe klinkt jullie <em>verhaal</em>?</h1>
+    <p class="lead">Kies muziek die past bij het gevoel. Kies een plek: waar speelt jullie verhaal?</p>
 
     <div class="keuze" aria-live="polite">
       <div class="slot laag-m"><span class="k">muziek</span><span id="keuze-m"></span><button type="button" class="weg" id="weg-m" aria-label="Muziek weghalen">✕</button></div>
-      <div class="slot laag-s"><span class="k">sfeergeluid</span><span id="keuze-s"></span><button type="button" class="weg" id="weg-s" aria-label="Sfeergeluid weghalen">✕</button></div>
+      <div class="slot laag-s"><span class="k">plek</span><span id="keuze-s"></span><button type="button" class="weg" id="weg-s" aria-label="Plek weghalen">✕</button></div>
       <button type="button" class="knop" id="samen">▶ Samen luisteren</button>
     </div>
 
     <div class="soorten" role="group" aria-label="Zoeken op">
-      <button type="button" class="soort" data-soort="gevoel"><b>Gevoel</b><small>muziek</small></button>
-      <button type="button" class="soort" data-soort="plek"><b>Plek</b><small>sfeergeluid</small></button>
+      <button type="button" class="soort" data-soort="gevoel"><b>Hoe voelt het?</b><small>muziek</small></button>
+      <button type="button" class="soort" data-soort="plek"><b>Waar is het?</b><small>plek</small></button>
     </div>
     <div class="groepen" id="groepen"></div>
 
@@ -51,8 +51,8 @@
 
   <!-- 02 GELUIDEN -->
   <section class="scherm" id="s-geluiden" hidden>
-    <h1>Maak jullie <em>geluiden</em></h1>
-    <p class="lead">Maak een geluid met iets uit de klas. Tik op de grote knop, maak je geluid en tik nog een keer.</p>
+    <h1>Maak zelf <em>geluiden</em></h1>
+    <p class="lead">Een deur die kraakt? Voetstappen? Een kat? Maak het geluid met iets uit de klas. Tik op de knop, maak je geluid, tik nog een keer.</p>
 
     <div class="opnamevak">
       <button type="button" class="opneemknop" id="g-knop"><span class="ring" aria-hidden="true"></span><span class="tekst" id="g-tekst">Opnemen</span></button>
@@ -69,28 +69,28 @@
       </div>
     </div>
 
-    <h2>Jullie geluiden</h2>
+    <h2>Jullie eigen geluiden</h2>
     <div class="tegels" id="g-lijst"></div>
   </section>
 
   <!-- 03 OPNEMEN -->
   <section class="scherm" id="s-opnemen" hidden>
-    <h1>Neem jullie hoorspel <em>op</em></h1>
-    <p class="lead">De spelers spreken hun tekst in. De geluidstechnicus tikt op het goede moment op een geluid.</p>
+    <h1>Spreek jullie <em>verhaal</em> in</h1>
+    <p class="lead">De acteurs lezen hun tekst voor. De geluidstechnicus drukt op het goede moment op de geluiden.</p>
 
     <button type="button" class="overzicht" id="o-gekozen"></button>
 
     <div class="voorbereiding" id="o-voor">
       <div class="deel" id="o-deel1">
         <p class="deel-kop"><span class="nr">1</span> Samen oefenen</p>
-        <p class="deel-tekst">Oefen samen <b>zonder koptelefoon</b>, zodat iedereen meeluistert. Er wordt nog niets opgenomen.</p>
+        <p class="deel-tekst">Oefen samen, <b>zonder koptelefoon</b>. Dan hoort iedereen het. Er wordt nog niets opgenomen.</p>
         <button type="button" class="knop oefen" id="o-oefen">▶ Oefenen met muziek</button>
       </div>
       <div class="deel" id="o-deel2">
-        <p class="deel-kop"><span class="nr">2</span> Opnemen</p>
-        <p class="deel-tekst">Wie is de <b>geluidstechnicus</b>? Die drukt op tijd op de geluiden.</p>
+        <p class="deel-kop"><span class="nr">2</span> Inspreken</p>
+        <p class="deel-tekst">Wie is de <b>geluidstechnicus</b>? Die drukt op de geluiden.</p>
         <div class="kopvraag" id="o-kopvraag">
-          <p class="deel-tekst">De geluidstechnicus zet nu de koptelefoon op.</p>
+          <p class="deel-tekst">De geluidstechnicus zet de koptelefoon op.</p>
           <button type="button" class="knop hoofd" data-kop="1">🎧 Koptelefoon is op</button>
           <button type="button" class="linkknop" data-kop="0">We hebben geen koptelefoon</button>
         </div>
@@ -120,13 +120,13 @@
         <button type="button" class="knop" id="o-klaar">Klaar</button>
       </div>
     </div>
-    <p class="tip" id="o-tip" hidden>Tik op de tijdlijn om vanaf daar te luisteren. Tik op het naamkaartje van een geluid om het te verschuiven of weg te halen.</p>
+    <p class="tip" id="o-tip" hidden>Tik op de balk om daar te luisteren. Tik op een naamkaartje om een geluid te verschuiven of weg te halen.</p>
 
     <p class="afzetten" id="o-afzetten" hidden>🎧 Doe de koptelefoon af en luister samen!</p>
     <div class="daarna" id="o-daarna" hidden>
       <button type="button" class="knop" id="o-luister">▶ Luisteren</button>
-      <button type="button" class="knop" id="o-opnieuw">Opnieuw</button>
-      <button type="button" class="knop bewaar" id="o-bewaar">Bewaren als mp3</button>
+      <button type="button" class="knop" id="o-opnieuw">Opnieuw inspreken</button>
+      <button type="button" class="knop bewaar" id="o-bewaar">Bewaren<small>als mp3-bestand</small></button>
     </div>
 
     <h2 id="o-geluiden-kop">Geluiden</h2>
@@ -154,7 +154,7 @@
     <div class="rijtje" id="w-gezichten" aria-hidden="true"></div>
     <p class="boven">Welkom in de</p>
     <h2 id="w-titel" class="logo-groot">Hoorspel<em>studio</em></h2>
-    <p>Hier maken jullie een hoorspel: muziek kiezen, geluiden maken en jullie verhaal opnemen.</p>
+    <p>Kies muziek, maak geluiden en spreek jullie verhaal in. Zo maken jullie een hoorspel!</p>
     <label for="w-naam">Hoe heet jullie groepje?</label>
     <input type="text" id="w-naam" maxlength="30" autocomplete="off" enterkeyhint="go" placeholder="bijvoorbeeld: De Mobielmakers">
     <p class="melding" id="w-melding" role="status"></p>
@@ -181,10 +181,10 @@
     <h3>Zo werkt het</h3>
     <ol class="genummerd">
       <li>Elk groepje werkt op een eigen apparaat, zoals een Chromebook, tablet of telefoon.</li>
-      <li><b>Muziek.</b> Het groepje kiest muziek bij een gevoel en een sfeergeluid bij een plek.</li>
-      <li><b>Geluiden.</b> De kinderen maken zelf geluiden, nemen ze op en geven ze een naam.</li>
-      <li><b>Opnemen.</b> Eerst oefenen met muziek, dan opnemen. De spelers spreken het verhaal in en de geluidstechnicus tikt op het juiste moment op de geluiden. Daarna kun je geluiden nog verschuiven.</li>
-      <li>Met <b>Bewaren als mp3</b> komt het hoorspel in de map Downloads. Dat bestand speelt op elke telefoon of mp3-speler.</li>
+      <li><b>Muziek kiezen.</b> Het groepje kiest muziek bij een gevoel en een plek (achtergrondgeluid, zoals bos of zee).</li>
+      <li><b>Geluiden maken.</b> De kinderen maken zelf geluiden, nemen ze op en geven ze een naam.</li>
+      <li><b>Verhaal inspreken.</b> Eerst samen oefenen, dan opnemen. De acteurs spreken het verhaal in en de geluidstechnicus tikt op het juiste moment op de geluiden. Daarna kun je geluiden nog verschuiven.</li>
+      <li>Met <b>Bewaren</b> komt het hoorspel in de map Downloads. Dat bestand speelt op elke telefoon of mp3-speler.</li>
     </ol>
     <h3>Samen oefenen, dan pas de koptelefoon</h3>
     <p>Kiezen, geluiden maken en oefenen doet het groepje samen, <b>zonder koptelefoon</b>, zodat iedereen meeluistert. Let op: een Chromebook stuurt al het geluid naar de koptelefoon zodra die is aangesloten.</p>
@@ -193,14 +193,14 @@
     <h3>Verbeteren na de opname</h3>
     <p>Staat een geluid op het verkeerde moment? Tik op het naamkaartje op de tijdlijn en schuif het eerder of later, of haal het weg. Tik tijdens Luisteren op een geluid om het op dat moment toe te voegen. Opnieuw beginnen is dan niet nodig.</p>
     <h3>Tips</h3>
-    <p>Zoek een rustige plek. Leg het apparaat op tafel, ongeveer een onderarm van de spelers af. Oefen het verhaal één keer zonder opname.</p>
-    <p>Muziek of sfeergeluid kiezen kan ook nog na de opname. Bij Luisteren hoor je dan meteen de nieuwe keuze.</p>
+    <p>Zoek een rustige plek. Leg het apparaat op tafel, ongeveer een onderarm van de acteurs af. Oefen het verhaal één keer zonder opname.</p>
+    <p>Muziek of plek kiezen kan ook nog na de opname. Bij Luisteren hoor je dan meteen de nieuwe keuze.</p>
     <h3>Doet de microfoon het niet?</h3>
     <p><b>Chromebook of Chrome:</b> tik links van het webadres op het icoontje en zet Microfoon op Toestaan. Laad de pagina daarna opnieuw.<br>
     <b>iPad of iPhone:</b> ga naar Instellingen › Safari › Microfoon en kies Toestaan.<br>
     Op sommige Chromebooks van school staat de microfoon uit. Vraag dan de ICT-beheerder om hem aan te zetten.</p>
     <h3>Privacy</h3>
-    <p>Alle opnames blijven op dit apparaat, in deze browser. Er gaat niets naar internet. Alleen als je zelf op Bewaren als mp3 tikt, komt er een bestand in Downloads.</p>
+    <p>Alle opnames blijven op dit apparaat, in deze browser. Er gaat niets naar internet. Alleen als je zelf op Bewaren tikt, komt er een bestand in Downloads.</p>
     <h3>Nieuw groepje op dit apparaat</h3>
     <p>Hiermee wis je de muziekkeuze, de geluiden en de opname op dit apparaat. Bewaar het hoorspel eerst als mp3.</p>
     <div class="rij">
