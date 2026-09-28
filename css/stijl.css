@@ -639,3 +639,8 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 #s-opnemen .werkbalk .rechts{display:grid;grid-template-columns:150px;gap:8px;align-items:center}
 #s-opnemen .werkbalk .rechts .wb{width:100%;justify-content:center;padding:0 10px}
 @media (max-width:640px){ #s-opnemen .werkbalk{gap:12px} }
+
+/* tijdlijn: muziek- en plekbalk even hoog als de stem- en geluidsblokjes */
+#golf .spoor.bed{height:76px;min-height:76px}
+#golf .strook{top:10px;height:54px}
+#golf .strook .gezicht{width:40px}
