@@ -967,6 +967,8 @@ document.addEventListener('keydown', e => {
 });
 
 /* ================= groep, welkom, leerkracht ================= */
+/* makers van de muziek en plekgeluiden (licentie) */
+$('#bronnen').innerHTML = [...Bibliotheek.GEVOEL, ...Bibliotheek.PLEK].flatMap(m => m.stukken.filter(x => x.bron).map(x => '<li><b>' + esc(x.titel) + '</b> · ' + esc(x.bron) + '</li>')).join('');
 function welkom(){
   const d = $('#welkom');
   $('#w-gezichten').innerHTML = ['vrolijk', 'eng', 'magisch', 'stoer', 'dromerig'].map(id => gezichtHtml(Bibliotheek.GEVOEL.find(g => g.id === id))).join('');

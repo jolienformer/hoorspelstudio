@@ -222,6 +222,17 @@ function gelijkFactor(buf, doel, actief = false, maxPiek = 1.5){
   if(rms < 0.0005) return 1;
   return Math.min(Math.max(0.25, Math.min(5, doel / rms)), piek > 0 ? maxPiek / piek : 5);
 }
+/* bijna-stilte aan begin en eind wegknippen (hooguit 0,1 s per kant) */
+function knipRand(buf){
+  const n = buf.length, max = Math.round(buf.sampleRate * 0.1), ch = [...Array(buf.numberOfChannels)].map((_, i) => buf.getChannelData(i));
+  const stil = i => ch.every(c => Math.abs(c[i]) < 0.0005);
+  let a = 0; while(a < max && a < n - 1 && stil(a)) a++;
+  let z = n; while(n - z < max && z > a + 1 && stil(z - 1)) z--;
+  if(a === 0 && z === n) return buf;
+  const uit = context().createBuffer(buf.numberOfChannels, z - a, buf.sampleRate);
+  ch.forEach((c, i) => uit.getChannelData(i).set(c.subarray(a, z)));
+  return uit;
+}
 /* een buffer zelf op sterkte brengen (voor muziek en plekgeluid) */
 function maakGelijk(buf, doel){
   const f = gelijkFactor(buf, doel, false, 0.98);
@@ -325,5 +336,5 @@ async function naarMp3(buf){
   return new Blob(delen, {type:'audio/mpeg'});
 }
 
-window.Geluid = {luidheid, gelijkFactor, maakGelijk, context, speel, los, stop, decodeer, blobNaarBuffer, maakRecorder, knipStilte, isStil, samplesNaarBuffer, wav, bufferNaarWav, mix, naarMp3};
+window.Geluid = {knipRand, luidheid, gelijkFactor, maakGelijk, context, speel, los, stop, decodeer, blobNaarBuffer, maakRecorder, knipStilte, isStil, samplesNaarBuffer, wav, bufferNaarWav, mix, naarMp3};
 })();

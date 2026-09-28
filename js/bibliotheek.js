@@ -10,8 +10,8 @@ const M = (id, naam, kleur, uitdr, stukken) => ({id, naam, kleur, uitdr, stukken
 
 const GEVOEL = [
   M('spannend', 'Spannend', 'blauw', 'bang', [
-    {titel:'Sluipen', synth:'spannend', v:0},
-    {titel:'Wie is daar?', synth:'spannend', v:1}]),
+    {titel:'Sluipen', synth:'spannend', v:0, bestand:'audio/muziek/spannend-1.mp3', bron:'"Sneaky Snitch" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Wie is daar?', synth:'spannend', v:1, bestand:'audio/muziek/spannend-2.mp3', bron:'"Crypto" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('eng', 'Eng', 'paars', 'schrik', [
     {titel:'Spookhuis', synth:'eng', v:0},
     {titel:'Iets onder het bed', synth:'eng', v:1}]),
@@ -52,8 +52,8 @@ const GEVOEL = [
 
 const PLEK = [
   M('bos', 'Bos', 'groen', 'tevreden', [
-    {titel:'Vogels in het bos', synth:'bos', v:0},
-    {titel:'Bos bij nacht', synth:'bos', v:1}]),
+    {titel:'Vogels in het bos', synth:'bos', v:0, bestand:'audio/plek/bos-1.mp3', bron:'GammaGool (freesound.org/s/850507), CC0'},
+    {titel:'Bos bij nacht', synth:'bos', v:1, bestand:'audio/plek/bos-2.mp3', bron:'fribergmusic2024 (freesound.org/s/719558), CC0'}]),
   M('zee', 'Zee', 'blauw', 'verwonderd', [
     {titel:'Golven op het strand', synth:'zee', v:0},
     {titel:'Storm op zee', synth:'zee', v:1}]),
@@ -300,7 +300,8 @@ function laad(id){
   const p = (async () => {
     if(s.bestand){
       const r = await fetch(s.bestand); if(!r.ok) throw new Error('niet gevonden');
-      return Geluid.maakGelijk(await Geluid.decodeer(await r.arrayBuffer()), s.soort === 'gevoel' ? 0.15 : 0.1);
+      /* mp3 heeft aan begin en eind een paar ms stilte van de encoder; weg ermee, anders hapert de lus */
+      return Geluid.maakGelijk(Geluid.knipRand(await Geluid.decodeer(await r.arrayBuffer())), s.soort === 'gevoel' ? 0.15 : 0.1);
     }
     return Geluid.maakGelijk(await (s.soort === 'gevoel' ? maakMuziek(s.synth, s.v) : maakSfeer(s.synth, s.v)), s.soort === 'gevoel' ? 0.15 : 0.1);
   })();

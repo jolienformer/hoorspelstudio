@@ -682,3 +682,4 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 .volkeuze button.aan{background:var(--ink);color:var(--bg)}
 .volmerk{position:absolute;left:5px;bottom:4px;z-index:3;background:var(--ink);color:var(--bg);font-weight:800;font-size:.62rem;line-height:1;padding:3px 5px;border-radius:4px;pointer-events:none}
 .strook .volmerk{left:auto;right:40px;bottom:auto;top:50%;transform:translateY(-50%)}
+.bronnen{margin:6px 0 0;padding-left:1.1rem;font-size:.85rem;color:var(--soft)} .bronnen li{margin:3px 0}
