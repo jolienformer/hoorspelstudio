@@ -299,9 +299,9 @@ let afzetten = false;     // na opname met koptelefoon: eerst afzetten, dan same
 function renderOpnemen(){
   const m = S.muziek && Bibliotheek.zoek(S.muziek), s = S.sfeer && Bibliotheek.zoek(S.sfeer);
   $('#o-gekozen').innerHTML =
-    '<div><span class="k">muziek</span>' + (m ? '<span class="mini">' + stukGezicht(m) + '<b>' + esc(m.titel) + '</b></span>' : '<b>geen</b>') + '</div>' +
-    '<div><span class="k">plek</span>' + (s ? '<span class="mini">' + stukGezicht(s) + '<b>' + esc(s.titel) + '</b></span>' : '<b>geen</b>') + '</div>' +
-    '<span class="wijzig">Wijzigen bij stap 01 ›</span>';
+    (m ? '<span class="mini">' + stukGezicht(m) + '<b>' + esc(m.titel) + '</b></span>' : '<span class="mini"><b>geen muziek</b></span>') +
+    (s ? '<span class="mini">' + stukGezicht(s) + '<b>' + esc(s.titel) + '</b></span>' : '<span class="mini"><b>geen plek</b></span>') +
+    '<span class="wijzig">wijzig ›</span>';
 
   const heeft = !!S.opname, bezig = !!oRec;
   $('#o-kopvraag').hidden = kopGekozen;

@@ -365,3 +365,26 @@ body.neemt-op .clip{cursor:default}
   .vak-inhoud .gezicht,.vak-inhoud .leeg{width:44px;height:44px}
 }
 @media (prefers-reduced-motion:reduce){ .rtegel.speelt .gezicht{animation:none} }
+
+/* minder vakjes in vakjes */
+.opnamevak{border:0;background:none;box-shadow:none;padding:6px 0 10px}
+.overzicht{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 18px;border:0;background:none;box-shadow:none;padding:0;margin-bottom:18px}
+.overzicht .mini b{font-size:.95rem}
+.overzicht .wijzig{margin:0}
+.voorbereiding .stil{border:0;background:none;padding:0;max-width:none}
+.meeklinkt{border:0;background:none;box-shadow:none;padding:0 0 4px;justify-content:center}
+.clip .gezicht{border:0;border-radius:6px}
+
+/* eigen geluiden: net als stap 01, groot gezichtje met de naam eronder */
+.tegels{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:16px 14px}
+.tegel{display:flex;flex-direction:column;align-items:stretch;gap:6px;border:0;background:none;box-shadow:none;padding:0;min-height:0;border-radius:0;color:var(--ink);text-align:center}
+.tegel:active,.tegel.tik{transform:none;box-shadow:none}
+.tegel .gezicht{width:100%;border:var(--line);border-radius:12px;box-shadow:var(--shadow);background:var(--c);transition:transform .08s ease,box-shadow .08s ease}
+.tegel:active .gezicht,.tegel.tik .gezicht{transform:translate(3px,3px);box-shadow:none}
+.tegel .naam{font-size:.9rem}
+.tegel .toets{top:-8px;left:-6px;z-index:1}
+.tegel-wrap .weg{top:-10px;right:-8px;width:34px;height:34px;min-width:0;min-height:0;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:1}
+.tegel-wrap .weg.zeker{width:auto;border-radius:17px;padding:0 .6rem}
+#o-lijst .tegel{min-height:0}
+body.compact #o-lijst .tegel{min-height:0}
+@media (max-width:440px){ .tegels{grid-template-columns:repeat(3,1fr);gap:14px 10px} .tegel .gezicht{width:100%} }
