@@ -321,3 +321,47 @@ body.compact #o-geluiden-uitleg{order:1}
 body.neemt-op .clip{cursor:default}
 .daarna{align-items:stretch}
 .daarna .knop{display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* stap 01: twee vakken + raster met gezichtjes */
+.vakken{position:sticky;top:0;z-index:4;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-block:14px 8px;margin-bottom:6px;background:var(--bg)}
+.vak{position:relative;display:flex}
+.vak-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:var(--line);background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:.5rem .6rem .7rem;text-align:center;min-height:132px}
+.vak.open .vak-tab{background:var(--yellow);color:var(--on)}
+.vak.doel .vak-tab{outline:4px dashed var(--accent);outline-offset:3px}
+.vak-kop{font-family:var(--f-head);font-size:2.1rem;line-height:1}
+.vak-vraag{font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.vak-inhoud{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:6px}
+.vak-inhoud .gezicht{width:52px;border-width:2px;box-shadow:2px 2px 0 var(--edge)}
+.vak-inhoud b{font-weight:900;font-size:.9rem;line-height:1.15}
+.vak-inhoud .leeg{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border:2.5px dashed var(--muted);border-radius:10px;font-size:0}
+.vak-inhoud .leeg::before{content:"?";font-size:1.4rem;font-weight:900;color:var(--muted)}
+.vak .weg{position:absolute;top:-10px;right:-8px;width:34px;height:34px;min-width:0;min-height:0;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--paper);color:var(--ink);z-index:2}
+.samen{display:block;margin:4px auto 8px}
+.hint{text-align:center;font-weight:700;font-size:.88rem;color:var(--soft);margin:4px 0 14px}
+
+.kiesraster{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px 16px}
+.rgroep{display:flex;flex-direction:column;gap:6px}
+.rrij{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rkop{margin:0;font-family:var(--f-head);font-size:1.7rem;line-height:1}
+.rtegel{display:flex;flex-direction:column;align-items:stretch;gap:6px;border:0;background:none;padding:0;text-align:center}
+.rgezicht{position:relative;display:block}
+.rgezicht .gezicht{width:100%;transition:transform .08s ease,box-shadow .08s ease}
+.rtegel:active .gezicht{transform:translate(3px,3px);box-shadow:none}
+.rtegel .badge{position:absolute;right:-6px;bottom:-6px;width:32px;height:32px;border-radius:50%;border:2.5px solid var(--edge);background:var(--paper);color:var(--ink);font-size:.8rem;font-weight:900;display:flex;align-items:center;justify-content:center}
+.rtegel.gekozen .gezicht{outline:4px solid var(--accent);outline-offset:3px}
+.rtegel.gekozen .badge{background:var(--ok);color:var(--on)}
+.rtegel.speelt .badge{background:var(--accent);color:#fff}
+.rtegel.speelt .gezicht{animation:wiebel .6s ease-in-out infinite alternate}
+.rtegel .naam{font-weight:900;font-size:.82rem;line-height:1.15}
+.rspook{position:fixed;width:72px;transform:translate(-50%,-50%) rotate(-4deg);pointer-events:none;z-index:50}
+.rspook .gezicht{width:72px;box-shadow:4px 4px 0 var(--edge)}
+@media (max-width:440px){
+  .kiesraster{grid-template-columns:1fr 1fr;gap:16px 12px}
+  .rrij{gap:8px}
+  .rkop{font-size:1.45rem}
+  .rtegel .naam{font-size:.74rem}
+  .vak-tab{min-height:0;padding:.4rem .5rem .55rem}
+  .vak-kop{font-size:1.7rem}
+  .vak-inhoud .gezicht,.vak-inhoud .leeg{width:44px;height:44px}
+}
+@media (prefers-reduced-motion:reduce){ .rtegel.speelt .gezicht{animation:none} }
