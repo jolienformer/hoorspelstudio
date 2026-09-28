@@ -200,25 +200,27 @@ function wav(kanalen, rate){
 const bufferNaarWav = b => wav([...Array(b.numberOfChannels)].map((_, i) => b.getChannelData(i)), b.sampleRate);
 
 /* ---------- mixen ---------- */
-/* stem: AudioBuffer; muziek/sfeer: AudioBuffer|null; tikken: [{buf, t}] */
-async function mix({stem, muziek, sfeer, tikken}){
+/* stemmen: [{buf, t}]; muziek/sfeer: AudioBuffer|null; tikken: [{buf, t}] */
+async function mix({stemmen, muziek, sfeer, tikken}){
   const rate = 44100;
-  let eind = stem.duration + 1.2;
+  let stemEind = 0;
+  stemmen.forEach(s => { stemEind = Math.max(stemEind, s.t + s.buf.duration); });
+  let eind = stemEind + 1.2;
   tikken.forEach(k => { eind = Math.max(eind, k.t + k.buf.duration + 0.3); });
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
   const oc = new OAC(2, Math.ceil(eind * rate), rate);
   const uit = oc.createGain(); uit.connect(oc.destination);
 
-  const s = oc.createBufferSource(); s.buffer = stem;
-  const sg = oc.createGain(); sg.gain.value = 1; s.connect(sg); sg.connect(uit); s.start(0);
-
-  /* wanneer wordt er gepraat? per 0,1 s kijken */
-  const d = stem.getChannelData(0), stap = Math.round(stem.sampleRate * 0.1);
-  const praat = [];
-  for(let i = 0; i < d.length; i += stap){
-    let som = 0, m = 0; for(let j = i; j < Math.min(d.length, i + stap); j += 2){ som += d[j] * d[j]; m++; }
-    praat.push(Math.sqrt(som / Math.max(1, m)) > 0.02);
-  }
+  /* wanneer wordt er gepraat? per 0,1 s kijken, over alle stemmen samen */
+  const praat = new Array(Math.ceil(eind * 10) + 1).fill(false);
+  stemmen.forEach(({buf, t}) => {
+    const s = oc.createBufferSource(); s.buffer = buf; s.connect(uit); s.start(t);
+    const d = buf.getChannelData(0), stap = Math.round(buf.sampleRate * 0.1);
+    for(let i = 0, n = 0; i < d.length; i += stap, n++){
+      let som = 0, m = 0; for(let j = i; j < Math.min(d.length, i + stap); j += 2){ som += d[j] * d[j]; m++; }
+      if(Math.sqrt(som / Math.max(1, m)) > 0.02){ const k = Math.round(t * 10) + n; if(k < praat.length) praat[k] = true; }
+    }
+  });
   /* even vasthouden zodat het niet pompt */
   const vast = praat.map((_, i) => praat.slice(Math.max(0, i - 1), i + 5).some(Boolean));
 

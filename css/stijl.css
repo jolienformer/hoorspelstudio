@@ -413,3 +413,16 @@ body.compact #o-lijst .tegel{min-height:0}
 .clip.smal{padding-right:4px;justify-content:flex-start}
 .clip.smal .naam{display:none}
 .clip .gezicht{width:32px}
+
+/* stemmen als blokjes */
+.clip.stemclip{--c:var(--paper);background:var(--tint);padding:0;overflow:hidden;cursor:grab}
+.clip.stemclip .kruis{top:4px;right:4px}
+.clip.stemclip .kruis.zeker{width:auto;padding:0 8px;border-radius:13px;background:#C0321A;color:#fff;border-color:#C0321A}
+.spoor.stem .stemgolf{position:absolute;inset:0 0 0 2px;pointer-events:none}
+.spoor.stem .stemgolf i{position:absolute;top:50%;width:4px;border-radius:2px;background:var(--ink);opacity:.75;transform:translateY(-50%)}
+.clip.stemclip.live{background:color-mix(in srgb,var(--accent) 22%,var(--paper));border-color:var(--accent);box-shadow:none;cursor:default}
+.erbij-info{margin:0;max-width:30em;text-align:center;font-weight:700;font-size:.92rem;color:var(--soft)}
+.erbij-info b{color:var(--accent)}
+.alles-opnieuw{align-self:center;margin:0 0 14px;font-size:.85rem;color:var(--soft)}
+.alles-opnieuw.gevaar{color:#C0321A}
+#s-opnemen.heeft .alles-opnieuw{order:5}
