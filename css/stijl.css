@@ -644,3 +644,11 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 #golf .spoor.bed{height:76px;min-height:76px}
 #golf .strook{top:10px;height:54px}
 #golf .strook .gezicht{width:40px}
+
+/* spoornamen in het titel-lettertype, midden in de rij */
+.sporen-namen span{display:flex;align-items:center;padding:0 10px;font-family:var(--f-head);font-size:1.45rem;font-weight:700;line-height:1;color:var(--ink);letter-spacing:.02em}
+.sporen-namen .lin{padding:0}
+@media (max-width:640px){ .sporen-namen span{font-size:1.15rem;padding:0 6px} }
+.montage{grid-template-columns:84px 1fr}
+.sporen-namen span{padding:0 12px}
+@media (max-width:640px){ .montage{grid-template-columns:64px 1fr} .sporen-namen span{padding:0 7px} }
