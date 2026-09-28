@@ -359,7 +359,6 @@ function renderOpnemen(){
   $('#o-bewaar').hidden = !heeft || bezig || oefent;
   if(!luister && !$('#o-luister').disabled) knopInhoud($('#o-luister'), 'speel', 'Luisteren');
   $('#o-kop').closest('.schakel').hidden = bezig;
-  $('#o-afzetten').hidden = !(heeft && !bezig && afzetten);
   $('#o-alles-opnieuw').hidden = !heeft || bezig;
   if(!bezig){ $('#o-klok').textContent = ''; tekenTijdlijn(); }
 
@@ -827,7 +826,6 @@ async function stopOpname(){
   render();
   if(!ok) toast('Let op: bewaren op dit apparaat lukte niet. Tik op Bewaren.', 5000);
   zetKop(stem.t);   /* afspeellijn aan het begin van het nieuwe stuk; luisteren doen ze zelf */
-  if(S.koptelefoon){ afzetten = true; render(); toast('Opgenomen! Doe de koptelefoon af en tik samen op Luisteren.', 5000); }
 }
 $('#o-knop').onclick = () => oRec ? stopOpname() : startOpname();
 
@@ -890,7 +888,7 @@ async function luisterVanaf(vanaf){
   };
   loop();
 }
-$('#o-luister').onclick = () => { if(afzetten){ afzetten = false; $('#o-afzetten').hidden = true; } (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(cursor); };
+$('#o-luister').onclick = () => { (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(cursor); };
 let opnieuwZeker = 0;
 $('#o-alles-opnieuw').onclick = () => {
   const b = $('#o-alles-opnieuw');
