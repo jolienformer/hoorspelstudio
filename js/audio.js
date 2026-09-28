@@ -13,9 +13,10 @@ function context(){
 
 /* ---------- afspelen ---------- */
 let bezig = [];   // lopende bronnen van één "speler"
-function stop(){
+let losse = [];   // losse geluiden die over de speler heen klinken
+function dempen(lijst){
   const c = ctx; if(!c) return;
-  bezig.forEach(({src, gain}) => {
+  lijst.forEach(({src, gain}) => {
     try{
       const t = c.currentTime;
       gain.gain.cancelScheduledValues(t);
@@ -24,22 +25,32 @@ function stop(){
       src.stop(t + 0.3);
     }catch(e){}
   });
-  bezig = [];
 }
-/* speel een of meer buffers tegelijk; lagen: [{buf, vol, loop}] */
-function speel(lagen, klaar){
+function stop(){ dempen(bezig); dempen(losse); bezig = []; losse = []; }
+/* speel een of meer buffers tegelijk; lagen: [{buf, vol, loop}]; vanaf: seconden */
+function speel(lagen, klaar, vanaf = 0){
   stop();
   const c = context(); const t = c.currentTime + 0.02;
   const eigen = [];
   lagen.forEach(({buf, vol = 1, loop = false}) => {
     const src = c.createBufferSource(); src.buffer = buf; src.loop = loop;
     const gain = c.createGain(); gain.gain.value = vol;
-    src.connect(gain); gain.connect(c.destination); src.start(t);
+    src.connect(gain); gain.connect(c.destination);
+    src.start(t, loop ? vanaf % buf.duration : Math.min(vanaf, buf.duration));
     eigen.push({src, gain});
   });
   bezig = eigen;
   if(klaar && eigen[0]) eigen[0].src.onended = () => { if(bezig === eigen){ bezig = []; klaar(); } };
   return t;
+}
+/* één geluid over wat er al speelt heen */
+function los(buf, vol = 0.9){
+  const c = context();
+  const src = c.createBufferSource(); src.buffer = buf;
+  const gain = c.createGain(); gain.gain.value = vol;
+  src.connect(gain); gain.connect(c.destination); src.start();
+  const item = {src, gain}; losse.push(item);
+  src.onended = () => { losse = losse.filter(x => x !== item); };
 }
 
 /* ---------- decoderen ---------- */
@@ -271,5 +282,5 @@ async function naarMp3(buf){
   return new Blob(delen, {type:'audio/mpeg'});
 }
 
-window.Geluid = {context, speel, stop, decodeer, blobNaarBuffer, maakRecorder, knipStilte, isStil, samplesNaarBuffer, wav, bufferNaarWav, mix, naarMp3};
+window.Geluid = {context, speel, los, stop, decodeer, blobNaarBuffer, maakRecorder, knipStilte, isStil, samplesNaarBuffer, wav, bufferNaarWav, mix, naarMp3};
 })();

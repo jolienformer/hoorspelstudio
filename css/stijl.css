@@ -160,7 +160,10 @@ input[type=text]{border:var(--line);background:var(--bg);border-radius:var(--rad
 .tijdlijn{position:relative;overflow-x:auto;border:var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 10px 20px;margin-bottom:20px;-webkit-overflow-scrolling:touch}
 .golf{position:relative;height:56px;min-width:100%}
 .golf i{position:absolute;bottom:50%;width:3px;border-radius:2px;background:var(--ink);opacity:.7;transform:translateY(50%)}
-.golf .mk{position:absolute;top:-26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;z-index:1}
+.golf .mk{position:absolute;top:-26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:1;border:0;background:none;padding:0;font:inherit;cursor:grab;touch-action:none}
+.golf .mk.gekozen span{outline:3px solid var(--accent);outline-offset:2px}
+.golf .mk.gekozen::after{background:var(--accent);width:3px}
+body.neemt-op .golf .mk{pointer-events:none}
 .golf .mk span{font-weight:900;font-size:.68rem;color:var(--on);background:var(--c);border:2px solid var(--edge);border-radius:5px;padding:0 5px;white-space:nowrap}
 .golf .mk::after{content:"";width:2px;height:60px;background:var(--edge)}
 .golf .bed{position:absolute;left:0;height:5px;border-radius:3px;background:var(--accent);bottom:-10px}
@@ -224,22 +227,64 @@ dialog::backdrop{background:rgba(17,17,17,.55)}
   .speel[aria-pressed="true"] .gezicht{animation:none}
 }
 
-/* ---------- tijdens de opname: alleen wat nodig is ---------- */
+/* ---------- tijdens oefenen en opnemen: alleen wat nodig is ---------- */
 #s-opnemen{display:flex;flex-direction:column}
-body.neemt-op .stappen,
-body.neemt-op #s-opnemen h1,
-body.neemt-op #s-opnemen .lead,
-body.neemt-op #o-gekozen,
-body.neemt-op #o-stil,
-body.neemt-op .toetsen,
-body.neemt-op .voet,
-body.neemt-op .dok{display:none}
-body.neemt-op .app{padding-bottom:40px}
-body.neemt-op .podium{flex-direction:row;justify-content:center;gap:20px;margin-bottom:6px}
-body.neemt-op .opneemknop.groot{width:108px;height:108px}
-body.neemt-op #o-geluiden-kop{order:1;margin-top:14px}
-body.neemt-op #o-lijst{order:2}
-body.neemt-op #tijdlijn{order:3;margin-top:22px}
-body.neemt-op #o-lijst .tegel{min-height:120px}
-body.neemt-op .klok{color:var(--accent)}
+body.compact .stappen,
+body.compact #s-opnemen h1,
+body.compact #s-opnemen .lead,
+body.compact #o-gekozen,
+body.compact #o-voor,
+body.compact .toetsen,
+body.compact .voet,
+body.compact .dok{display:none}
+body.compact .app{padding-bottom:40px}
+body.compact .podium{flex-direction:row;justify-content:center;gap:20px;margin-bottom:6px}
+body.compact .opneemknop.groot{width:112px;height:112px;font-size:.95rem}
+body.compact #o-geluiden-kop{order:1;margin-top:14px}
+body.compact #o-lijst{order:2}
+body.compact #tijdlijn{order:3;margin-top:22px}
+body.compact #o-lijst .tegel{min-height:120px}
+body.compact .klok{color:var(--accent)}
+body.oefent #o-voor{display:flex;margin-bottom:10px}
+body.oefent #o-voor > :not(.oefen){display:none}
 .golf .mk.begin{transform:translateX(-1px);align-items:flex-start}
+
+/* ---------- stap 03: voorbereiding, meeklinken, verbeteren ---------- */
+.voorbereiding{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.vraag{font-weight:900;margin:0;text-align:center}
+.voorbereiding .soorten{margin-bottom:0}
+.oefen{align-self:center;background:var(--yellow);color:var(--on);font-size:1.05rem;padding:.7rem 1.3rem}
+.oefen.aan{background:var(--ink);color:var(--bg)}
+.stil b{color:var(--ink)}
+
+.meeklinkt{display:flex;align-items:center;gap:12px;border:var(--line);background:var(--tint);border-radius:14px;box-shadow:var(--shadow);padding:10px 14px;margin-bottom:16px}
+.meeklinkt b{display:block;font-weight:900;line-height:1.2}
+.meeklinkt small{display:block;font-weight:700;color:var(--soft);font-size:.82rem}
+.dansers{display:flex;gap:6px;flex:none}
+.dansers .gezicht{width:44px;border-width:2px;box-shadow:none;animation:dans .5s ease-in-out infinite alternate}
+.dansers .gezicht:nth-child(2){animation-delay:-.25s}
+@keyframes dans{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-4px) rotate(5deg)}}
+
+.nuklinkt{--c:var(--c-geel);position:relative;display:none;align-items:center;gap:12px;min-width:min(320px,100%);border:var(--line);background:var(--c);color:var(--on);border-radius:14px;box-shadow:var(--shadow);padding:10px 14px 16px;overflow:hidden;pointer-events:none}
+.nuklinkt.toon{display:flex;animation:plofje .25s ease-out}
+.nuklinkt .gezicht{width:64px;flex:none;border-width:2px;box-shadow:none}
+.nuklinkt b{display:block;font-weight:900;font-size:1.25rem;line-height:1.15}
+.nuklinkt small{display:block;font-weight:900;font-size:.9rem}
+.nuklinkt i{position:absolute;left:0;bottom:0;height:6px;width:100%;background:var(--edge);transform-origin:left;animation:loopt linear forwards}
+@keyframes loopt{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes plofje{from{transform:scale(.8)}to{transform:scale(1)}}
+
+.bewerk{--c:var(--c-geel);border:var(--line);border-left-width:10px;border-left-color:var(--c);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.bewerk-titel{margin:0;font-weight:700}
+.bewerk .rij{justify-content:flex-start}
+.bewerk .knop{min-height:44px;padding:.45rem .8rem;font-size:.95rem}
+.tip{font-weight:700;font-size:.85rem;color:var(--soft);margin:-8px 0 16px}
+.uitleg{font-weight:700;font-size:.9rem;color:var(--soft);margin:-6px 0 12px}
+.uitleg:empty{display:none}
+body.compact .podium{flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){
+  .dansers .gezicht{animation:none}
+  .nuklinkt.toon{animation:none}
+}
+.voorbereiding .stil{align-self:center;text-align:center}
+body.compact #o-geluiden-uitleg{order:1}

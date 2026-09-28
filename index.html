@@ -80,16 +80,39 @@
 
     <button type="button" class="overzicht" id="o-gekozen"></button>
 
+    <div class="voorbereiding" id="o-voor">
+      <p class="vraag">Heeft de geluidsmaker een koptelefoon op?</p>
+      <div class="soorten" role="group" aria-label="Koptelefoon">
+        <button type="button" class="soort" data-kop="0"><b>Nee</b><small>zonder koptelefoon</small></button>
+        <button type="button" class="soort" data-kop="1"><b>Ja</b><small>met koptelefoon</small></button>
+      </div>
+      <p class="stil" id="o-stil"></p>
+      <button type="button" class="knop oefen" id="o-oefen">▶ Eerst oefenen met muziek</button>
+    </div>
+
+    <div class="meeklinkt" id="o-mee" hidden></div>
+
     <div class="podium">
       <button type="button" class="opneemknop groot" id="o-knop"><span class="ring" aria-hidden="true"></span><span class="tekst" id="o-tekst">Start<br>opname</span></button>
       <div class="klok" id="o-klok" aria-live="polite"></div>
-      <p class="stil" id="o-stil">Tijdens het opnemen hoor je de muziek en de geluiden niet. Zo blijven jullie stemmen goed te horen. Bij Luisteren hoor je alles samen.</p>
+      <div class="nuklinkt" id="o-nu" aria-live="polite"></div>
       <p class="melding" id="o-melding" role="status"></p>
     </div>
 
     <div class="tijdlijn" id="tijdlijn" hidden>
       <div class="golf" id="golf"></div>
     </div>
+    <div class="bewerk" id="o-bewerk" hidden>
+      <p class="bewerk-titel" id="o-bewerk-titel"></p>
+      <div class="rij">
+        <button type="button" class="knop" id="o-eerder">◀ Eerder</button>
+        <button type="button" class="knop" id="o-later">Later ▶</button>
+        <button type="button" class="knop" id="o-hier">▶ Luister hier</button>
+        <button type="button" class="knop gevaar" id="o-weg">Weghalen</button>
+        <button type="button" class="knop" id="o-klaar">Klaar</button>
+      </div>
+    </div>
+    <p class="tip" id="o-tip" hidden>Tik op de tijdlijn om vanaf daar te luisteren. Tik op het naamkaartje van een geluid om het te verschuiven of weg te halen.</p>
 
     <div class="daarna" id="o-daarna" hidden>
       <button type="button" class="knop" id="o-luister">▶ Luisteren</button>
@@ -98,6 +121,7 @@
     </div>
 
     <h2 id="o-geluiden-kop">Geluiden</h2>
+    <p class="uitleg" id="o-geluiden-uitleg"></p>
     <div class="tegels" id="o-lijst"></div>
     <p class="toetsen">Op een laptop of Chromebook kun je ook de toetsen 1 tot 9 gebruiken.</p>
   </section>
@@ -150,11 +174,15 @@
       <li>Elk groepje werkt op een eigen apparaat, zoals een Chromebook, tablet of telefoon.</li>
       <li><b>Muziek.</b> Het groepje kiest muziek bij een gevoel en een sfeergeluid bij een plek.</li>
       <li><b>Geluiden.</b> De kinderen maken zelf geluiden, nemen ze op en geven ze een naam.</li>
-      <li><b>Opnemen.</b> De spelers spreken het verhaal in. De geluidsmaker tikt op het juiste moment op de geluiden.</li>
+      <li><b>Opnemen.</b> Eerst oefenen met muziek, dan opnemen. De spelers spreken het verhaal in en de geluidsmaker tikt op het juiste moment op de geluiden. Daarna kun je geluiden nog verschuiven.</li>
       <li>Met <b>Bewaren als mp3</b> komt het hoorspel in de map Downloads. Dat bestand speelt op elke telefoon of mp3-speler.</li>
     </ol>
-    <h3>Waarom is het stil tijdens het opnemen?</h3>
-    <p>Als muziek uit de luidspreker komt, neemt de microfoon die ook op en worden de stemmen slecht verstaanbaar. Daarom onthoudt de app alleen wanneer er op een geluid getikt wordt. Na de opname voegt de app alles samen. Onder de stemmen gaat de muziek vanzelf zachter.</p>
+    <h3>Met of zonder koptelefoon</h3>
+    <p><b>Met koptelefoon</b> hoort de geluidsmaker de muziek en de geluiden live mee. De microfoon vangt dan alleen de stemmen op.</p>
+    <p><b>Zonder koptelefoon</b> is het stil tijdens het opnemen. Anders neemt de microfoon de muziek uit de luidspreker ook op en zijn de stemmen slecht te verstaan. De app laat wel zien welk geluid er klinkt.</p>
+    <p>In beide gevallen onthoudt de app alleen wanneer er op een geluid getikt wordt, en voegt hij alles na de opname samen. Onder de stemmen gaat de muziek vanzelf zachter. Met <b>Eerst oefenen met muziek</b> spelen de kinderen het verhaal een keer door met geluid, zonder opname.</p>
+    <h3>Verbeteren na de opname</h3>
+    <p>Staat een geluid op het verkeerde moment? Tik op het naamkaartje op de tijdlijn en schuif het eerder of later, of haal het weg. Tik tijdens Luisteren op een geluid om het op dat moment toe te voegen. Opnieuw beginnen is dan niet nodig.</p>
     <h3>Tips</h3>
     <p>Zoek een rustige plek. Leg het apparaat op tafel, ongeveer een onderarm van de spelers af. Oefen het verhaal één keer zonder opname.</p>
     <p>Muziek of sfeergeluid kiezen kan ook nog na de opname. Bij Luisteren hoor je dan meteen de nieuwe keuze.</p>
