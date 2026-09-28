@@ -246,7 +246,9 @@ body.compact #tijdlijn{order:3;margin-top:22px}
 body.compact #o-lijst .tegel{min-height:120px}
 body.compact .klok{color:var(--accent)}
 body.oefent #o-voor{display:flex;margin-bottom:10px}
-body.oefent #o-voor > :not(.oefen){display:none}
+body.oefent #o-deel2{display:none}
+body.oefent #o-deel1{border:0;background:none;box-shadow:none;padding:0}
+body.oefent #o-deel1 > :not(.oefen){display:none}
 .golf .mk.begin{transform:translateX(-1px);align-items:flex-start}
 
 /* ---------- stap 03: voorbereiding, meeklinken, verbeteren ---------- */
@@ -286,5 +288,17 @@ body.compact .podium{flex-wrap:wrap}
   .dansers .gezicht{animation:none}
   .nuklinkt.toon{animation:none}
 }
-.voorbereiding .stil{align-self:center;text-align:center}
+.voorbereiding .stil{margin:0}
 body.compact #o-geluiden-uitleg{order:1}
+
+/* stap 03 in twee delen */
+.deel{display:flex;flex-direction:column;align-items:flex-start;gap:8px;border:var(--line);background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px}
+.deel-kop{display:flex;align-items:center;gap:10px;margin:0;font-family:var(--f-head);font-size:2rem;line-height:1}
+.deel-kop .nr{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;border:2.5px solid var(--edge);font-family:var(--f-body);font-weight:900;font-size:1rem}
+.deel-tekst{margin:0}
+.deel .oefen{align-self:flex-start}
+.kopvraag{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.kopvraag .knop{font-size:1.05rem}
+.kopvraag .linkknop{font-size:.9rem;color:var(--soft)}
+.stil .linkknop{font-size:.85rem;margin-left:4px}
+.afzetten{border:var(--line);background:var(--yellow);color:var(--on);border-radius:var(--radius);box-shadow:var(--shadow);padding:.7rem 1rem;font-weight:900;font-size:1.1rem;text-align:center;margin:0 0 14px}

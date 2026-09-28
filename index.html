@@ -76,18 +76,26 @@
   <!-- 03 OPNEMEN -->
   <section class="scherm" id="s-opnemen" hidden>
     <h1>Neem jullie hoorspel <em>op</em></h1>
-    <p class="lead">De spelers spreken hun tekst in. De geluidsmaker tikt op het goede moment op een geluid.</p>
+    <p class="lead">De spelers spreken hun tekst in. De geluidstechnicus tikt op het goede moment op een geluid.</p>
 
     <button type="button" class="overzicht" id="o-gekozen"></button>
 
     <div class="voorbereiding" id="o-voor">
-      <p class="vraag">Heeft de geluidsmaker een koptelefoon op?</p>
-      <div class="soorten" role="group" aria-label="Koptelefoon">
-        <button type="button" class="soort" data-kop="0"><b>Nee</b><small>zonder koptelefoon</small></button>
-        <button type="button" class="soort" data-kop="1"><b>Ja</b><small>met koptelefoon</small></button>
+      <div class="deel" id="o-deel1">
+        <p class="deel-kop"><span class="nr">1</span> Samen oefenen</p>
+        <p class="deel-tekst">Oefen samen <b>zonder koptelefoon</b>, zodat iedereen meeluistert. Er wordt nog niets opgenomen.</p>
+        <button type="button" class="knop oefen" id="o-oefen">▶ Oefenen met muziek</button>
       </div>
-      <p class="stil" id="o-stil"></p>
-      <button type="button" class="knop oefen" id="o-oefen">▶ Eerst oefenen met muziek</button>
+      <div class="deel" id="o-deel2">
+        <p class="deel-kop"><span class="nr">2</span> Opnemen</p>
+        <p class="deel-tekst">Wie is de <b>geluidstechnicus</b>? Die drukt op tijd op de geluiden.</p>
+        <div class="kopvraag" id="o-kopvraag">
+          <p class="deel-tekst">De geluidstechnicus zet nu de koptelefoon op.</p>
+          <button type="button" class="knop hoofd" data-kop="1">🎧 Koptelefoon is op</button>
+          <button type="button" class="linkknop" data-kop="0">We hebben geen koptelefoon</button>
+        </div>
+        <p class="stil" id="o-stil" hidden></p>
+      </div>
     </div>
 
     <div class="meeklinkt" id="o-mee" hidden></div>
@@ -114,6 +122,7 @@
     </div>
     <p class="tip" id="o-tip" hidden>Tik op de tijdlijn om vanaf daar te luisteren. Tik op het naamkaartje van een geluid om het te verschuiven of weg te halen.</p>
 
+    <p class="afzetten" id="o-afzetten" hidden>🎧 Doe de koptelefoon af en luister samen!</p>
     <div class="daarna" id="o-daarna" hidden>
       <button type="button" class="knop" id="o-luister">▶ Luisteren</button>
       <button type="button" class="knop" id="o-opnieuw">Opnieuw</button>
@@ -174,13 +183,13 @@
       <li>Elk groepje werkt op een eigen apparaat, zoals een Chromebook, tablet of telefoon.</li>
       <li><b>Muziek.</b> Het groepje kiest muziek bij een gevoel en een sfeergeluid bij een plek.</li>
       <li><b>Geluiden.</b> De kinderen maken zelf geluiden, nemen ze op en geven ze een naam.</li>
-      <li><b>Opnemen.</b> Eerst oefenen met muziek, dan opnemen. De spelers spreken het verhaal in en de geluidsmaker tikt op het juiste moment op de geluiden. Daarna kun je geluiden nog verschuiven.</li>
+      <li><b>Opnemen.</b> Eerst oefenen met muziek, dan opnemen. De spelers spreken het verhaal in en de geluidstechnicus tikt op het juiste moment op de geluiden. Daarna kun je geluiden nog verschuiven.</li>
       <li>Met <b>Bewaren als mp3</b> komt het hoorspel in de map Downloads. Dat bestand speelt op elke telefoon of mp3-speler.</li>
     </ol>
-    <h3>Met of zonder koptelefoon</h3>
-    <p><b>Met koptelefoon</b> hoort de geluidsmaker de muziek en de geluiden live mee. De microfoon vangt dan alleen de stemmen op.</p>
-    <p><b>Zonder koptelefoon</b> is het stil tijdens het opnemen. Anders neemt de microfoon de muziek uit de luidspreker ook op en zijn de stemmen slecht te verstaan. De app laat wel zien welk geluid er klinkt.</p>
-    <p>In beide gevallen onthoudt de app alleen wanneer er op een geluid getikt wordt, en voegt hij alles na de opname samen. Onder de stemmen gaat de muziek vanzelf zachter. Met <b>Eerst oefenen met muziek</b> spelen de kinderen het verhaal een keer door met geluid, zonder opname.</p>
+    <h3>Samen oefenen, dan pas de koptelefoon</h3>
+    <p>Kiezen, geluiden maken en oefenen doet het groepje samen, <b>zonder koptelefoon</b>, zodat iedereen meeluistert. Let op: een Chromebook stuurt al het geluid naar de koptelefoon zodra die is aangesloten.</p>
+    <p>Pas bij het echte opnemen zet de <b>geluidstechnicus</b> de koptelefoon op. Die hoort de muziek en de geluiden dan live, terwijl de microfoon alleen de stemmen opneemt. Na de opname gaat de koptelefoon weer af en luistert het groepje samen.</p>
+    <p>Geen koptelefoon? Dan is het stil tijdens het opnemen, anders neemt de microfoon de muziek uit de luidspreker mee op. De app laat wel zien welk geluid er klinkt. In beide gevallen voegt de app alles na de opname samen. Onder de stemmen gaat de muziek vanzelf zachter.</p>
     <h3>Verbeteren na de opname</h3>
     <p>Staat een geluid op het verkeerde moment? Tik op het naamkaartje op de tijdlijn en schuif het eerder of later, of haal het weg. Tik tijdens Luisteren op een geluid om het op dat moment toe te voegen. Opnieuw beginnen is dan niet nodig.</p>
     <h3>Tips</h3>

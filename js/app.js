@@ -40,6 +40,7 @@ function ga(stap){
   if(stap !== S.stap && !mag()) return;
   stopAlles();
   S.stap = stap; bewaar();
+  if(stap === 'opnemen') kopGekozen = false;
   STAPPEN.forEach(n => $('#s-' + n).hidden = n !== stap);
   render();
   window.scrollTo(0, 0);
@@ -262,7 +263,12 @@ $('#g-knop').onclick = () => {
   startGeluid();
 };
 $('#g-luister').onclick = () => { if(pending) Geluid.speel([{buf: pending.buf}]); };
-$('#g-opnieuw').onclick = () => { pending = null; $('#g-naamvak').hidden = true; startGeluid(); };
+$('#g-opnieuw').onclick = () => {
+  pending = null; Geluid.stop();
+  $('#g-naamvak').hidden = true; $('#g-knop').hidden = false; $('#g-klok').textContent = '';
+  melding($('#g-melding'), 'Weggegooid. Tik op Opnemen als je klaar bent voor een nieuwe poging.');
+  $('#g-knop').focus();
+};
 $('#g-bewaar').onclick = () => bewaarGeluid();
 $('#g-naam').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); bewaarGeluid(); } });
 async function bewaarGeluid(){
@@ -285,6 +291,8 @@ async function bewaarGeluid(){
 /* ================= 03 opnemen ================= */
 let oRec = null, stemBuf = null, mixCache = null, oefent = false, gekozenTik = -1;
 let luister = null;   // {start, vanaf} tijdens het terugluisteren
+let kopGekozen = false;   // koptelefoon-vraag beantwoord voor deze opname
+let afzetten = false;     // na opname met koptelefoon: eerst afzetten, dan samen luisteren
 const STAP_SCHUIF = 0.5;
 
 function renderOpnemen(){
@@ -295,15 +303,18 @@ function renderOpnemen(){
     '<span class="wijzig">Wijzigen bij stap 01 ›</span>';
 
   const heeft = !!S.opname, bezig = !!oRec;
-  document.querySelectorAll('[data-kop]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.kop === (S.koptelefoon ? 1 : 0))));
+  $('#o-kopvraag').hidden = kopGekozen;
+  $('#o-stil').hidden = !kopGekozen;
   $('#o-stil').innerHTML = S.koptelefoon
-    ? '🎧 De geluidsmaker hoort de muziek en de geluiden in de koptelefoon. <b>Zet de koptelefoon op vóór je begint.</b>'
-    : '🤫 Tijdens het opnemen hoor je de muziek en de geluiden niet. Zo blijven jullie stemmen goed te horen. Je ziet wel welk geluid er klinkt. Bij Luisteren hoor je alles samen.';
+    ? '🎧 <b>Met koptelefoon.</b> De geluidstechnicus hoort de muziek en de geluiden. De rest hoort alleen de stemmen. <button type="button" class="linkknop" id="o-kop-wijzig">wijzig</button>'
+    : '🤫 <b>Zonder koptelefoon.</b> Tijdens het opnemen is het stil, anders neemt de microfoon de muziek mee op. Je ziet wel welk geluid er klinkt. <button type="button" class="linkknop" id="o-kop-wijzig">wijzig</button>';
+  $('#o-kop-wijzig').onclick = () => { kopGekozen = false; render(); };
   $('#o-voor').hidden = heeft || bezig;
-  $('#o-oefen').textContent = oefent ? '■ Stop met oefenen' : '▶ Eerst oefenen met muziek';
+  $('#o-oefen').textContent = oefent ? '■ Klaar met oefenen' : '▶ Oefenen met muziek';
   $('#o-oefen').classList.toggle('aan', oefent);
-  $('#o-knop').hidden = heeft && !bezig;
-  $('#o-knop').querySelector('.tekst').innerHTML = bezig ? 'Stop' : oefent ? 'Nu echt<br>opnemen' : 'Start<br>opname';
+  $('#o-knop').hidden = (heeft && !bezig) || oefent || (!bezig && !kopGekozen);
+  $('#o-knop').querySelector('.tekst').innerHTML = bezig ? 'Stop' : 'Start<br>opname';
+  $('#o-afzetten').hidden = !(heeft && !bezig && afzetten);
   $('#o-daarna').hidden = !heeft || bezig;
   $('#tijdlijn').hidden = !heeft && !bezig;
   $('#o-tip').hidden = !heeft || bezig;
@@ -316,7 +327,7 @@ function renderOpnemen(){
   $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : heeft ? 'Geluid toevoegen' : 'Geluiden';
   $('#o-geluiden-uitleg').textContent = bezig ? '' : heeft
     ? 'Tik op Luisteren en tik op een geluid op het moment dat het moet klinken. Zo zet je het erbij.'
-    : oefent ? 'Tik op een geluid op het goede moment. Nu hoor je het gewoon.' : 'Tik op een geluid om het te horen.';
+    : oefent ? 'Tik op een geluid op het goede moment. Nu hoort iedereen het.' : 'Tik op een geluid om het te horen.';
   const el = $('#o-lijst'); el.innerHTML = '';
   if(!S.geluiden.length){ el.innerHTML = '<div class="leeg-vak">Nog geen geluiden. Die maak je bij stap 02. Zonder geluiden kun je ook opnemen.</div>'; return; }
   S.geluiden.forEach((g, i) => {
@@ -326,7 +337,10 @@ function renderOpnemen(){
   });
 }
 $('#o-gekozen').onclick = () => ga('muziek');
-document.querySelectorAll('[data-kop]').forEach(b => b.onclick = () => { S.koptelefoon = b.dataset.kop === '1'; bewaar(); render(); });
+document.querySelectorAll('[data-kop]').forEach(b => b.onclick = () => {
+  S.koptelefoon = b.dataset.kop === '1'; kopGekozen = true; bewaar(); render();
+  $('#o-knop').scrollIntoView({block:'center', behavior:'smooth'});
+});
 
 /* balk die laat zien welke muziek er meeklinkt */
 function renderMee(){
@@ -335,7 +349,7 @@ function renderMee(){
   el.hidden = !zichtbaar;
   if(!zichtbaar) return;
   const stukken = [S.muziek, S.sfeer].filter(Boolean).map(id => Bibliotheek.zoek(id)).filter(Boolean);
-  const tekst = oefent ? 'Oefenen: de muziek speelt'
+  const tekst = oefent ? 'Samen oefenen: de muziek speelt'
     : S.koptelefoon ? 'De muziek speelt in de koptelefoon'
     : 'De muziek speelt mee in de opname';
   el.innerHTML = '<span class="dansers">' + stukken.map(stukGezicht).join('') + '</span><span><b>' + tekst + '</b><small>' +
@@ -561,8 +575,9 @@ async function stopOpname(){
   $('#tijdlijn').scrollLeft = 0;
   $('#o-klok').scrollIntoView({block:'start', behavior:'smooth'});
   if(!ok) toast('Let op: bewaren op dit apparaat lukte niet. Bewaar het hoorspel als mp3.', 5000);
-  /* meteen terugluisteren */
-  luisterVanaf(0);
+  kopGekozen = false;
+  if(S.koptelefoon){ afzetten = true; render(); toast('Opgenomen! Doe de koptelefoon af en tik samen op Luisteren.', 5000); }
+  else luisterVanaf(0);   /* meteen samen terugluisteren */
 }
 $('#o-knop').onclick = () => oRec ? stopOpname() : startOpname();
 
@@ -608,7 +623,7 @@ async function luisterVanaf(vanaf){
   };
   loop();
 }
-$('#o-luister').onclick = () => (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(0);
+$('#o-luister').onclick = () => { if(afzetten){ afzetten = false; $('#o-afzetten').hidden = true; } (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(0); };
 let opnieuwZeker = 0;
 $('#o-opnieuw').onclick = () => {
   const b = $('#o-opnieuw');
@@ -616,9 +631,9 @@ $('#o-opnieuw').onclick = () => {
   clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Opnieuw'; b.classList.remove('gevaar');
   stopAlles();
   if(S.opname) Opslag.wisAudio(S.opname.id);
-  S.opname = null; stemBuf = null; mixCache = null; gekozenTik = -1; bewaar();
+  S.opname = null; stemBuf = null; mixCache = null; gekozenTik = -1; kopGekozen = false; afzetten = false; bewaar();
   $('#golf').innerHTML = ''; render();
-  toast('Tik op Start opname als jullie klaar zijn.');
+  toast('Oefen gerust nog een keer, of neem opnieuw op.');
 };
 $('#o-bewaar').onclick = async () => {
   const knop = $('#o-bewaar'); knop.disabled = true; knop.textContent = 'Bezig…';
