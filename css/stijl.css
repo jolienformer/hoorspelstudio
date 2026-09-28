@@ -674,3 +674,11 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 @media (max-width:640px){ .speelhoek{left:13px} }
 @media (prefers-reduced-motion:reduce){ .speelhoek{transition:none} .speelhoek .bezig{animation:none} }
 @media (max-width:440px){ .dok .knop{font-size:.88rem;letter-spacing:.02em;white-space:nowrap;padding-inline:.6rem} }
+
+/* zacht / normaal / hard */
+.volkeuze{position:fixed;z-index:60;display:flex;gap:6px;padding:6px;background:var(--paper);border:var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.volkeuze button{border:2px solid var(--edge);border-radius:8px;background:var(--paper);color:var(--ink);font-weight:800;font-size:.9rem;padding:.4rem .75rem;min-height:40px;cursor:pointer}
+.volkeuze button:hover{background:var(--tint)}
+.volkeuze button.aan{background:var(--ink);color:var(--bg)}
+.volmerk{position:absolute;left:5px;bottom:4px;z-index:3;background:var(--ink);color:var(--bg);font-weight:800;font-size:.62rem;line-height:1;padding:3px 5px;border-radius:4px;pointer-events:none}
+.strook .volmerk{left:auto;right:40px;bottom:auto;top:50%;transform:translateY(-50%)}

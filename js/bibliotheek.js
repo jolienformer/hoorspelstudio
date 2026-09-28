@@ -3,7 +3,8 @@
    Voorlopig worden alle stukjes in de browser gemaakt ("synth").
    Later komen hier echte, rechtenvrije bestanden bij. Zet dan bij een stukje:
      bestand: 'audio/muziek/spannend-1.mp3', bron: 'Naam maker, licentie CC0'
-   Een stukje met een bestand gebruikt dat bestand, anders de synth. */
+   Een stukje met een bestand gebruikt dat bestand, anders de synth.
+   Alles wordt bij het laden op dezelfde sterkte gebracht (muziek 0,15 en plek 0,1 rms). */
 (() => {
 const M = (id, naam, kleur, uitdr, stukken) => ({id, naam, kleur, uitdr, stukken});
 
@@ -299,9 +300,9 @@ function laad(id){
   const p = (async () => {
     if(s.bestand){
       const r = await fetch(s.bestand); if(!r.ok) throw new Error('niet gevonden');
-      return Geluid.decodeer(await r.arrayBuffer());
+      return Geluid.maakGelijk(await Geluid.decodeer(await r.arrayBuffer()), s.soort === 'gevoel' ? 0.15 : 0.1);
     }
-    return s.soort === 'gevoel' ? maakMuziek(s.synth, s.v) : maakSfeer(s.synth, s.v);
+    return Geluid.maakGelijk(await (s.soort === 'gevoel' ? maakMuziek(s.synth, s.v) : maakSfeer(s.synth, s.v)), s.soort === 'gevoel' ? 0.15 : 0.1);
   })();
   cache.set(id, p);
   p.catch(() => cache.delete(id));

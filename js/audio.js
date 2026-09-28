@@ -201,9 +201,37 @@ function wav(kanalen, rate){
 }
 const bufferNaarWav = b => wav([...Array(b.numberOfChannels)].map((_, i) => b.getChannelData(i)), b.sampleRate);
 
+/* ---------- luidheid gelijktrekken ---------- */
+/* gemiddelde sterkte (rms) en hoogste piek; actief = alleen de stukken waar echt geluid is */
+function luidheid(buf, actief = false){
+  const d = buf.getChannelData(0), stap = Math.max(1, Math.round(buf.sampleRate * 0.05)), vakken = [];
+  let piek = 0;
+  for(let i = 0; i < d.length; i += stap){
+    let som = 0, m = 0;
+    for(let j = i; j < Math.min(d.length, i + stap); j += 2){ const v = d[j]; som += v * v; m++; const a = Math.abs(v); if(a > piek) piek = a; }
+    vakken.push(som / Math.max(1, m));
+  }
+  let lijst = vakken;
+  if(actief){ const max = Math.max(0, ...vakken), drempel = Math.max(0.0001, max * 0.01); lijst = vakken.filter(e => e > drempel); if(!lijst.length) lijst = vakken; }
+  const rms = Math.sqrt(lijst.reduce((a, b) => a + b, 0) / Math.max(1, lijst.length));
+  return {rms, piek};
+}
+/* versterking om op sterkte 'doel' te komen, met grenzen zodat ruis of knallen niet ontsporen */
+function gelijkFactor(buf, doel, actief = false, maxPiek = 1.5){
+  const {rms, piek} = luidheid(buf, actief);
+  if(rms < 0.0005) return 1;
+  return Math.min(Math.max(0.25, Math.min(5, doel / rms)), piek > 0 ? maxPiek / piek : 5);
+}
+/* een buffer zelf op sterkte brengen (voor muziek en plekgeluid) */
+function maakGelijk(buf, doel){
+  const f = gelijkFactor(buf, doel, false, 0.98);
+  if(Math.abs(f - 1) > 0.02) for(let k = 0; k < buf.numberOfChannels; k++){ const c = buf.getChannelData(k); for(let i = 0; i < c.length; i++) c[i] *= f; }
+  return buf;
+}
+
 /* ---------- mixen ---------- */
 /* stemmen: [{buf, t}]; muziek/sfeer: AudioBuffer|null; tikken: [{buf, t}] */
-async function mix({stemmen, muziek, sfeer, tikken, muziekVan = 0, muziekTot = null, sfeerVan = 0, sfeerTot = null}){
+async function mix({stemmen, muziek, sfeer, tikken, muziekVan = 0, muziekTot = null, sfeerVan = 0, sfeerTot = null, muziekVol = 1, sfeerVol = 1}){
   const rate = 44100;
   let stemEind = 0;
   stemmen.forEach(s => { stemEind = Math.max(stemEind, s.t + s.buf.duration); });
@@ -213,16 +241,23 @@ async function mix({stemmen, muziek, sfeer, tikken, muziekVan = 0, muziekTot = n
   if(sfeer && sfeerTot != null) eind = Math.max(eind, sfeerTot);
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
   const oc = new OAC(2, Math.ceil(eind * rate), rate);
-  const uit = oc.createGain(); uit.connect(oc.destination);
+  /* begrenzer aan het eind: hard zetten mag nooit gaan kraken */
+  const rem = oc.createDynamicsCompressor();
+  rem.threshold.value = -4; rem.knee.value = 2; rem.ratio.value = 20; rem.attack.value = 0.002; rem.release.value = 0.15;
+  rem.connect(oc.destination);
+  const uit = oc.createGain(); uit.connect(rem);
 
   /* wanneer wordt er gepraat? per 0,1 s kijken, over alle stemmen samen */
   const praat = new Array(Math.ceil(eind * 10) + 1).fill(false);
-  stemmen.forEach(({buf, t}) => {
-    const s = oc.createBufferSource(); s.buffer = buf; s.connect(uit); s.start(t);
+  stemmen.forEach(({buf, t, vol = 1}) => {
+    /* elke stem op dezelfde sterkte, daarna zacht/normaal/hard */
+    const f = gelijkFactor(buf, 0.12, true) * vol;
+    const s = oc.createBufferSource(); s.buffer = buf;
+    const g = oc.createGain(); g.gain.value = f; s.connect(g); g.connect(uit); s.start(t);
     const d = buf.getChannelData(0), stap = Math.round(buf.sampleRate * 0.1);
     for(let i = 0, n = 0; i < d.length; i += stap, n++){
       let som = 0, m = 0; for(let j = i; j < Math.min(d.length, i + stap); j += 2){ som += d[j] * d[j]; m++; }
-      if(Math.sqrt(som / Math.max(1, m)) > 0.02){ const k = Math.round(t * 10) + n; if(k < praat.length) praat[k] = true; }
+      if(Math.sqrt(som / Math.max(1, m)) * f > 0.02){ const k = Math.round(t * 10) + n; if(k < praat.length) praat[k] = true; }
     }
   });
   /* even vasthouden zodat het niet pompt */
@@ -240,12 +275,12 @@ async function mix({stemmen, muziek, sfeer, tikken, muziekVan = 0, muziekTot = n
     g.gain.setTargetAtTime(0, Math.max(van + 0.9, tot - 1.8), 0.4);
     src.connect(g); g.connect(uit); src.start(van); src.stop(tot);
   };
-  bed(muziek, 0.55, 0.2, muziekVan, muziekTot);
-  bed(sfeer, 0.45, 0.17, sfeerVan, sfeerTot);
+  bed(muziek, 0.55 * muziekVol, 0.2 * muziekVol, muziekVan, muziekTot);
+  bed(sfeer, 0.45 * sfeerVol, 0.17 * sfeerVol, sfeerVan, sfeerTot);
 
   tikken.forEach(k => {
     const src = oc.createBufferSource(); src.buffer = k.buf;
-    const g = oc.createGain(); g.gain.value = 0.9;
+    const g = oc.createGain(); g.gain.value = 0.9 * gelijkFactor(k.buf, 0.1, true) * (k.vol || 1);
     src.connect(g); g.connect(uit); src.start(Math.max(0, k.t));
   });
 
@@ -290,5 +325,5 @@ async function naarMp3(buf){
   return new Blob(delen, {type:'audio/mpeg'});
 }
 
-window.Geluid = {context, speel, los, stop, decodeer, blobNaarBuffer, maakRecorder, knipStilte, isStil, samplesNaarBuffer, wav, bufferNaarWav, mix, naarMp3};
+window.Geluid = {luidheid, gelijkFactor, maakGelijk, context, speel, los, stop, decodeer, blobNaarBuffer, maakRecorder, knipStilte, isStil, samplesNaarBuffer, wav, bufferNaarWav, mix, naarMp3};
 })();

@@ -421,7 +421,7 @@ async function bedLagen(vanaf = 0){
     if(!bedActief(slot)) continue;
     const b = bed(slot), tot = bedTot(slot);
     if(vanaf >= tot) continue;
-    lagen.push({buf: await Bibliotheek.laad(S[slot]), vol, loop: true,
+    lagen.push({buf: await Bibliotheek.laad(S[slot]), vol: vol * (VOL[b.vol] || 1), loop: true,
       wacht: Math.max(0, b.van - vanaf), vanaf: Math.max(0, vanaf - b.van),
       duur: b.tot != null ? tot - Math.max(vanaf, b.van) : null});
   }
@@ -473,7 +473,7 @@ function tekenBedden(bewerkbaar = true){
     const d = document.createElement('div'); d.className = 'strook ' + (slot === 'muziek' ? 'm' : 's') + (b.uit ? ' uit' : '') + (b.tot == null ? ' auto' : '');
     d.dataset.slot = slot;
     d.style.left = tNaarX(van) + 'px'; d.style.width = Math.max(60, (tot - van) * PX) + 'px';
-    d.innerHTML = stukGezicht(s) + '<span class="naam"></span>' +
+    d.innerHTML = stukGezicht(s) + '<span class="naam"></span>' + (b.uit ? '' : volMerk(b.vol)) +
       (b.uit ? '<button type="button" class="terug">terugzetten</button>'
              : (bewerkbaar ? '<button type="button" class="kruis" aria-label="' + esc(s.titel) + ' uitzetten">✕</button><span class="rand" aria-hidden="true"></span>' : ''));
     d.querySelector('.naam').textContent = s.titel;
@@ -510,7 +510,7 @@ function maakStrookVersleepbaar(d, slot){
   });
   const los = () => {
     if(x0 == null) return; x0 = null;
-    if(!geschoven) return;
+    if(!geschoven) return kiesVolume(d, b);
     if(soortSleep === 'eind'){
       const tot = +d.dataset.tot;
       /* terug tegen het einde van de stemmen: dan loopt hij weer vanzelf mee */
@@ -557,7 +557,7 @@ function tekenStemmen(bewerkbaar){
     const c = document.createElement('div'); c.className = 'clip stemclip'; c.dataset.i = i; c.dataset.soort = 'stem';
     c.style.left = x + 'px'; c.style.width = w + 'px'; c.style.top = (10 + r * RIJ) + 'px';
     c.title = 'Stuk ' + (n + 1) + ' (' + fmtKort(s.duur) + ')';
-    c.innerHTML = golfjeHtml(s.pieken, s.perSec || 4) + (bewerkbaar ? '<button type="button" class="kruis" aria-label="Stuk ' + (n + 1) + ' weghalen">✕</button>' : '');
+    c.innerHTML = golfjeHtml(s.pieken, s.perSec || 4) + volMerk(s.vol) + (bewerkbaar ? '<button type="button" class="kruis" aria-label="Stuk ' + (n + 1) + ' weghalen">✕</button>' : '');
     if(bewerkbaar){
       c.tabIndex = 0; c.setAttribute('role', 'button');
       c.setAttribute('aria-label', 'Stuk ' + (n + 1) + ' op ' + fmt(s.t) + '. Tik om te luisteren, sleep om te verschuiven.');
@@ -579,7 +579,7 @@ function tekenClips(tikken, bewerkbaar){
     const c = document.createElement('div'); c.className = 'clip' + (w < 120 ? ' smal' : ''); c.dataset.i = i; c.dataset.soort = 'fx'; c.title = g.naam + ' (' + fmtKort(g.duur) + ')';
     c.style.left = x + 'px'; c.style.width = w + 'px'; c.style.top = (10 + r * RIJ) + 'px';
     c.style.setProperty('--c', 'var(--c-' + g.kleur + ')');
-    c.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span class="naam"></span>' +
+    c.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span class="naam"></span>' + volMerk(k.vol) +
       (bewerkbaar ? '<button type="button" class="kruis" aria-label="' + esc(g.naam) + ' weghalen">✕</button>' : '');
     c.querySelector('.naam').textContent = g.naam;
     if(bewerkbaar){
@@ -625,8 +625,10 @@ function maakVersleepbaar(c, g){
     if(x0 == null) return; x0 = null;
     if(geschoven) return zetBlok(soort, +c.dataset.i, tNu);
     flits(c);
-    if(soort === 'stem') return luisterVanaf(S.opname.stemmen[+c.dataset.i].t);
-    try{ Geluid.los(await geluidBuffer(g.id)); }catch(e){}
+    const item = lijstVoor(soort)[+c.dataset.i];
+    kiesVolume(c, item);
+    if(soort === 'stem') return luisterVanaf(item.t);
+    try{ Geluid.los(await geluidBuffer(g.id), 0.9 * (VOL[item.vol] || 1)); }catch(e){}
   });
   c.addEventListener('pointercancel', () => { x0 = null; tekenTijdlijn(); });
   c.addEventListener('click', e => e.stopPropagation());
@@ -646,6 +648,38 @@ function maakVersleepbaar(c, g){
     clearTimeout(zeker); verwijderStem(+c.dataset.i);
   });
 }
+/* ---- zacht / normaal / hard per blokje ---- */
+const VOL = {zacht: 0.5, hard: 1.8};
+const volMerk = v => v ? '<span class="volmerk">' + v + '</span>' : '';
+function sluitVolume(){ const o = $('.volkeuze'); if(o) o.remove(); document.removeEventListener('pointerdown', buitenVolume, true); }
+function buitenVolume(e){ if(!e.target.closest('.volkeuze')) sluitVolume(); }
+function kiesVolume(el, item){
+  sluitVolume();
+  const k = document.createElement('div'); k.className = 'volkeuze'; k.setAttribute('role', 'group'); k.setAttribute('aria-label', 'Hoe hard?');
+  ['zacht', 'normaal', 'hard'].forEach(v => {
+    const knop = document.createElement('button'); knop.type = 'button'; knop.textContent = v;
+    const aan = (item.vol || 'normaal') === v; knop.setAttribute('aria-pressed', aan); if(aan) knop.className = 'aan';
+    knop.onclick = () => {
+      sluitVolume();
+      if((item.vol || 'normaal') === v) return;
+      if(v === 'normaal') delete item.vol; else item.vol = v;
+      bewaar(); mixCache = null;
+      const speelde = speelt && speelt.wat === 'mix';
+      if(speelde) stopAlles();
+      render();
+      if(speelde) luisterVanaf(cursor);   /* meteen horen hoe het nu klinkt */
+    };
+    k.append(knop);
+  });
+  document.body.append(k);
+  const r = el.getBoundingClientRect(), w = k.offsetWidth, h = k.offsetHeight;
+  const x = Math.max(8, Math.min(innerWidth - w - 8, r.left + Math.min(r.width, 240) / 2 - w / 2));
+  const y = r.bottom + h + 12 < innerHeight ? r.bottom + 8 : r.top - h - 8;
+  k.style.left = x + 'px'; k.style.top = y + 'px';
+  setTimeout(() => document.addEventListener('pointerdown', buitenVolume, true));
+}
+document.addEventListener('scroll', sluitVolume, {passive: true, capture: true});
+document.addEventListener('keydown', e => { if(e.key === 'Escape') sluitVolume(); });
 function zetBlok(soort, i, t){
   const k = lijstVoor(soort)[i]; if(!k) return;
   k.t = Math.max(0, Math.min(soort === 'stem' ? 600 : totaal(), Math.round(t * 20) / 20));
@@ -843,16 +877,17 @@ async function maakMix(){
   const sleutel = [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(o), JSON.stringify(S.bedden || {})].join('|');
   if(mixCache && mixCache.sleutel === sleutel) return mixCache.buf;
   const stemLijst = [];
-  for(const s of o.stemmen){ try{ stemLijst.push({buf: await stemBuffer(s.id), t: s.t}); }catch(e){} }
+  for(const s of o.stemmen){ try{ stemLijst.push({buf: await stemBuffer(s.id), t: s.t, vol: VOL[s.vol] || 1}); }catch(e){} }
   if(!stemLijst.length) throw new Error('weg');
   const tikken = [];
-  for(const k of o.tikken){ const g = S.geluiden.find(x => x.id === k.g); if(!g) continue; try{ tikken.push({buf: await geluidBuffer(g.id), t: k.t}); }catch(e){} }
+  for(const k of o.tikken){ const g = S.geluiden.find(x => x.id === k.g); if(!g) continue; try{ tikken.push({buf: await geluidBuffer(g.id), t: k.t, vol: VOL[k.vol] || 1}); }catch(e){} }
   const buf = await Geluid.mix({
     stemmen: stemLijst,
     muziek: bedActief('muziek') ? await Bibliotheek.laad(S.muziek) : null,
     sfeer: bedActief('sfeer') ? await Bibliotheek.laad(S.sfeer) : null,
     muziekVan: bed('muziek').van, muziekTot: bed('muziek').tot,
     sfeerVan: bed('sfeer').van, sfeerTot: bed('sfeer').tot,
+    muziekVol: VOL[bed('muziek').vol] || 1, sfeerVol: VOL[bed('sfeer').vol] || 1,
     tikken
   });
   mixCache = {sleutel, buf};
