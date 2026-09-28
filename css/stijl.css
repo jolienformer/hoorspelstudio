@@ -402,3 +402,7 @@ body.compact #o-lijst .tegel{min-height:0}
 #s-opnemen.heeft #o-daarna{order:5}
 #s-opnemen.heeft .toetsen{display:none}
 #s-opnemen.heeft #o-lijst .toets{display:none}
+
+/* afspeellijn met greepje */
+.liniaal{cursor:ew-resize;touch-action:none}
+.kop .greep{position:absolute;top:1px;left:50%;width:20px;height:20px;transform:translateX(-50%);border-radius:50%;background:var(--accent);border:2.5px solid var(--edge);pointer-events:auto;cursor:ew-resize;touch-action:none}

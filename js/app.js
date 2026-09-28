@@ -477,6 +477,7 @@ function tekenTijdlijn(){
   (o.pieken || []).forEach((p, i) => zetStreep(i / 4, p));
   tekenBedden(o.duur);
   tekenClips(o.tikken, true);
+  zetKop(cursor);
 }
 
 /* ---- geluiden slepen of weghalen ---- */
@@ -568,13 +569,33 @@ function sleepUitRij(tegelEl, g){
   tegelEl.addEventListener('pointerup', eind);
   tegelEl.addEventListener('pointercancel', eind);
 }
-/* tik op de tijdlijn: luisteren vanaf dat punt */
+/* tik op de tijdlijn: afspelen of pauze */
+let geenKlik = false;
 $('#golf').addEventListener('click', e => {
-  if(oRec || !S.opname || e.target.closest('.clip')) return;
-  if(speelt && speelt.wat === 'mix'){ stopAlles(); return; }   /* tik tijdens spelen: stoppen */
-  const r = $('#golf').getBoundingClientRect();
-  luisterVanaf(Math.max(0, Math.min(S.opname.duur - 0.5, xNaarT(e.clientX - r.left))));
+  if(geenKlik){ geenKlik = false; return; }
+  if(oRec || !S.opname || e.target.closest('.clip, .liniaal, .greep')) return;
+  (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(cursor);
 });
+/* afspeellijn slepen (of tikken op de tijdschaal), ook tijdens het afspelen */
+let scrub = null;
+const kopNaarMuis = e => { const r = $('#golf').getBoundingClientRect(); zetKop(xNaarT(e.clientX - r.left)); };
+$('#golf').addEventListener('pointerdown', e => {
+  if(oRec || !S.opname || !e.target.closest('.liniaal, .greep')) return;
+  e.preventDefault();
+  scrub = {speelde: !!(speelt && speelt.wat === 'mix')};
+  if(scrub.speelde) stopAlles();
+  try{ $('#golf').setPointerCapture(e.pointerId); }catch(err){}
+  kopNaarMuis(e);
+});
+$('#golf').addEventListener('pointermove', e => {
+  if(!scrub) return;
+  kopNaarMuis(e);
+  const tl = $('#tijdlijn'), r = tl.getBoundingClientRect();
+  if(e.clientX > r.right - 40) tl.scrollLeft += 14; else if(e.clientX < r.left + 40) tl.scrollLeft -= 14;
+});
+const scrubKlaar = () => { if(!scrub) return; const s = scrub; scrub = null; geenKlik = true; setTimeout(() => geenKlik = false, 50); if(s.speelde) luisterVanaf(cursor); };
+$('#golf').addEventListener('pointerup', scrubKlaar);
+$('#golf').addEventListener('pointercancel', scrubKlaar);
 
 /* ---- opnemen ---- */
 let wakeLock = null;
@@ -645,7 +666,7 @@ async function stopOpname(){
   const id = uid('o_');
   stemBuf = Geluid.samplesNaarBuffer(samples, rate); mixCache = null;
   const oud = S.opname && S.opname.id;
-  S.opname = {id, duur: samples.length / rate, tikken: r.tikken, pieken};
+  S.opname = {id, duur: samples.length / rate, tikken: r.tikken, pieken}; cursor = 0;
   const ok = await Opslag.bewaarAudio(id, Geluid.wav([samples], rate));
   if(oud) Opslag.wisAudio(oud);
   bewaar(); render();
@@ -676,31 +697,39 @@ async function maakMix(){
   return buf;
 }
 let kopRaf = 0;
+/* afspeellijn: blijft staan, ook als er niets speelt */
+let cursor = 0;
+function zetKop(t){
+  cursor = Math.max(0, Math.min(S.opname ? S.opname.duur : 0, t));
+  let k = $('#golf .kop');
+  if(!k){ k = document.createElement('div'); k.className = 'kop'; k.innerHTML = '<span class="greep" aria-hidden="true"></span>'; $('#golf').append(k); }
+  k.style.left = tNaarX(cursor) + 'px';
+}
 function stopKop(){
+  if(luister) zetKop(Geluid.context().currentTime - luister.start + luister.vanaf);   /* pauze: lijn blijft waar het was */
   cancelAnimationFrame(kopRaf); kopRaf = 0; luister = null;
-  const k = document.querySelector('#golf .kop'); if(k) k.remove();
   $('#o-luister').textContent = '▶ Luisteren';
 }
 async function luisterVanaf(vanaf){
   stopAlles();
+  if(vanaf >= S.opname.duur - 0.2) vanaf = 0;
   const knop = $('#o-luister'); knop.textContent = 'Even samenvoegen…'; knop.disabled = true;
   let buf;
   try{ buf = await maakMix(); }
   catch(e){ knop.disabled = false; knop.textContent = '▶ Luisteren'; toast('De opname staat niet meer op dit apparaat. Neem opnieuw op.'); return; }
-  knop.disabled = false; knop.textContent = '■ Stoppen';
-  const start = Geluid.speel([{buf}], () => { speelt = null; stopKop(); }, vanaf);
+  knop.disabled = false; knop.textContent = '❚❚ Pauze';
+  const start = Geluid.speel([{buf}], () => { speelt = null; stopKop(); zetKop(0); }, vanaf);
   speelt = {wat:'mix', id:'mix'}; luister = {start, vanaf};
-  const kop = document.createElement('div'); kop.className = 'kop'; $('#golf').append(kop);
+  zetKop(vanaf);
   const c = Geluid.context(), tl = $('#tijdlijn');
   const loop = () => {
-    const t = c.currentTime - start + vanaf; const x = tNaarX(Math.max(vanaf, t));
-    const k = document.querySelector('#golf .kop'); if(k) k.style.left = x + 'px';
+    zetKop(Math.max(vanaf, c.currentTime - start + vanaf)); const x = tNaarX(cursor);
     if(x > tl.scrollLeft + tl.clientWidth - 60 || x < tl.scrollLeft) tl.scrollLeft = x - 60;
     kopRaf = requestAnimationFrame(loop);
   };
   loop();
 }
-$('#o-luister').onclick = () => { if(afzetten){ afzetten = false; $('#o-afzetten').hidden = true; } (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(0); };
+$('#o-luister').onclick = () => { if(afzetten){ afzetten = false; $('#o-afzetten').hidden = true; } (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(cursor); };
 let opnieuwZeker = 0;
 $('#o-opnieuw').onclick = () => {
   const b = $('#o-opnieuw');
