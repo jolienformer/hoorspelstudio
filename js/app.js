@@ -571,6 +571,7 @@ function sleepUitRij(tegelEl, g){
 /* tik op de tijdlijn: luisteren vanaf dat punt */
 $('#golf').addEventListener('click', e => {
   if(oRec || !S.opname || e.target.closest('.clip')) return;
+  if(speelt && speelt.wat === 'mix'){ stopAlles(); return; }   /* tik tijdens spelen: stoppen */
   const r = $('#golf').getBoundingClientRect();
   luisterVanaf(Math.max(0, Math.min(S.opname.duur - 0.5, xNaarT(e.clientX - r.left))));
 });
