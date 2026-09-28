@@ -222,10 +222,7 @@ function renderGeluiden(){
     const t = tegel(g); t.onclick = () => speelGeluid(g, t);
     const x = document.createElement('button'); x.type = 'button'; x.className = 'weg'; x.textContent = '✕';
     x.setAttribute('aria-label', g.naam + ' weggooien');
-    let zeker = 0;
     x.onclick = () => {
-      if(!zeker){ x.classList.add('zeker'); x.textContent = 'Weg?'; zeker = setTimeout(() => { zeker = 0; x.classList.remove('zeker'); x.textContent = '✕'; }, 3000); return; }
-      clearTimeout(zeker);
       S.geluiden = S.geluiden.filter(y => y.id !== g.id); Opslag.wisAudio(g.id); buffers.delete(g.id); mixCache = null;
       bewaar(); render(); toast('"' + g.naam + '" is weggegooid.');
     };
