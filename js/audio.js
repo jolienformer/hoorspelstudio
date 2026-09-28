@@ -32,11 +32,13 @@ function speel(lagen, klaar, vanaf = 0){
   stop();
   const c = context(); const t = c.currentTime + 0.02;
   const eigen = [];
-  lagen.forEach(({buf, vol = 1, loop = false}) => {
+  lagen.forEach(({buf, vol = 1, loop = false, wacht = 0, vanaf: eigenVanaf, duur}) => {
     const src = c.createBufferSource(); src.buffer = buf; src.loop = loop;
     const gain = c.createGain(); gain.gain.value = vol;
     src.connect(gain); gain.connect(c.destination);
-    src.start(t, loop ? vanaf % buf.duration : Math.min(vanaf, buf.duration));
+    const off = eigenVanaf != null ? eigenVanaf : vanaf;
+    src.start(t + wacht, loop ? off % buf.duration : Math.min(off, buf.duration));
+    if(duur) src.stop(t + wacht + duur);
     eigen.push({src, gain});
   });
   bezig = eigen;
@@ -201,12 +203,14 @@ const bufferNaarWav = b => wav([...Array(b.numberOfChannels)].map((_, i) => b.ge
 
 /* ---------- mixen ---------- */
 /* stemmen: [{buf, t}]; muziek/sfeer: AudioBuffer|null; tikken: [{buf, t}] */
-async function mix({stemmen, muziek, sfeer, tikken}){
+async function mix({stemmen, muziek, sfeer, tikken, muziekVan = 0, muziekTot = null, sfeerVan = 0, sfeerTot = null}){
   const rate = 44100;
   let stemEind = 0;
   stemmen.forEach(s => { stemEind = Math.max(stemEind, s.t + s.buf.duration); });
   let eind = stemEind + 1.2;
   tikken.forEach(k => { eind = Math.max(eind, k.t + k.buf.duration + 0.3); });
+  if(muziek && muziekTot != null) eind = Math.max(eind, muziekTot);
+  if(sfeer && sfeerTot != null) eind = Math.max(eind, sfeerTot);
   const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
   const oc = new OAC(2, Math.ceil(eind * rate), rate);
   const uit = oc.createGain(); uit.connect(oc.destination);
@@ -224,18 +228,20 @@ async function mix({stemmen, muziek, sfeer, tikken}){
   /* even vasthouden zodat het niet pompt */
   const vast = praat.map((_, i) => praat.slice(Math.max(0, i - 1), i + 5).some(Boolean));
 
-  const bed = (buf, hoog, laag) => {
-    if(!buf) return;
+  const bed = (buf, hoog, laag, van, tot) => {
+    if(tot == null) tot = eind;
+    if(!buf || tot - van < 0.5) return;
     const src = oc.createBufferSource(); src.buffer = buf; src.loop = true;
     const g = oc.createGain();
-    g.gain.setValueAtTime(0, 0); g.gain.linearRampToValueAtTime(vast[0] ? laag : hoog, 0.8);
-    let vorige = vast[0];
-    vast.forEach((p, i) => { if(i > 8 && p !== vorige){ g.gain.setTargetAtTime(p ? laag : hoog, i * 0.1, p ? 0.08 : 0.35); vorige = p; } });
-    g.gain.setTargetAtTime(0, eind - 1.8, 0.4);
-    src.connect(g); g.connect(uit); src.start(0); src.stop(eind);
+    const i0 = Math.min(vast.length - 1, Math.round(van * 10));
+    let vorige = vast[i0];
+    g.gain.setValueAtTime(0, van); g.gain.linearRampToValueAtTime(vorige ? laag : hoog, van + 0.8);
+    vast.forEach((p, i) => { const t = i * 0.1; if(t > van + 0.9 && t < tot - 1.9 && p !== vorige){ g.gain.setTargetAtTime(p ? laag : hoog, t, p ? 0.08 : 0.35); vorige = p; } });
+    g.gain.setTargetAtTime(0, Math.max(van + 0.9, tot - 1.8), 0.4);
+    src.connect(g); g.connect(uit); src.start(van); src.stop(tot);
   };
-  bed(muziek, 0.55, 0.2);
-  bed(sfeer, 0.45, 0.17);
+  bed(muziek, 0.55, 0.2, muziekVan, muziekTot);
+  bed(sfeer, 0.45, 0.17, sfeerVan, sfeerTot);
 
   tikken.forEach(k => {
     const src = oc.createBufferSource(); src.buffer = k.buf;

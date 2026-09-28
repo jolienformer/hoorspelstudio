@@ -24,7 +24,7 @@ function micFout(e){
 
 /* ---------- afspelen (één ding tegelijk) ---------- */
 let speelt = null;   // {wat, id}
-function stopAlles(){ Geluid.stop(); speelt = null; stopKop(); renderSpeelknoppen(); if(oefent){ oefent = false; document.body.classList.remove('compact', 'oefent'); if(S.stap === 'opnemen') renderOpnemen(); } }
+function stopAlles(){ Geluid.stop(); speelt = null; stopKop(); renderSpeelknoppen(); if(oefent){ oefent = false; if(S.stap === 'opnemen') renderOpnemen(); } }
 
 /* ================= navigatie ================= */
 function mag(){
@@ -62,6 +62,7 @@ function render(){
   if(S.stap === 'muziek') renderMuziek();
   if(S.stap === 'geluiden') renderGeluiden();
   if(S.stap === 'opnemen') renderOpnemen();
+  document.body.classList.toggle('breed', S.stap === 'opnemen');
 }
 
 /* ================= 01 muziek ================= */
@@ -153,7 +154,9 @@ function renderSpeelknoppen(){
 /* één tik: luisteren én kiezen; nog een tik: stil */
 function tikStuk(s){
   if(speelt && speelt.id === s.id){ stopAlles(); return; }
-  S[slotVan(s.soort)] = s.id; bewaar(); mixCache = null;
+  S[slotVan(s.soort)] = s.id;
+  if(S.bedden && S.bedden[slotVan(s.soort)]) S.bedden[slotVan(s.soort)].uit = false;   /* nieuwe keuze speelt weer mee */
+  bewaar(); mixCache = null;
   render();
   speelStuk(s.id);
 }
@@ -312,43 +315,53 @@ async function bewaarGeluid(){
 }
 
 /* ================= 03 opnemen ================= */
-/* Een opname bestaat uit stem-blokjes (stukken of scènes) en getikte geluiden:
-   S.opname = {stemmen:[{id, t, duur, pieken}], tikken:[{g, t}]} */
+/* Stap 03 is één montagescherm: een knoppenbalk en een tijdlijn met sporen.
+   S.opname = {stemmen:[{id, t, duur, pieken, perSec}], tikken:[{g, t}]}
+   S.bedden = {muziek:{van, tot, uit}, sfeer:{van, tot, uit}}; tot = null: loopt mee met de stemmen */
 let oRec = null, mixCache = null, oefent = false;
 let luister = null;       // {start, vanaf} tijdens het terugluisteren
 let afzetten = false;     // na opname met koptelefoon: eerst afzetten, dan samen luisteren
 const stemBufs = new Map();
 const stemmen = () => (S.opname && S.opname.stemmen) || [];
 function totaal(){ let d = 1; stemmen().forEach(s => { d = Math.max(d, s.t + s.duur); }); return d; }
+const LEEG_DUUR = 15;   // lengte van de tijdlijn zolang er nog niets is ingesproken
+function bed(slot){
+  S.bedden = S.bedden || {};
+  return S.bedden[slot] || (S.bedden[slot] = {van: 0, tot: null, uit: false});
+}
+const bedTot = slot => bed(slot).tot != null ? bed(slot).tot : (S.opname ? totaal() : LEEG_DUUR);
+const bedActief = slot => !!S[slot] && !bed(slot).uit;
+function tijdlijnDuur(){
+  let d = S.opname ? totaal() : LEEG_DUUR;
+  ['muziek', 'sfeer'].forEach(slot => { if(S[slot]) d = Math.max(d, bedTot(slot)); });
+  if(S.opname) S.opname.tikken.forEach(k => { const g = S.geluiden.find(x => x.id === k.g); d = Math.max(d, k.t + (g ? g.duur : 0)); });
+  return d;
+}
 
 function renderOpnemen(){
-  const m = S.muziek && Bibliotheek.zoek(S.muziek), s = S.sfeer && Bibliotheek.zoek(S.sfeer);
-  $('#o-gekozen').innerHTML =
-    (m ? '<span class="mini">' + stukGezicht(m) + '<b>' + esc(m.titel) + '</b></span>' : '<span class="mini"><b>geen muziek</b></span>') +
-    (s ? '<span class="mini">' + stukGezicht(s) + '<b>' + esc(s.titel) + '</b></span>' : '<span class="mini"><b>geen plek</b></span>') +
-    '<span class="wijzig">wijzig ›</span>';
-
   const heeft = !!S.opname, bezig = !!oRec;
-  $('#s-opnemen').classList.toggle('heeft', heeft && !bezig && !oefent);
-  $('#o-bediening').hidden = bezig;
+  document.body.classList.toggle('neemt-op-tl', bezig);
   $('#o-kop').checked = !!S.koptelefoon;
+  $('#o-knop').querySelector('.tekst').textContent = bezig ? 'Stop' : 'Opnemen';
+  $('#o-knop').hidden = oefent;
+  $('#o-luister').hidden = !heeft || bezig || oefent;
+  $('#o-bewaar').hidden = !heeft || bezig || oefent;
+  $('#o-oefen').hidden = bezig;
   $('#o-oefen').textContent = oefent ? '■ Klaar met oefenen' : '▶ Oefenen';
   $('#o-oefen').classList.toggle('aan', oefent);
-  $('#o-knop').hidden = oefent;
-  $('#o-knop').querySelector('.tekst').innerHTML = bezig ? 'Stop' : 'Inspreken';
+  $('#o-kop').closest('.schakel').hidden = bezig;
   $('#o-afzetten').hidden = !(heeft && !bezig && afzetten);
-  $('#o-daarna').hidden = !heeft || bezig;
   $('#o-alles-opnieuw').hidden = !heeft || bezig;
-  $('#tijdlijn').hidden = !heeft && !bezig;
-  if(heeft && !bezig) tekenTijdlijn();
-  if(!heeft && !bezig) $('#o-klok').textContent = '';
-  if(heeft && !bezig) $('#o-klok').textContent = 'Jullie hoorspel duurt ' + fmt(totaal());
-  renderMee();
+  if(!bezig){
+    $('#o-klok').textContent = oefent ? 'Samen oefenen: de muziek speelt'
+      : heeft ? 'Jullie hoorspel duurt ' + fmt(totaal()) : 'Tik op Opnemen om jullie verhaal in te spreken';
+    tekenTijdlijn();
+  }
 
-  $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : heeft && !oefent ? 'Geluid erbij zetten' : 'Jullie eigen geluiden';
-  $('#o-geluiden-uitleg').textContent = bezig ? '' : heeft && !oefent
-    ? (matchMedia('(hover: hover)').matches ? 'Sleep een geluid naar de balk.' : 'Tik op een geluid tijdens Luisteren.')
-    : oefent ? 'Tik op een geluid. Iedereen hoort het.' : 'Tik op een geluid om het te horen.';
+  $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : 'Geluiden';
+  $('#o-geluiden-uitleg').textContent = bezig ? '' : oefent ? 'Tik op een geluid. Iedereen hoort het.'
+    : heeft ? (matchMedia('(hover: hover)').matches ? 'Tik om te horen, of sleep een geluid naar de tijdlijn.' : 'Tik om te horen. Tik tijdens Luisteren om het erbij te zetten.')
+    : 'Tik op een geluid om het te horen.';
   const el = $('#o-lijst'); el.innerHTML = '';
   if(!S.geluiden.length){ el.innerHTML = '<div class="leeg-vak">Nog geen geluiden. Die maak je bij stap 02. Zonder geluiden kun je ook opnemen.</div>'; return; }
   S.geluiden.forEach((g, i) => {
@@ -358,22 +371,8 @@ function renderOpnemen(){
     el.append(t);
   });
 }
-$('#o-gekozen').onclick = () => ga('muziek');
-$('#o-kop').onchange = e => { S.koptelefoon = e.target.checked; bewaar(); render(); };
+$('#o-kop').onchange = e => { S.koptelefoon = e.target.checked; bewaar(); };
 
-/* balk die laat zien welke muziek er meeklinkt */
-function renderMee(){
-  const el = $('#o-mee');
-  const zichtbaar = (oRec || oefent) && (S.muziek || S.sfeer);
-  el.hidden = !zichtbaar;
-  if(!zichtbaar) return;
-  const stukken = [S.muziek, S.sfeer].filter(Boolean).map(id => Bibliotheek.zoek(id)).filter(Boolean);
-  const tekst = oefent ? 'Samen oefenen: muziek speelt'
-    : S.koptelefoon ? 'Muziek speelt in de koptelefoon'
-    : 'Muziek speelt mee';
-  el.innerHTML = '<span class="dansers">' + stukken.map(stukGezicht).join('') + '</span><span><b>' + tekst + '</b><small>' +
-    stukken.map(s => esc(s.titel)).join(' + ') + (oRec && !S.koptelefoon ? ' · je hoort het bij Luisteren' : '') + '</small></span>';
-}
 /* groot kaartje: dit geluid klinkt nu */
 let nuT = 0;
 function nuKaart(g){
@@ -413,33 +412,40 @@ async function tikGeluid(g, el){
   speelGeluid(g, null);
 }
 
-/* ---- oefenen ---- */
-async function bedLagen(){
+/* ---- muziek en plek live laten klinken (oefenen, koptelefoon) vanaf moment 'vanaf' ---- */
+async function bedLagen(vanaf = 0){
   const lagen = [];
-  if(S.muziek) lagen.push({buf: await Bibliotheek.laad(S.muziek), vol:0.55, loop:true});
-  if(S.sfeer) lagen.push({buf: await Bibliotheek.laad(S.sfeer), vol:0.45, loop:true});
+  for(const [slot, vol] of [['muziek', 0.55], ['sfeer', 0.45]]){
+    if(!bedActief(slot)) continue;
+    const b = bed(slot), tot = bedTot(slot);
+    if(vanaf >= tot) continue;
+    lagen.push({buf: await Bibliotheek.laad(S[slot]), vol, loop: true,
+      wacht: Math.max(0, b.van - vanaf), vanaf: Math.max(0, vanaf - b.van),
+      duur: b.tot != null ? tot - Math.max(vanaf, b.van) : null});
+  }
   return lagen;
 }
 async function startOefenen(){
-  stopAlles(); oefent = true; document.body.classList.add('compact', 'oefent'); render(); window.scrollTo(0, 0);
-  try{ Geluid.speel(await bedLagen()); speelt = {wat:'oefen', id:'oefen'}; }
+  stopAlles(); oefent = true; render();
+  try{ Geluid.speel(await bedLagen(0)); speelt = {wat:'oefen', id:'oefen'}; }
   catch(e){ toast('De muziek kan nu niet spelen.'); }
-  if(!S.muziek && !S.sfeer) toast('Er is geen muziek gekozen. Je kunt wel met de geluiden oefenen.');
+  if(!bedActief('muziek') && !bedActief('sfeer')) toast('Er speelt geen muziek. Je kunt wel met de geluiden oefenen.');
 }
-function stopOefenen(){ if(!oefent) return; oefent = false; document.body.classList.remove('compact', 'oefent'); Geluid.stop(); speelt = null; render(); }
+function stopOefenen(){ if(!oefent) return; oefent = false; Geluid.stop(); speelt = null; render(); }
 $('#o-oefen').onclick = () => oefent ? stopOefenen() : startOefenen();
 
-/* ---- tijdlijn: sporen onder elkaar, zoals in MovieMaker ---- */
-const PAD = 12, RIJ = 54;
+/* ---- tijdlijn: sporen onder elkaar, zoals in een montageprogramma ---- */
+const PAD = 12, RIJ = 62;
 const tNaarX = t => PAD + t * PX;
 const xNaarT = x => (x - PAD) / PX;
 function tijdlijnBreedte(duur){ return Math.max($('#tijdlijn').clientWidth - 4, Math.ceil(tNaarX(duur)) + 120); }
 function bouwTijdlijn(duur){
-  const golf = $('#golf'), kop = golf.querySelector('.kop');
+  const golf = $('#golf'), kop = golf.querySelector('.kop:not(.opname)');
   golf.innerHTML = '<div class="liniaal"></div>' +
     '<div class="spoor stem"><span class="spoor-naam">stemmen</span></div>' +
     '<div class="spoor fx"><span class="spoor-naam">geluiden</span></div>' +
-    '<div class="spoor bed"><span class="spoor-naam">muziek en plek</span></div>';
+    '<div class="spoor bed" data-slot="muziek"><span class="spoor-naam">muziek</span></div>' +
+    '<div class="spoor bed" data-slot="sfeer"><span class="spoor-naam">plek</span></div>';
   if(kop) golf.append(kop);
   zetBreedte(duur);
 }
@@ -450,15 +456,76 @@ function zetBreedte(duur){
   for(let s = 0; tNaarX(s) < w - 20; s += 5) html += '<span style="left:' + tNaarX(s) + 'px">' + fmt(s) + '</span>';
   golf.querySelector('.liniaal').innerHTML = html;
 }
-function tekenBedden(duur){
-  const spoor = $('#golf .spoor.bed');
-  spoor.querySelectorAll('.strook').forEach(e => e.remove());
-  [[S.muziek, 'm'], [S.sfeer, 's']].forEach(([id, soort]) => {
-    const s = id && Bibliotheek.zoek(id); if(!s) return;
-    const d = document.createElement('div'); d.className = 'strook ' + soort;
-    d.style.left = tNaarX(0) + 'px'; d.style.width = Math.max(40, duur * PX) + 'px';
-    d.textContent = s.titel; spoor.append(d);
+/* muziek en plek: stroken met gezichtje; slepen, rechterrand verslepen, ✕ */
+function tekenBedden(bewerkbaar = true){
+  ['muziek', 'sfeer'].forEach(slot => {
+    const spoor = $('#golf .spoor.bed[data-slot="' + slot + '"]');
+    spoor.querySelectorAll('.strook, .spoor-leeg').forEach(e => e.remove());
+    const s = S[slot] && Bibliotheek.zoek(S[slot]);
+    if(!s){
+      const leeg = document.createElement('button'); leeg.type = 'button'; leeg.className = 'spoor-leeg';
+      leeg.textContent = (slot === 'muziek' ? 'Geen muziek gekozen' : 'Geen plek gekozen') + ' · kies bij stap 01';
+      leeg.onclick = () => { S.soort = slot === 'muziek' ? 'gevoel' : 'plek'; ga('muziek'); };
+      spoor.append(leeg); return;
+    }
+    const b = bed(slot), van = b.van, tot = bedTot(slot);
+    const d = document.createElement('div'); d.className = 'strook ' + (slot === 'muziek' ? 'm' : 's') + (b.uit ? ' uit' : '') + (b.tot == null ? ' auto' : '');
+    d.dataset.slot = slot;
+    d.style.left = tNaarX(van) + 'px'; d.style.width = Math.max(60, (tot - van) * PX) + 'px';
+    d.innerHTML = stukGezicht(s) + '<span class="naam"></span>' +
+      (b.uit ? '<button type="button" class="terug">↺ terugzetten</button>'
+             : (bewerkbaar ? '<button type="button" class="kruis" aria-label="' + esc(s.titel) + ' uitzetten">✕</button><span class="rand" aria-hidden="true"></span>' : ''));
+    d.querySelector('.naam').textContent = s.titel;
+    d.title = b.uit ? s.titel + ' (uit)' : s.titel + (b.tot == null ? ' · loopt mee met de stemmen' : '');
+    if(b.uit) d.querySelector('.terug').onclick = e => { e.stopPropagation(); b.uit = false; bedGewijzigd(); };
+    else if(bewerkbaar) maakStrookVersleepbaar(d, slot);
+    spoor.append(d);
   });
+}
+function bedGewijzigd(){ bewaar(); mixCache = null; if(speelt && (speelt.wat === 'mix' || speelt.wat === 'oefen')) stopAlles(); render(); }
+function maakStrookVersleepbaar(d, slot){
+  const tl = $('#tijdlijn'), b = bed(slot);
+  let x0 = null, s0 = 0, soortSleep = null, van0 = 0, tot0 = 0, geschoven = false;
+  d.addEventListener('pointerdown', e => {
+    if(oRec || e.target.closest('.kruis')) return;
+    x0 = e.clientX; s0 = tl.scrollLeft; van0 = b.van; tot0 = bedTot(slot); geschoven = false;
+    soortSleep = e.target.closest('.rand') ? 'eind' : 'hele';
+    try{ d.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  d.addEventListener('pointermove', e => {
+    if(x0 == null) return;
+    const dt = (e.clientX - x0 + (tl.scrollLeft - s0)) / PX;
+    if(!geschoven && Math.abs(dt * PX) > 6){ geschoven = true; d.classList.add('sleept'); }
+    if(!geschoven) return;
+    if(soortSleep === 'eind'){
+      const tot = Math.max(van0 + 1, tot0 + dt);
+      d.style.width = Math.max(60, (tot - van0) * PX) + 'px'; d.dataset.tot = tot;
+    } else {
+      const van = Math.max(0, van0 + dt);
+      d.style.left = tNaarX(van) + 'px'; d.dataset.van = van;
+      if(b.tot != null) d.style.width = Math.max(60, (tot0 - van0) * PX) + 'px';
+      else d.style.width = Math.max(60, (tot0 - van) * PX) + 'px';
+    }
+  });
+  const los = () => {
+    if(x0 == null) return; x0 = null;
+    if(!geschoven) return;
+    if(soortSleep === 'eind'){
+      const tot = +d.dataset.tot;
+      /* terug tegen het einde van de stemmen: dan loopt hij weer vanzelf mee */
+      b.tot = (S.opname && Math.abs(tot - totaal()) < 0.4) ? null : Math.round(tot * 10) / 10;
+    } else {
+      const van = Math.round(+d.dataset.van * 10) / 10;
+      if(b.tot != null) b.tot = Math.round((b.tot + (van - b.van)) * 10) / 10;
+      b.van = van;
+    }
+    bedGewijzigd();
+  };
+  d.addEventListener('pointerup', los);
+  d.addEventListener('pointercancel', () => { x0 = null; tekenTijdlijn(); });
+  d.addEventListener('click', e => e.stopPropagation());
+  d.querySelector('.kruis').addEventListener('pointerdown', e => e.stopPropagation());
+  d.querySelector('.kruis').addEventListener('click', e => { e.stopPropagation(); b.uit = true; bedGewijzigd(); toast((slot === 'muziek' ? 'De muziek' : 'Het plekgeluid') + ' speelt niet meer mee. Met ↺ zet je het terug.'); });
 }
 /* blokjes over rijen verdelen, zodat ze niet over elkaar vallen */
 function plaatsInRij(rijEind, x, w){
@@ -471,13 +538,18 @@ function golfjeHtml(pieken, perSec = 4){
   const max = Math.max(0.001, ...lijst);
   return '<span class="stemgolf">' + lijst.map((p, i) => {
     const v = p / max;
-    return '<i class="' + (v < 0.12 ? 'golf-stil' : '') + '" style="left:' + (i / perSec * PX) + 'px;height:' + (v < 0.12 ? 2 : Math.round(4 + v * 34)) + 'px"></i>';
+    return '<i class="' + (v < 0.12 ? 'golf-stil' : '') + '" style="left:' + (i / perSec * PX) + 'px;height:' + (v < 0.12 ? 2 : Math.round(4 + v * 40)) + 'px"></i>';
   }).join('') + '</span>';
 }
 function tekenStemmen(bewerkbaar){
   const spoor = $('#golf .spoor.stem');
-  spoor.querySelectorAll('.clip').forEach(e => e.remove());
+  spoor.querySelectorAll('.clip, .spoor-leeg').forEach(e => e.remove());
   const rijEind = [];
+  if(!stemmen().length && !oRec){
+    const leeg = document.createElement('span'); leeg.className = 'spoor-leeg hint';
+    leeg.textContent = 'Hier komen jullie stemmen. Tik bovenaan op Opnemen.';
+    spoor.append(leeg);
+  }
   stemmen().map((s, i) => ({s, i})).sort((a, b) => a.s.t - b.s.t).forEach(({s, i}, n) => {
     const x = tNaarX(s.t), w = Math.max(44, s.duur * PX);
     const r = plaatsInRij(rijEind, x, w);
@@ -492,7 +564,7 @@ function tekenStemmen(bewerkbaar){
     }
     spoor.append(c);
   });
-  spoor.style.height = (Math.max(1, rijEind.length) * RIJ + 24) + 'px';
+  spoor.style.height = (Math.max(1, rijEind.length) * RIJ + 26) + 'px';
   return rijEind;
 }
 function tekenClips(tikken, bewerkbaar){
@@ -501,7 +573,7 @@ function tekenClips(tikken, bewerkbaar){
   const rijEind = [];
   tikken.map((k, i) => ({k, i})).sort((a, b) => a.k.t - b.k.t).forEach(({k, i}) => {
     const g = S.geluiden.find(x => x.id === k.g); if(!g) return;
-    const x = tNaarX(k.t), w = Math.max(44, g.duur * PX);
+    const x = tNaarX(k.t), w = Math.max(50, g.duur * PX);
     const r = plaatsInRij(rijEind, x, w);
     const c = document.createElement('div'); c.className = 'clip' + (w < 120 ? ' smal' : ''); c.dataset.i = i; c.dataset.soort = 'fx'; c.title = g.naam + ' (' + fmtKort(g.duur) + ')';
     c.style.left = x + 'px'; c.style.width = w + 'px'; c.style.top = (22 + r * RIJ) + 'px';
@@ -516,15 +588,14 @@ function tekenClips(tikken, bewerkbaar){
     }
     spoor.append(c);
   });
-  spoor.style.height = (Math.max(1, rijEind.length) * RIJ + 24) + 'px';
+  spoor.style.height = (Math.max(1, rijEind.length) * RIJ + 26) + 'px';
 }
 function tekenTijdlijn(){
-  const d = totaal();
-  bouwTijdlijn(d);
-  tekenStemmen(true);
-  tekenBedden(d);
-  tekenClips(S.opname.tikken, true);
-  zetKop(cursor);
+  bouwTijdlijn(tijdlijnDuur());
+  tekenStemmen(!!S.opname);
+  tekenBedden(true);
+  tekenClips(S.opname ? S.opname.tikken : [], !!S.opname);
+  if(S.opname) zetKop(cursor); else { const k = $('#golf .kop'); if(k) k.remove(); }
 }
 
 /* ---- blokjes slepen of weghalen (stemmen en geluiden) ---- */
@@ -535,7 +606,7 @@ function maakVersleepbaar(c, g){
   c.addEventListener('pointerdown', e => {
     if(oRec || e.target.closest('.kruis')) return;
     x0 = e.clientX; s0 = tl.scrollLeft; t0 = tNu = lijstVoor(soort)[+c.dataset.i].t; geschoven = false;
-    c.setPointerCapture(e.pointerId);
+    try{ c.setPointerCapture(e.pointerId); }catch(err){}
   });
   c.addEventListener('pointermove', e => {
     if(x0 == null) return;
@@ -603,7 +674,7 @@ function sleepUitRij(tegelEl, g){
   const binnen = e => { const r = $('#tijdlijn').getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; };
   tegelEl.addEventListener('pointerdown', e => {
     if(e.pointerType === 'touch' || !S.opname || oRec) return;
-    start = {x: e.clientX, y: e.clientY}; tegelEl.setPointerCapture(e.pointerId);
+    start = {x: e.clientX, y: e.clientY}; try{ tegelEl.setPointerCapture(e.pointerId); }catch(err){}
   });
   tegelEl.addEventListener('pointermove', e => {
     if(!start) return;
@@ -639,7 +710,7 @@ function sleepUitRij(tegelEl, g){
 let geenKlik = false;
 $('#golf').addEventListener('click', e => {
   if(geenKlik){ geenKlik = false; return; }
-  if(oRec || !S.opname || e.target.closest('.clip, .liniaal, .greep')) return;
+  if(oRec || !S.opname || e.target.closest('.clip, .strook, .spoor-leeg, .liniaal, .greep')) return;
   (speelt && speelt.wat === 'mix') ? stopAlles() : luisterVanaf(cursor);
 });
 /* afspeellijn slepen (of tikken op de tijdschaal), ook tijdens het afspelen */
@@ -663,7 +734,7 @@ const scrubKlaar = () => { if(!scrub) return; const s = scrub; scrub = null; gee
 $('#golf').addEventListener('pointerup', scrubKlaar);
 $('#golf').addEventListener('pointercancel', scrubKlaar);
 
-/* ---- opnemen ---- */
+/* ---- opnemen, direct in de tijdlijn ---- */
 let wakeLock = null;
 async function houdWakker(aan){
   try{
@@ -681,49 +752,50 @@ function aftellen(){
   });
 }
 async function startOpname(){
-  oefent = false; document.body.classList.remove('oefent'); stopAlles(); melding($('#o-melding'), '');
+  oefent = false; stopAlles(); melding($('#o-melding'), ''); afzetten = false;
   const startT = S.opname ? totaal() : 0;   /* een nieuw stuk komt achteraan */
   const knop = $('#o-knop'); knop.disabled = true;
   let rec, lagen = [];
   try{ rec = await Geluid.maakRecorder('stem', {niveau: p => { knop.style.setProperty('--niveau', Math.min(1, p * 1.6)); if(oRec && oRec.bezig) oRec.pieken.push(p); }}); }
   catch(e){ knop.disabled = false; render(); melding($('#o-melding'), micFout(e), true); return; }
-  if(S.koptelefoon){ try{ lagen = await bedLagen(); }catch(e){} }
+  if(S.koptelefoon){ try{ lagen = await bedLagen(startT); }catch(e){} }
+  $('#o-balk').scrollIntoView({block: 'start', behavior: 'smooth'});
   await aftellen();
   knop.disabled = false;
   rec.begin();
-  if(lagen.length) Geluid.speel(lagen, null, startT);
+  if(lagen.length) Geluid.speel(lagen);
   const t0 = Date.now();
   oRec = {rec, t0, startT, tikken:[], pieken:[], bezig:true, timer:0};
   zetOpneemknop(knop, 'Stop', true, 'Stop opname');
   houdWakker(true);
-  document.body.classList.add('compact', 'neemt-op');
   render();
-  window.scrollTo(0, 0);
-  /* tijdlijn met een groeiend stem-blokje op de plek van de rode lijn */
-  $('#tijdlijn').hidden = false;
-  if(S.opname) tekenTijdlijn(); else { $('#golf').innerHTML = ''; bouwTijdlijn(0); }
-  const kop = $('#golf .kop'); if(kop) kop.remove();
-  const rijen = S.opname ? tekenStemmen(false) : [];
+  /* het nieuwe stem-blokje groeit op de tijdlijn */
+  const rijen = tekenStemmen(false);
+  tekenClips(S.opname ? S.opname.tikken : [], false);
+  tekenBedden(false);
   const live = document.createElement('div'); live.className = 'clip stemclip live';
   const r = plaatsInRij(rijen, tNaarX(startT), 99999);
   live.style.left = tNaarX(startT) + 'px'; live.style.top = (22 + r * RIJ) + 'px'; live.style.width = '44px';
   live.innerHTML = '<span class="stemgolf"></span>';
-  $('#golf .spoor.stem').append(live);
-  $('#golf .spoor.stem').style.height = (Math.max(1, rijen.length) * RIJ + 24) + 'px';
+  const spoor = $('#golf .spoor.stem'); spoor.append(live);
+  spoor.style.height = (Math.max(1, rijen.length) * RIJ + 26) + 'px';
   const golfje = live.querySelector('.stemgolf');
+  const kop = document.createElement('div'); kop.className = 'kop opname'; $('#golf').append(kop);
   let getekend = 0;
   oRec.timer = setInterval(() => {
     const s = (Date.now() - t0) / 1000;
-    $('#o-klok').textContent = '● ' + fmt(s);
+    $('#o-klok').textContent = '● ' + fmt(s) + (S.koptelefoon ? ' · muziek in de koptelefoon' : ' · muziek hoor je straks bij Luisteren');
     /* live golfje: elke 0,25 s een streepje */
     while(getekend < s * 4){
       const p = oRec.pieken.length ? Math.max(...oRec.pieken.splice(0)) : 0.02;
-      const i = document.createElement('i'); i.style.left = (getekend / 4 * PX) + 'px'; i.style.height = Math.max(3, Math.min(34, p * 60)) + 'px';
+      const i = document.createElement('i'); i.style.left = (getekend / 4 * PX) + 'px'; i.style.height = Math.max(3, Math.min(40, p * 70)) + 'px';
       golfje.append(i); getekend++;
     }
     live.style.width = Math.max(44, s * PX) + 'px';
-    if(getekend % 4 === 0){ const d = Math.max(S.opname ? totaal() : 0, startT + s); zetBreedte(d); tekenBedden(d); }
-    const tl = $('#tijdlijn'); tl.scrollLeft = tNaarX(startT + s) - tl.clientWidth + 80;
+    kop.style.left = tNaarX(startT + s) + 'px';
+    if(getekend % 4 === 0){ const d = Math.max(tijdlijnDuur(), startT + s + 2); zetBreedte(d); }
+    const tl = $('#tijdlijn'), x = tNaarX(startT + s);
+    if(x > tl.scrollLeft + tl.clientWidth - 80) tl.scrollLeft = x - tl.clientWidth + 160;
     if(s >= MAX_OPNAME_SEC){ toast('Een stuk is maximaal 5 minuten.'); stopOpname(); }
   }, 250);
 }
@@ -731,12 +803,11 @@ async function stopOpname(){
   if(!oRec) return;
   const r = oRec; r.bezig = false; clearInterval(r.timer);
   Geluid.stop();
-  const knop = $('#o-knop'); zetOpneemknop(knop, 'Start<br>opname', false, 'Start opname');
+  const knop = $('#o-knop'); zetOpneemknop(knop, 'Opnemen', false, 'Opnemen');
   const {samples, rate} = await r.rec.eind();
   oRec = null; houdWakker(false);
-  document.body.classList.remove('compact', 'neemt-op');
   if(!samples.length || Geluid.isStil(samples)){
-    render(); if(!S.opname) $('#tijdlijn').hidden = true;
+    render();
     melding($('#o-melding'), 'We hoorden niets. Kijk of de microfoon aan staat en probeer het nog een keer.', true);
     return;
   }
@@ -753,13 +824,11 @@ async function stopOpname(){
   bewaar();
   cursor = stem.t;
   render();
-  $('#o-klok').scrollIntoView({block:'start', behavior:'smooth'});
   if(!ok) toast('Let op: bewaren op dit apparaat lukte niet. Tik op Bewaren.', 5000);
   if(S.koptelefoon){ afzetten = true; zetKop(stem.t + stem.duur); render(); toast('Opgenomen! Doe de koptelefoon af en tik samen op Luisteren.', 5000); }
   else luisterVanaf(stem.t);   /* meteen samen terugluisteren, vanaf het nieuwe stuk */
 }
 $('#o-knop').onclick = () => oRec ? stopOpname() : startOpname();
-
 
 /* ---- mixen, luisteren, bewaren ---- */
 async function stemBuffer(id){
@@ -769,7 +838,7 @@ async function stemBuffer(id){
 }
 async function maakMix(){
   const o = S.opname;
-  const sleutel = [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(o)].join('|');
+  const sleutel = [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(o), JSON.stringify(S.bedden || {})].join('|');
   if(mixCache && mixCache.sleutel === sleutel) return mixCache.buf;
   const stemLijst = [];
   for(const s of o.stemmen){ try{ stemLijst.push({buf: await stemBuffer(s.id), t: s.t}); }catch(e){} }
@@ -778,8 +847,10 @@ async function maakMix(){
   for(const k of o.tikken){ const g = S.geluiden.find(x => x.id === k.g); if(!g) continue; try{ tikken.push({buf: await geluidBuffer(g.id), t: k.t}); }catch(e){} }
   const buf = await Geluid.mix({
     stemmen: stemLijst,
-    muziek: S.muziek ? await Bibliotheek.laad(S.muziek) : null,
-    sfeer: S.sfeer ? await Bibliotheek.laad(S.sfeer) : null,
+    muziek: bedActief('muziek') ? await Bibliotheek.laad(S.muziek) : null,
+    sfeer: bedActief('sfeer') ? await Bibliotheek.laad(S.sfeer) : null,
+    muziekVan: bed('muziek').van, muziekTot: bed('muziek').tot,
+    sfeerVan: bed('sfeer').van, sfeerTot: bed('sfeer').tot,
     tikken
   });
   mixCache = {sleutel, buf};
@@ -789,8 +860,8 @@ let kopRaf = 0;
 /* afspeellijn: blijft staan, ook als er niets speelt */
 let cursor = 0;
 function zetKop(t){
-  cursor = Math.max(0, Math.min(S.opname ? totaal() : 0, t));
-  let k = $('#golf .kop');
+  cursor = Math.max(0, Math.min(S.opname ? tijdlijnDuur() : 0, t));
+  let k = $('#golf .kop:not(.opname)');
   if(!k){ k = document.createElement('div'); k.className = 'kop'; k.innerHTML = '<span class="greep" aria-hidden="true"></span>'; $('#golf').append(k); }
   k.style.left = tNaarX(cursor) + 'px';
 }
@@ -801,7 +872,7 @@ function stopKop(){
 }
 async function luisterVanaf(vanaf){
   stopAlles();
-  if(vanaf >= totaal() - 0.2) vanaf = 0;
+  if(vanaf >= tijdlijnDuur() - 0.2) vanaf = 0;
   const knop = $('#o-luister'); knop.textContent = 'Even samenvoegen…'; knop.disabled = true;
   let buf;
   try{ buf = await maakMix(); }
@@ -826,8 +897,8 @@ $('#o-alles-opnieuw').onclick = () => {
   clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Alles opnieuw'; b.classList.remove('gevaar');
   stopAlles();
   stemmen().forEach(s => { Opslag.wisAudio(s.id); stemBufs.delete(s.id); });
-  S.opname = null; mixCache = null; cursor = 0; afzetten = false; bewaar();
-  $('#golf').innerHTML = ''; render();
+  S.opname = null; S.bedden = {}; mixCache = null; cursor = 0; afzetten = false; bewaar();
+  render();
   toast('Oefen nog een keer, of spreek het opnieuw in.');
 };
 $('#o-bewaar').onclick = async () => {

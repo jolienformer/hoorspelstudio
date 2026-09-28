@@ -459,3 +459,62 @@ body.compact #o-lijst .tegel{min-height:0}
 /* golfje in de stem-blokjes */
 .spoor.stem .stemgolf i{width:3px}
 .spoor.stem .stemgolf i.golf-stil{opacity:.35}
+
+/* ================= stap 03 als montagescherm ================= */
+body.breed .app{max-width:1120px}
+body.breed #s-opnemen h1,body.breed #s-opnemen .lead{max-width:680px;margin-inline:auto}
+
+/* knoppenbalk boven de tijdlijn */
+.werkbalk{position:sticky;top:0;z-index:6;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 12px;margin:6px 0 10px;background:var(--paper);border:var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.werkbalk .knop{min-height:44px;padding:.45rem .9rem;font-size:.95rem}
+.werkbalk .bewaar{background:var(--accent);color:#fff;display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.werkbalk .bewaar small{font-size:.66rem;font-weight:700;opacity:.9}
+.werkbalk .vul{flex:1}
+.werkbalk .status{font-weight:800;font-size:.9rem;color:var(--soft);min-width:0}
+body.neemt-op-tl .werkbalk .status{color:var(--accent)}
+.opneemknop.klein{width:78px;height:78px;font-size:.78rem;box-shadow:3px 3px 0 var(--edge)}
+.opneemknop.klein .ring{inset:-5px;border-width:5px}
+.opneemknop.klein::before{content:"";position:absolute;top:13px;width:14px;height:14px;border-radius:50%;background:#fff}
+.opneemknop.klein.aan::before{border-radius:3px;background:var(--bg)}
+.opneemknop.klein .tekst{margin-top:18px}
+
+/* tijdlijn: groter en hogere sporen */
+#s-opnemen .tijdlijn{margin-bottom:10px}
+.spoor.stem{min-height:88px;height:auto}
+.spoor.fx{min-height:88px}
+.spoor.bed{height:74px;min-height:74px}
+.clip{height:54px}
+.clip .gezicht{width:40px}
+.spoor.stem .stemgolf i{max-height:44px}
+.spoor-leeg{position:absolute;left:120px;top:26px;border:0;background:none;padding:6px 0;font-weight:800;font-size:.85rem;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.spoor-leeg.hint{position:sticky;display:inline-block;left:12px;margin:30px 0 0 12px;text-decoration:none;cursor:default}
+
+/* muziek- en plekstroken */
+.strook{top:22px;height:44px;display:flex;align-items:center;gap:8px;padding:0 34px 0 4px;line-height:1.1;font-size:.82rem;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:2px 2px 0 var(--edge)}
+.strook .gezicht{width:34px;flex:none;border-width:2px;border-radius:7px;box-shadow:none}
+.strook .naam{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:900}
+.strook.m,.strook.s{top:22px}
+.strook.s{color:var(--on)}
+.strook .kruis{position:absolute;top:-10px;right:14px;width:24px;height:24px;border-radius:50%;border:2px solid var(--edge);background:var(--paper);color:var(--ink);font-weight:900;font-size:.66rem;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;z-index:3}
+.strook .kruis:hover{background:#C0321A;color:#fff}
+.strook .rand{position:absolute;top:0;right:0;bottom:0;width:14px;border-left:2px solid rgba(0,0,0,.35);background:rgba(255,255,255,.35);cursor:ew-resize;border-radius:0 5px 5px 0}
+.strook .rand::after{content:"⋮";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:rgba(0,0,0,.6)}
+.strook.auto .rand{background:repeating-linear-gradient(45deg,rgba(255,255,255,.5) 0 4px,transparent 4px 8px)}
+.strook.sleept{cursor:grabbing;box-shadow:5px 5px 0 var(--edge);z-index:4}
+.strook.uit{opacity:.5;background:var(--paper)!important;color:var(--soft);border-style:dashed;cursor:default;padding-right:6px}
+.strook.uit .gezicht{filter:grayscale(1)}
+.strook .terug{margin-left:auto;border:2px solid var(--edge);background:var(--paper);border-radius:8px;padding:2px 8px;font-weight:900;font-size:.75rem;cursor:pointer;color:var(--ink);white-space:nowrap}
+
+/* afspeellijn tijdens opnemen */
+.golf .kop.opname{background:#C0321A}
+
+/* kaartje 'klinkt nu' zweeft onderin beeld */
+#s-opnemen .nuklinkt{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20}
+#s-opnemen .nuklinkt.toon{animation:none}
+
+@media (max-width:640px){
+  .werkbalk{gap:8px 10px;padding:8px}
+  .opneemknop.klein{width:66px;height:66px;font-size:.7rem}
+  .werkbalk .status{order:9;flex-basis:100%}
+  .werkbalk .vul{display:none}
+}
