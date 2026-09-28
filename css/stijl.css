@@ -406,3 +406,10 @@ body.compact #o-lijst .tegel{min-height:0}
 /* afspeellijn met greepje */
 .liniaal{cursor:ew-resize;touch-action:none}
 .kop .greep{position:absolute;top:1px;left:50%;width:20px;height:20px;transform:translateX(-50%);border-radius:50%;background:var(--accent);border:2.5px solid var(--edge);pointer-events:auto;cursor:ew-resize;touch-action:none}
+
+/* geluidsblokjes zo lang als het geluid */
+.clip{padding:4px 8px 4px 4px;overflow:visible}
+.clip .kruis{top:-10px;right:-10px;transform:none;width:24px;height:24px;font-size:.66rem;z-index:3}
+.clip.smal{padding-right:4px;justify-content:flex-start}
+.clip.smal .naam{display:none}
+.clip .gezicht{width:32px}

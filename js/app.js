@@ -453,10 +453,10 @@ function tekenClips(tikken, bewerkbaar){
   const rijEind = [];
   tikken.map((k, i) => ({k, i})).sort((a, b) => a.k.t - b.k.t).forEach(({k, i}) => {
     const g = S.geluiden.find(x => x.id === k.g); if(!g) return;
-    const x = tNaarX(k.t), w = Math.max(150, g.duur * PX);
+    const x = tNaarX(k.t), w = Math.max(44, g.duur * PX);
     let r = rijEind.findIndex(e => e <= x); if(r < 0){ r = rijEind.length; rijEind.push(0); }
     rijEind[r] = x + w + 4;
-    const c = document.createElement('div'); c.className = 'clip'; c.dataset.i = i;
+    const c = document.createElement('div'); c.className = 'clip' + (w < 120 ? ' smal' : ''); c.dataset.i = i; c.title = g.naam + ' (' + fmtKort(g.duur) + ')';
     c.style.left = x + 'px'; c.style.width = w + 'px'; c.style.top = (22 + r * RIJ) + 'px';
     c.style.setProperty('--c', 'var(--c-' + g.kleur + ')');
     c.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span class="naam"></span>' +
