@@ -867,7 +867,7 @@ $('#groep-knop').onclick = () => { $('#gd-naam').value = S.groep; $('#groep-dlg'
 $('#gd-annuleer').onclick = () => $('#groep-dlg').close();
 $('#gd-form').addEventListener('submit', () => { const n = $('#gd-naam').value.trim(); if(n){ S.groep = n; bewaar(); render(); } });
 
-$('#leerkracht-knop').onclick = () => $('#leerkracht').showModal();
+$('#leerkracht-knop').onclick = () => { const d = $('#leerkracht'); d.showModal(); d.scrollTop = 0; $('#lk-titel').focus(); };
 $('#lk-sluit').onclick = () => $('#leerkracht').close();
 let wisZeker = 0;
 $('#wis-alles').onclick = async () => {

@@ -426,3 +426,4 @@ body.compact #o-lijst .tegel{min-height:0}
 .alles-opnieuw{align-self:center;margin:0 0 14px;font-size:.85rem;color:var(--soft)}
 .alles-opnieuw.gevaar{color:#C0321A}
 #s-opnemen.heeft .alles-opnieuw{order:5}
+#lk-titel:focus{outline:none}
