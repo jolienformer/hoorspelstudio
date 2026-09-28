@@ -156,7 +156,6 @@ input[type=text]{border:var(--line);background:var(--bg);border-radius:var(--rad
 .overzicht b{font-weight:900}
 .overzicht .wijzig{font-weight:800;font-size:.8rem;color:var(--accent);margin-top:2px}
 .podium{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px;text-align:center}
-.stil{font-weight:700;font-size:.9rem;color:var(--soft);margin:0;max-width:30em;background:var(--paper);border:2px solid var(--edge);border-radius:var(--radius);padding:.55rem .85rem}
 .tijdlijn{position:relative;overflow-x:auto;border:var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:0 0 6px;margin-bottom:12px;-webkit-overflow-scrolling:touch;cursor:pointer}
 .tijdlijn.doel{outline:4px dashed var(--accent);outline-offset:3px}
 .golf{position:relative;min-width:100%}
@@ -242,7 +241,6 @@ body.compact .klok{color:var(--accent)}
 .voorbereiding .soorten{margin-bottom:0}
 .oefen{align-self:center;background:var(--yellow);color:var(--on);font-size:1.05rem;padding:.7rem 1.3rem}
 .oefen.aan{background:var(--ink);color:var(--bg)}
-.stil b{color:var(--ink)}
 
 .meeklinkt{display:flex;align-items:center;gap:12px;border:var(--line);background:var(--tint);border-radius:14px;box-shadow:var(--shadow);padding:10px 14px;margin-bottom:16px}
 .meeklinkt b{display:block;font-weight:900;line-height:1.2}
@@ -269,7 +267,6 @@ body.compact .podium{flex-wrap:wrap}
   .dansers .gezicht{animation:none}
   .nuklinkt.toon{animation:none}
 }
-.voorbereiding .stil{margin:0}
 body.compact #o-geluiden-uitleg{order:1}
 
 /* stap 03 in twee delen */
@@ -281,7 +278,6 @@ body.compact #o-geluiden-uitleg{order:1}
 .kopvraag{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 .kopvraag .knop{font-size:1.05rem}
 .kopvraag .linkknop{font-size:.9rem;color:var(--soft)}
-.stil .linkknop{font-size:.85rem;margin-left:4px}
 .afzetten{border:var(--line);background:var(--yellow);color:var(--on);border-radius:var(--radius);box-shadow:var(--shadow);padding:.7rem 1rem;font-weight:900;font-size:1.1rem;text-align:center;margin:0 0 14px}
 
 /* stapnamen met voorbeeld */
@@ -371,7 +367,6 @@ body.neemt-op .clip{cursor:default}
 .overzicht{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 18px;border:0;background:none;box-shadow:none;padding:0;margin-bottom:18px}
 .overzicht .mini b{font-size:.95rem}
 .overzicht .wijzig{margin:0}
-.voorbereiding .stil{border:0;background:none;padding:0;max-width:none}
 .meeklinkt{border:0;background:none;box-shadow:none;padding:0 0 4px;justify-content:center}
 .clip .gezicht{border:0;border-radius:6px}
 
@@ -460,3 +455,7 @@ body.compact #o-lijst .tegel{min-height:0}
 #s-opnemen.heeft #o-lijst{order:4}
 #s-opnemen.heeft .podium{order:5;margin-top:18px}
 #s-opnemen .klok:empty{display:none}
+
+/* golfje in de stem-blokjes */
+.spoor.stem .stemgolf i{width:3px}
+.spoor.stem .stemgolf i.golf-stil{opacity:.35}

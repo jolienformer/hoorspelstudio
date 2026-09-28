@@ -465,8 +465,14 @@ function plaatsInRij(rijEind, x, w){
   let r = rijEind.findIndex(e => e <= x + 2); if(r < 0){ r = rijEind.length; rijEind.push(0); }
   rijEind[r] = x + w; return r;
 }
-function golfjeHtml(pieken){
-  return '<span class="stemgolf">' + (pieken || []).map((p, i) => '<i style="left:' + (i / 4 * PX) + 'px;height:' + Math.max(3, Math.min(34, p * 60)) + 'px"></i>').join('') + '</span>';
+/* golfje: hoog = hard, laag = zacht, plat lijntje = stil */
+function golfjeHtml(pieken, perSec = 4){
+  const lijst = pieken || [];
+  const max = Math.max(0.001, ...lijst);
+  return '<span class="stemgolf">' + lijst.map((p, i) => {
+    const v = p / max;
+    return '<i class="' + (v < 0.12 ? 'golf-stil' : '') + '" style="left:' + (i / perSec * PX) + 'px;height:' + (v < 0.12 ? 2 : Math.round(4 + v * 34)) + 'px"></i>';
+  }).join('') + '</span>';
 }
 function tekenStemmen(bewerkbaar){
   const spoor = $('#golf .spoor.stem');
@@ -478,7 +484,7 @@ function tekenStemmen(bewerkbaar){
     const c = document.createElement('div'); c.className = 'clip stemclip'; c.dataset.i = i; c.dataset.soort = 'stem';
     c.style.left = x + 'px'; c.style.width = w + 'px'; c.style.top = (22 + r * RIJ) + 'px';
     c.title = 'Stuk ' + (n + 1) + ' (' + fmtKort(s.duur) + ')';
-    c.innerHTML = golfjeHtml(s.pieken) + (bewerkbaar ? '<button type="button" class="kruis" aria-label="Stuk ' + (n + 1) + ' weghalen">✕</button>' : '');
+    c.innerHTML = golfjeHtml(s.pieken, s.perSec || 4) + (bewerkbaar ? '<button type="button" class="kruis" aria-label="Stuk ' + (n + 1) + ' weghalen">✕</button>' : '');
     if(bewerkbaar){
       c.tabIndex = 0; c.setAttribute('role', 'button');
       c.setAttribute('aria-label', 'Stuk ' + (n + 1) + ' op ' + fmt(s.t) + '. Tik om te luisteren, sleep om te verschuiven.');
@@ -734,10 +740,12 @@ async function stopOpname(){
     melding($('#o-melding'), 'We hoorden niets. Kijk of de microfoon aan staat en probeer het nog een keer.', true);
     return;
   }
-  /* 4 streepjes per seconde voor het golfje */
-  const stap = Math.round(rate / 4), pieken = [];
-  for(let i = 0; i < samples.length; i += stap){ let p = 0; for(let j = i; j < Math.min(samples.length, i + stap); j += 4){ const v = Math.abs(samples[j]); if(v > p) p = v; } pieken.push(+p.toFixed(3)); }
-  const stem = {id: uid('o_'), t: r.startT, duur: samples.length / rate, pieken};
+  /* golfje: 8 streepjes per seconde, gemiddeld volume, op schaal van deze opname */
+  const perSec = 8, stap = Math.round(rate / perSec), ruw = [];
+  for(let i = 0; i < samples.length; i += stap){ let som = 0, m = 0; for(let j = i; j < Math.min(samples.length, i + stap); j += 2){ som += samples[j] * samples[j]; m++; } ruw.push(Math.sqrt(som / Math.max(1, m))); }
+  const hoog = [...ruw].sort((a, b) => a - b)[Math.floor(ruw.length * 0.95)] || 0.001;
+  const pieken = ruw.map(v => +Math.min(1, v / hoog).toFixed(2));
+  const stem = {id: uid('o_'), t: r.startT, duur: samples.length / rate, pieken, perSec};
   stemBufs.set(stem.id, Geluid.samplesNaarBuffer(samples, rate)); mixCache = null;
   if(!S.opname) S.opname = {stemmen: [stem], tikken: r.tikken};
   else { S.opname.stemmen.push(stem); S.opname.tikken.push(...r.tikken); }
