@@ -190,8 +190,8 @@ dialog::backdrop{background:rgba(17,17,17,.55)}
 .rijtje .gezicht:nth-child(odd){transform:rotate(-5deg)}
 .rijtje .gezicht:nth-child(even){transform:rotate(4deg) translateY(4px)}
 .genummerd{margin:0;padding:0;list-style:none;counter-reset:n;display:flex;flex-direction:column;gap:8px}
-.genummerd li{counter-increment:n;display:grid;grid-template-columns:2.4rem 1fr;gap:4px}
-.genummerd li::before{content:counter(n,decimal-leading-zero);font-weight:900;color:var(--accent)}
+.genummerd li{counter-increment:n;position:relative;padding-left:2.4rem}
+.genummerd li::before{content:counter(n,decimal-leading-zero);position:absolute;left:0;top:0;font-weight:900;color:var(--accent)}
 
 /* ---------- aftellen ---------- */
 .aftellen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 85%,transparent)}
