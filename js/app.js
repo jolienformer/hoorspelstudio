@@ -210,7 +210,7 @@ function renderGeluiden(){
 function tegel(g, toets){
   const b = document.createElement('button'); b.type = 'button'; b.className = 'tegel';
   b.style.setProperty('--c', 'var(--c-' + g.kleur + ')');
-  b.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span><span class="naam">' + esc(g.naam) + '</span><span class="meta">🎤 ' + fmtKort(g.duur) + '</span></span>' +
+  b.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span class="naam">' + esc(g.naam) + ' <span class="meta">' + fmtKort(g.duur) + '</span></span>' +
     (toets ? '<span class="toets" aria-hidden="true">' + toets + '</span>' : '');
   return b;
 }

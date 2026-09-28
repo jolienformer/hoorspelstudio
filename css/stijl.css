@@ -138,7 +138,7 @@ input[type=text]{border:var(--line);background:var(--bg);border-radius:var(--rad
 .tegel:active,.tegel.tik{transform:translate(4px,4px);box-shadow:none}
 .tegel .gezicht{width:64px;border-width:2px;border-radius:9px;box-shadow:none;background:rgba(255,255,255,.35)}
 .tegel .naam{display:block;font-weight:900;font-size:1.05rem;line-height:1.15;overflow-wrap:break-word;hyphens:auto}
-.tegel .meta{display:block;font-weight:800;font-size:.75rem;opacity:.7}
+.tegel .meta{display:inline;font-weight:700;font-size:.7rem;opacity:.65;white-space:nowrap}
 .tegel .toets{position:absolute;top:-10px;left:-8px;background:var(--paper);color:var(--ink);border:2px solid var(--edge);border-radius:6px;font-weight:900;font-size:.72rem;padding:0 6px}
 .tegel-wrap{position:relative;display:flex}
 .tegel-wrap .tegel{flex:1}
