@@ -388,3 +388,16 @@ body.neemt-op .clip{cursor:default}
 #o-lijst .tegel{min-height:0}
 body.compact #o-lijst .tegel{min-height:0}
 @media (max-width:440px){ .tegels{grid-template-columns:repeat(3,1fr);gap:14px 10px} .tegel .gezicht{width:100%} }
+.gezicht img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
+.rtegel,.tegel{-webkit-user-select:none;user-select:none}
+
+/* na de opname: geluiden direct onder de tijdlijn, zoals in MovieMaker */
+#s-opnemen.heeft #tijdlijn{order:2}
+#s-opnemen.heeft #o-geluiden-kop{order:3;margin-top:4px;font-size:1.8rem}
+#s-opnemen.heeft #o-geluiden-uitleg{order:3}
+#s-opnemen.heeft #o-lijst{order:3;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:12px 10px;margin-bottom:10px}
+#s-opnemen.heeft #o-lijst .naam{font-size:.78rem}
+#s-opnemen.heeft #o-tip{order:4;margin-top:6px}
+#s-opnemen.heeft #o-afzetten{order:5}
+#s-opnemen.heeft #o-daarna{order:5}
+#s-opnemen.heeft .toetsen{display:none}

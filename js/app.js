@@ -304,6 +304,7 @@ function renderOpnemen(){
     '<span class="wijzig">wijzig ›</span>';
 
   const heeft = !!S.opname, bezig = !!oRec;
+  $('#s-opnemen').classList.toggle('heeft', heeft && !bezig);
   $('#o-kopvraag').hidden = kopGekozen;
   $('#o-stil').hidden = !kopGekozen;
   $('#o-stil').innerHTML = S.koptelefoon
@@ -326,7 +327,7 @@ function renderOpnemen(){
 
   $('#o-geluiden-kop').textContent = bezig ? 'Tik op het goede moment' : heeft ? 'Geluid erbij zetten' : 'Jullie eigen geluiden';
   $('#o-geluiden-uitleg').textContent = bezig ? '' : heeft
-    ? 'Tik op Luisteren. Tik dan op een geluid, precies waar het moet klinken.' + (matchMedia('(hover: hover)').matches ? ' Of sleep het met de muis naar de balk.' : '')
+    ? (matchMedia('(hover: hover)').matches ? 'Sleep een geluid naar de balk, of tik erop tijdens Luisteren.' : 'Tik tijdens Luisteren op een geluid om het erbij te zetten.')
     : oefent ? 'Tik op een geluid. Iedereen hoort het.' : 'Tik op een geluid om het te horen.';
   const el = $('#o-lijst'); el.innerHTML = '';
   if(!S.geluiden.length){ el.innerHTML = '<div class="leeg-vak">Nog geen geluiden. Die maak je bij stap 02. Zonder geluiden kun je ook opnemen.</div>'; return; }
@@ -550,6 +551,7 @@ function sleepUitRij(tegelEl, g){
     if(!spook) return;
     spook.style.left = e.clientX + 'px'; spook.style.top = e.clientY + 'px';
     $('#tijdlijn').classList.toggle('doel', binnen(e));
+    if(e.clientY < 70) window.scrollBy(0, -14); else if(e.clientY > innerHeight - 110) window.scrollBy(0, 14);
   });
   const eind = e => {
     if(!start) return; start = null;
