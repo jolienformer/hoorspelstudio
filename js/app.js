@@ -302,7 +302,7 @@ async function bewaarGeluid(){
   const id = uid('g_');
   const kleur = KLEUREN.find(k => !S.geluiden.some(g => g.kleur === k)) || KLEUREN[S.geluiden.length % KLEUREN.length];
   const nummer = (S.teller = (S.teller || 0) + 1);
-  const g = {id, naam, kleur, gez: Gezichten.voorGeluid(nummer), duur: p.samples.length / p.rate};
+  const g = {id, naam, kleur, gez: Gezichten.voorGeluid(nummer, S.geluiden.map(x => x.gez && x.gez.sleutel)), duur: p.samples.length / p.rate};
   buffers.set(id, p.buf);
   const ok = await Opslag.bewaarAudio(id, Geluid.wav([p.samples], p.rate));
   S.geluiden.push(g); bewaar();

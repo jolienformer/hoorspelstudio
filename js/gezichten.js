@@ -39,9 +39,15 @@ function html(sleutel, uitdr){
   return svg(uitdr);
 }
 /* gezichtjes voor zelfgemaakte geluiden */
-function voorGeluid(i){
+/* een willekeurig gezichtje dat het groepje nog niet heeft */
+function voorGeluid(i, alGebruikt = []){
   const extra = (window.GEZICHTEN_GELUID || []);
-  if(extra.length) return {sleutel:'geluid:' + (i % extra.length), uitdr:LIJST[i % LIJST.length]};
+  if(extra.length){
+    const bezet = new Set(alGebruikt);
+    const vrij = extra.map((_, n) => 'geluid:' + n).filter(k => !bezet.has(k));
+    const lijst = vrij.length ? vrij : extra.map((_, n) => 'geluid:' + n);
+    return {sleutel: lijst[Math.floor(Math.random() * lijst.length)], uitdr:LIJST[i % LIJST.length]};
+  }
   return {sleutel:null, uitdr:LIJST[(i * 3 + 1) % LIJST.length]};
 }
 function htmlGeluid(g){
