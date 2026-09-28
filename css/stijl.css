@@ -438,3 +438,8 @@ body.compact #o-lijst .tegel{min-height:0}
 .nieuw-hoorspel .deel-tekst{font-size:.92rem;color:var(--soft)}
 .nieuw-hoorspel .knop{align-self:flex-start}
 .fijndruk{margin:0;font-size:.8rem;color:var(--muted)}
+
+/* stap 02: eigen geluiden boven de opnameknop, zodra je er een hebt (net als stap 01/03) */
+#s-geluiden{display:flex;flex-direction:column}
+#s-geluiden.heeft .opnamevak{order:2;padding-top:22px}
+#s-geluiden.heeft #g-lijst-kop{margin-top:0}

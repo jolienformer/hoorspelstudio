@@ -214,6 +214,7 @@ async function geluidBuffer(id){
 let gRec = null, pending = null;
 
 function renderGeluiden(){
+  $('#s-geluiden').classList.toggle('heeft', S.geluiden.length > 0);
   const el = $('#g-lijst'); el.innerHTML = '';
   if(!S.geluiden.length){ el.innerHTML = '<div class="leeg-vak">Nog geen geluiden. Neem er hierboven een op.</div>'; return; }
   S.geluiden.forEach(g => {
