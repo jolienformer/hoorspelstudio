@@ -626,17 +626,16 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
   #s-opnemen #o-knop{width:84px;height:84px;font-size:.8rem}
 }
 
-/* naam van de stap verschijnt onder de knop bij aanwijzen */
-.stap{position:relative}
-.stap::after{content:attr(data-naam);position:absolute;top:calc(100% + 8px);left:50%;transform:translate(-50%,-4px);background:var(--ink);color:var(--bg);font-weight:800;font-size:.85rem;padding:5px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s,transform .12s;z-index:20}
-.stap:hover::after,.stap:focus-visible::after{opacity:1;transform:translate(-50%,0)}
-@media (hover:none){ .stap::after{display:none} }
-@media (prefers-reduced-motion:reduce){ .stap::after{transition:none} }
+/* stapknoppen: klein "Stap 1" met los vinkje, daaronder de naam */
+.stap{flex-direction:column;gap:2px;min-height:72px}
+.stap .n{font-family:inherit;font-weight:900;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:5px}
+.stap .l{font-size:1.9rem;line-height:1}
+.stap .ok{width:14px;height:14px}
+.stap[aria-current="step"] .n{color:#fff}
+@media (max-width:440px){ .stap .l{font-size:1.35rem} .stap .n{font-size:.62rem;letter-spacing:.08em} .stap .ok{width:12px;height:12px} }
 
-/* stap 03: opnameknop met rechts ernaast drie even grote knoppen op een rij */
+/* stap 03: opnameknop met rechts ernaast drie even grote knoppen onder elkaar */
 #s-opnemen .werkbalk{display:flex;justify-content:center;align-items:center;gap:18px}
 #s-opnemen .werkbalk .rechts{display:grid;grid-template-columns:150px;gap:8px;align-items:center}
 #s-opnemen .werkbalk .rechts .wb{width:100%;justify-content:center;padding:0 10px}
-@media (max-width:640px){
-  #s-opnemen .werkbalk{gap:12px}
-}
+@media (max-width:640px){ #s-opnemen .werkbalk{gap:12px} }
