@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/stijl.css?v=202609281541">
+<link rel="stylesheet" href="css/stijl.css?v=20260928154731">
 </head>
 <body>
 
@@ -23,9 +23,9 @@
 
 <main class="app">
   <nav class="stappen" aria-label="Stappen">
-    <button type="button" class="stap" data-stap="muziek"><span class="n">STAP 01 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Muziek kiezen</span></button>
-    <button type="button" class="stap" data-stap="geluiden"><span class="n">STAP 02 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Geluiden maken</span></button>
-    <button type="button" class="stap" data-stap="opnemen"><span class="n">STAP 03 <i class="ok" aria-label="klaar">✓</i></span><span class="l">Verhaal inspreken</span></button>
+    <button type="button" class="stap" data-stap="muziek" aria-label="Stap 1: Muziek kiezen" title="Muziek kiezen"><span class="l">Stap 1</span><svg class="ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg></button>
+    <button type="button" class="stap" data-stap="geluiden" aria-label="Stap 2: Geluiden maken" title="Geluiden maken"><span class="l">Stap 2</span><svg class="ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg></button>
+    <button type="button" class="stap" data-stap="opnemen" aria-label="Stap 3: Verhaal inspreken" title="Verhaal inspreken"><span class="l">Stap 3</span><svg class="ok" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg></button>
   </nav>
 
   <!-- 01 MUZIEK -->
@@ -77,15 +77,17 @@
     <h1>Spreek jullie <em>verhaal</em> in</h1>
 
     <div class="werkbalk" id="o-balk">
-      <button type="button" class="opneemknop" id="o-knop" aria-label="Opnemen"><span class="ring" aria-hidden="true"></span><span class="tekst">Opnemen</span></button>
-      <span class="status" id="o-klok" aria-live="polite"></span>
-      <button type="button" class="wb" id="o-luister"></button>
-      <button type="button" class="wb" id="o-oefen"></button>
-      <label class="wb schakel" for="o-kop"><input type="checkbox" id="o-kop"><span class="schuif" aria-hidden="true"></span>Koptelefoon</label>
-      <span class="vul"></span>
-      <button type="button" class="wb" id="o-bewaar">Bewaren</button>
-    </div>
-    <p class="afzetten" id="o-afzetten" hidden>Doe de koptelefoon af en luister samen.</p>
+        <div class="kant links"><button type="button" class="wb" id="o-luister"></button></div>
+        <div class="midden">
+          <button type="button" class="opneemknop" id="o-knop" aria-label="Opnemen"><span class="ring" aria-hidden="true"></span><span class="tekst">Opnemen</span></button>
+          <span class="status" id="o-klok" aria-live="polite"></span>
+        </div>
+        <div class="kant rechts">
+          <label class="wb schakel" for="o-kop"><input type="checkbox" id="o-kop"><span class="schuif" aria-hidden="true"></span>Koptelefoon</label>
+          <button type="button" class="wb" id="o-bewaar">Bewaren</button>
+        </div>
+      </div>
+      <p class="afzetten" id="o-afzetten" hidden>Doe de koptelefoon af en luister samen.</p>
     <p class="melding" id="o-melding" role="status"></p>
 
     <div class="montage">
@@ -154,7 +156,7 @@
     <ol class="genummerd">
       <li><b>Muziek kiezen.</b> Kies bij <i>Muziek</i> een muziekje dat past bij het gevoel, en bij <i>Plek</i> het geluid van de plek waar het verhaal speelt, zoals een bos of de zee. Eén tik op een gezichtje laat het horen en kiest het meteen.</li>
       <li><b>Geluiden maken.</b> De kinderen maken zelf geluiden met spullen uit de klas, zoals voetstappen of een krakende deur. Ze nemen elk geluid op en geven het een naam.</li>
-      <li><b>Verhaal inspreken.</b> Alles gebeurt op de tijdlijn. Met <b>Oefenen</b> spelen de kinderen het verhaal samen door met muziek, zonder opname. Met <b>Opnemen</b> spreken de acteurs hun tekst in terwijl de geluidstechnicus op de geluiden drukt. Elke opname komt als een stuk achteraan op de tijdlijn, dus scène voor scène opnemen kan ook.</li>
+      <li><b>Verhaal inspreken.</b> Alles gebeurt op de tijdlijn. Met <b>Opnemen</b> spreken de acteurs hun tekst in terwijl de geluidstechnicus op de geluiden drukt. Elke opname komt als een stuk achteraan op de tijdlijn, dus scène voor scène opnemen kan ook.</li>
       <li><b>Verbeteren.</b> Stemmen, geluiden, muziek en plek staan als blokjes en stroken op de tijdlijn. Sleep ze naar een andere plek, of haal ze weg met ✕. Muziek en plek lopen vanzelf even lang mee als de stemmen; aan het rechteruiteinde van zo'n strook kun je trekken om hem eerder te laten stoppen.</li>
       <li><b>Bewaren.</b> Het hoorspel komt als mp3 in de map Downloads. Dat bestand speelt op elke telefoon of mp3-speler, bijvoorbeeld bij het storyboard.</li>
     </ol>
@@ -187,11 +189,11 @@
 <div class="aftellen" id="aftellen" hidden aria-live="assertive"><span id="aftel-getal">3</span></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="images/gezichten/lijst.js?v=202609281541"></script>
-<script src="js/opslag.js?v=202609281541"></script>
-<script src="js/audio.js?v=202609281541"></script>
-<script src="js/gezichten.js?v=202609281541"></script>
-<script src="js/bibliotheek.js?v=202609281541"></script>
-<script src="js/app.js?v=202609281541"></script>
+<script src="images/gezichten/lijst.js?v=20260928154731"></script>
+<script src="js/opslag.js?v=20260928154731"></script>
+<script src="js/audio.js?v=20260928154731"></script>
+<script src="js/gezichten.js?v=20260928154731"></script>
+<script src="js/bibliotheek.js?v=20260928154731"></script>
+<script src="js/app.js?v=20260928154731"></script>
 </body>
 </html>

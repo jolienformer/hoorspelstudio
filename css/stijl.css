@@ -596,3 +596,32 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 #s-opnemen #o-knop{width:124px;height:124px;margin-right:6px;flex:none;font-size:1rem}
 #s-opnemen #o-knop .tekst{margin:0}
 @media (max-width:640px){ #s-opnemen #o-knop{width:92px;height:92px;font-size:.95rem} }
+
+/* stapknoppen: alleen "Stap 1" met een los vinkje */
+.stap{flex-direction:row;gap:8px;min-height:56px}
+.stap .l{font-size:1.9rem;line-height:1}
+.stap .ok{display:none;width:20px;height:20px;border:0;border-radius:0;background:none;fill:none;stroke:var(--ok);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.stap.klaar .ok{display:block}
+.stap[aria-current="step"] .ok{stroke:#fff}
+@media (max-width:440px){ .stap .l{font-size:1.45rem} .stap .ok{width:16px;height:16px} }
+
+/* stap 03: opnameknop in het midden, knoppen in dezelfde vierkante stijl als de stappen */
+#s-opnemen .werkbalk{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:4px 0 16px}
+#s-opnemen .werkbalk .kant{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+#s-opnemen .werkbalk .links{justify-content:flex-end}
+#s-opnemen .werkbalk .rechts{justify-content:flex-start}
+#s-opnemen .werkbalk .midden{display:flex;flex-direction:column;align-items:center;gap:6px}
+#s-opnemen #o-knop{margin:0}
+#s-opnemen .wb{border:var(--line);border-radius:var(--radius);box-shadow:var(--shadow);height:46px;transition:transform .08s ease,box-shadow .08s ease}
+#s-opnemen .wb:active{transform:translate(3px,3px);box-shadow:none}
+@media (max-width:640px){
+  #s-opnemen .werkbalk{gap:8px}
+  #s-opnemen .werkbalk .kant{flex-direction:column;align-items:stretch}
+  #s-opnemen .wb{height:42px;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){ #s-opnemen .wb{transition:none} }
+#s-opnemen .werkbalk{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+@media (max-width:640px){
+  #s-opnemen .wb{padding:0 8px;font-size:.8rem;gap:6px}
+  #s-opnemen #o-knop{width:84px;height:84px;font-size:.8rem}
+}

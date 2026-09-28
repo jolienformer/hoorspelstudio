@@ -357,10 +357,7 @@ function renderOpnemen(){
   $('#o-knop').hidden = oefent;
   $('#o-luister').hidden = !heeft || bezig || oefent;
   $('#o-bewaar').hidden = !heeft || bezig || oefent;
-  $('#o-oefen').hidden = bezig;
-  knopInhoud($('#o-oefen'), oefent ? 'stop' : 'speel', oefent ? 'Stop' : 'Oefenen');
   if(!luister && !$('#o-luister').disabled) knopInhoud($('#o-luister'), 'speel', 'Luisteren');
-  $('#o-oefen').classList.toggle('aan', oefent);
   $('#o-kop').closest('.schakel').hidden = bezig;
   $('#o-afzetten').hidden = !(heeft && !bezig && afzetten);
   $('#o-alles-opnieuw').hidden = !heeft || bezig;
@@ -428,14 +425,6 @@ async function bedLagen(vanaf = 0){
   }
   return lagen;
 }
-async function startOefenen(){
-  stopAlles(); oefent = true; render();
-  try{ Geluid.speel(await bedLagen(0)); speelt = {wat:'oefen', id:'oefen'}; }
-  catch(e){ toast('De muziek kan nu niet spelen.'); }
-  if(!bedActief('muziek') && !bedActief('sfeer')) toast('Er speelt geen muziek. Je kunt wel met de geluiden oefenen.');
-}
-function stopOefenen(){ if(!oefent) return; oefent = false; Geluid.stop(); speelt = null; render(); }
-$('#o-oefen').onclick = () => oefent ? stopOefenen() : startOefenen();
 
 /* ---- tijdlijn: sporen onder elkaar, zoals in een montageprogramma ---- */
 const PAD = 12, RIJ = 62;
@@ -837,8 +826,8 @@ async function stopOpname(){
   cursor = stem.t;
   render();
   if(!ok) toast('Let op: bewaren op dit apparaat lukte niet. Tik op Bewaren.', 5000);
-  if(S.koptelefoon){ afzetten = true; zetKop(stem.t + stem.duur); render(); toast('Opgenomen! Doe de koptelefoon af en tik samen op Luisteren.', 5000); }
-  else luisterVanaf(stem.t);   /* meteen samen terugluisteren, vanaf het nieuwe stuk */
+  zetKop(stem.t);   /* afspeellijn aan het begin van het nieuwe stuk; luisteren doen ze zelf */
+  if(S.koptelefoon){ afzetten = true; render(); toast('Opgenomen! Doe de koptelefoon af en tik samen op Luisteren.', 5000); }
 }
 $('#o-knop').onclick = () => oRec ? stopOpname() : startOpname();
 
@@ -912,7 +901,7 @@ $('#o-alles-opnieuw').onclick = () => {
   S.opname = null; S.bedden = {}; mixCache = null; cursor = 0; afzetten = false; bewaar();
   if($('#groep-dlg').open) $('#groep-dlg').close();
   render();
-  toast('Oefen nog een keer, of spreek het opnieuw in.');
+  toast('Spreek het verhaal opnieuw in.');
 };
 $('#o-bewaar').onclick = async () => {
   const knop = $('#o-bewaar'); knop.disabled = true; knop.textContent = 'Bezig…';
