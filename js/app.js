@@ -58,6 +58,7 @@ function render(){
   $('#terug').hidden = i === 0;
   $('#verder').hidden = i === STAPPEN.length - 1;
   $('#verder').textContent = i === 0 ? 'Naar stap 02 →' : 'Naar stap 03 →';
+  if(S.stap !== 'opnemen') $('#o-bewaar').hidden = true;
   $('#groep-naam').textContent = S.groep || 'Ons groepje';
   if(S.stap === 'muziek') renderMuziek();
   if(S.stap === 'geluiden') renderGeluiden();
@@ -345,6 +346,8 @@ const ICOON = {
   pauze: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>',
   stop: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1.5"/></svg>'
 };
+/* afspeelknop in de hoek van de tijdlijn: alleen een icoon */
+function luisterKnop(stand){ const k = $('#o-luister'); k.innerHTML = stand === 'bezig' ? '<span class="bezig" aria-hidden="true"></span>' : ICOON[stand]; k.setAttribute('aria-label', stand === 'pauze' ? 'Pauze' : stand === 'bezig' ? 'Samenvoegen' : 'Luisteren'); }
 const knopInhoud = (el, icoon, tekst) => { el.innerHTML = (icoon ? ICOON[icoon] : '') + '<span class="tekst">' + tekst + '</span>'; };
 
 function renderOpnemen(){
@@ -356,9 +359,9 @@ function renderOpnemen(){
   $('#o-knop').classList.toggle('aan', bezig);
   $('#o-knop').hidden = oefent;
   $('#o-luister').hidden = !heeft || bezig || oefent;
-  $('#o-bewaar').hidden = !heeft || bezig || oefent;
-  if(!luister && !$('#o-luister').disabled) knopInhoud($('#o-luister'), 'speel', 'Luisteren');
+  if(!luister && !$('#o-luister').disabled) luisterKnop('speel');
   $('#o-kop').closest('.schakel').hidden = bezig;
+  $('#o-bewaar').hidden = !heeft || bezig;
   $('#o-alles-opnieuw').hidden = !heeft || bezig;
   if(!bezig){ $('#o-klok').textContent = ''; tekenTijdlijn(); }
 
@@ -867,16 +870,16 @@ function zetKop(t){
 function stopKop(){
   if(luister) zetKop(Geluid.context().currentTime - luister.start + luister.vanaf);   /* pauze: lijn blijft waar het was */
   cancelAnimationFrame(kopRaf); kopRaf = 0; luister = null;
-  knopInhoud($('#o-luister'), 'speel', 'Luisteren');
+  luisterKnop('speel');
 }
 async function luisterVanaf(vanaf){
   stopAlles();
   if(vanaf >= tijdlijnDuur() - 0.2) vanaf = 0;
-  const knop = $('#o-luister'); knopInhoud(knop, null, 'Samenvoegen…'); knop.disabled = true;
+  const knop = $('#o-luister'); luisterKnop('bezig'); knop.disabled = true;
   let buf;
   try{ buf = await maakMix(); }
-  catch(e){ knop.disabled = false; knopInhoud(knop, 'speel', 'Luisteren'); toast('De opname staat niet meer op dit apparaat. Neem opnieuw op.'); return; }
-  knop.disabled = false; knopInhoud(knop, 'pauze', 'Pauze');
+  catch(e){ knop.disabled = false; luisterKnop('speel'); toast('De opname staat niet meer op dit apparaat. Neem opnieuw op.'); return; }
+  knop.disabled = false; luisterKnop('pauze');
   const start = Geluid.speel([{buf}], () => { speelt = null; stopKop(); zetKop(totaal()); }, vanaf);
   speelt = {wat:'mix', id:'mix'}; luister = {start, vanaf};
   zetKop(vanaf);
@@ -915,7 +918,7 @@ $('#o-bewaar').onclick = async () => {
     setTimeout(() => URL.revokeObjectURL(url), 60000);
     toast(ext === 'mp3' ? 'Bewaard! Je vindt "' + naam + '.mp3" in de map Downloads.' : 'Bewaard als "' + naam + '.wav" in Downloads. (mp3 lukte niet zonder internet.)', 6000);
   }catch(e){ toast('Bewaren lukte niet. Probeer het nog een keer.'); }
-  knop.disabled = false; knop.textContent = 'Bewaren';
+  knop.disabled = false; knop.textContent = 'Bewaren als mp3';
 };
 
 /* toetsen 1 tot 9 bij opnemen */

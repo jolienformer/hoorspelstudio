@@ -652,3 +652,25 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 .montage{grid-template-columns:84px 1fr}
 .sporen-namen span{padding:0 12px}
 @media (max-width:640px){ .montage{grid-template-columns:64px 1fr} .sporen-namen span{padding:0 7px} }
+
+/* stap 03: alleen de opnameknop boven, koptelefoon als klein schuifje eronder */
+#s-opnemen .werkbalk{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0 18px}
+#s-opnemen .status{font-size:1rem}
+.schakel.koptel{font-weight:800;font-size:.88rem;color:var(--soft);gap:8px}
+.schakel.koptel .schuif{width:34px;height:20px;border-width:2px}
+.schakel.koptel .schuif::after{top:2px;left:2px;width:12px;height:12px}
+.schakel.koptel input:checked + .schuif::after{transform:translateX(14px)}
+
+/* afspeelknop in de lege hoek linksboven van de tijdlijn */
+.montage{position:relative}
+#s-opnemen .liniaal{height:46px}
+#s-opnemen .liniaal span{padding-top:6px}
+.speelhoek{position:absolute;top:5px;left:22px;z-index:7;width:38px;height:38px;border-radius:50%;border:2.5px solid var(--edge);background:var(--accent);color:#fff;box-shadow:2px 2px 0 var(--edge);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease}
+.speelhoek svg{width:14px;height:14px;fill:currentColor}
+.speelhoek:active{transform:translate(2px,2px);box-shadow:none}
+.speelhoek:disabled{cursor:default}
+.speelhoek .bezig{width:14px;height:14px;border-radius:50%;border:2.5px solid #fff;border-right-color:transparent;animation:draai .8s linear infinite}
+@keyframes draai{to{transform:rotate(360deg)}}
+@media (max-width:640px){ .speelhoek{left:13px} }
+@media (prefers-reduced-motion:reduce){ .speelhoek{transition:none} .speelhoek .bezig{animation:none} }
+@media (max-width:440px){ .dok .knop{font-size:.88rem;letter-spacing:.02em;white-space:nowrap;padding-inline:.6rem} }
