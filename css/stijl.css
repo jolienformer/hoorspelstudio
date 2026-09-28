@@ -157,18 +157,9 @@ input[type=text]{border:var(--line);background:var(--bg);border-radius:var(--rad
 .overzicht .wijzig{font-weight:800;font-size:.8rem;color:var(--accent);margin-top:2px}
 .podium{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:20px;text-align:center}
 .stil{font-weight:700;font-size:.9rem;color:var(--soft);margin:0;max-width:30em;background:var(--paper);border:2px solid var(--edge);border-radius:var(--radius);padding:.55rem .85rem}
-.tijdlijn{position:relative;overflow-x:auto;border:var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 10px 20px;margin-bottom:20px;-webkit-overflow-scrolling:touch}
-.golf{position:relative;height:56px;min-width:100%}
-.golf i{position:absolute;bottom:50%;width:3px;border-radius:2px;background:var(--ink);opacity:.7;transform:translateY(50%)}
-.golf .mk{position:absolute;top:-26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:1;border:0;background:none;padding:0;font:inherit;cursor:grab;touch-action:none}
-.golf .mk.gekozen span{outline:3px solid var(--accent);outline-offset:2px}
-.golf .mk.gekozen::after{background:var(--accent);width:3px}
-body.neemt-op .golf .mk{pointer-events:none}
-.golf .mk span{font-weight:900;font-size:.68rem;color:var(--on);background:var(--c);border:2px solid var(--edge);border-radius:5px;padding:0 5px;white-space:nowrap}
-.golf .mk::after{content:"";width:2px;height:60px;background:var(--edge)}
-.golf .bed{position:absolute;left:0;height:5px;border-radius:3px;background:var(--accent);bottom:-10px}
-.golf .bed.sfeer{bottom:-17px;background:var(--c-blauw)}
-.golf .kop{position:absolute;top:-8px;bottom:-20px;width:3px;background:var(--accent);z-index:2}
+.tijdlijn{position:relative;overflow-x:auto;border:var(--line);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:0 0 6px;margin-bottom:12px;-webkit-overflow-scrolling:touch;cursor:pointer}
+.tijdlijn.doel{outline:4px dashed var(--accent);outline-offset:3px}
+.golf{position:relative;min-width:100%}
 .daarna{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .daarna .knop{flex:1;min-width:140px;padding:.8rem 1rem;font-size:1.02rem}
 .daarna .bewaar{background:var(--accent);color:#fff}
@@ -249,7 +240,6 @@ body.oefent #o-voor{display:flex;margin-bottom:10px}
 body.oefent #o-deel2{display:none}
 body.oefent #o-deel1{border:0;background:none;box-shadow:none;padding:0}
 body.oefent #o-deel1 > :not(.oefen){display:none}
-.golf .mk.begin{transform:translateX(-1px);align-items:flex-start}
 
 /* ---------- stap 03: voorbereiding, meeklinken, verbeteren ---------- */
 .voorbereiding{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
@@ -276,10 +266,6 @@ body.oefent #o-deel1 > :not(.oefen){display:none}
 @keyframes loopt{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes plofje{from{transform:scale(.8)}to{transform:scale(1)}}
 
-.bewerk{--c:var(--c-geel);border:var(--line);border-left-width:10px;border-left-color:var(--c);background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
-.bewerk-titel{margin:0;font-weight:700}
-.bewerk .rij{justify-content:flex-start}
-.bewerk .knop{min-height:44px;padding:.45rem .8rem;font-size:.95rem}
 .tip{font-weight:700;font-size:.85rem;color:var(--soft);margin:-8px 0 16px}
 .uitleg{font-weight:700;font-size:.9rem;color:var(--soft);margin:-6px 0 12px}
 .uitleg:empty{display:none}
@@ -309,3 +295,29 @@ body.compact #o-geluiden-uitleg{order:1}
 .stap[aria-current="step"] .v{color:#fff;opacity:.9}
 .daarna .bewaar small{display:block;font-size:.72rem;font-weight:700;opacity:.9}
 @media (max-width:440px){ .stap .l{font-size:1.35rem} .stap .v{font-size:.65rem} .soort b{font-size:1.7rem} }
+
+/* tijdlijn met sporen */
+.liniaal{position:relative;height:22px;border-bottom:2px solid var(--edge)}
+.liniaal span{position:absolute;top:0;bottom:0;border-left:2px solid var(--muted);padding:3px 0 0 4px;font-weight:800;font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.spoor{position:relative;border-bottom:1.5px dashed var(--muted)}
+.spoor:last-of-type{border-bottom:0}
+.spoor.stem{height:74px}
+.spoor.fx{min-height:78px;background:color-mix(in srgb,var(--tint) 55%,transparent)}
+.spoor.bed{height:70px}
+.spoor-naam{position:sticky;left:0;display:inline-block;z-index:3;margin:4px 0 0 4px;padding:0 5px;border-radius:4px;background:var(--paper);font-weight:900;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.spoor.stem i{position:absolute;top:58%;width:4px;border-radius:2px;background:var(--ink);opacity:.7;transform:translateY(-50%)}
+.strook{position:absolute;height:20px;border:2px solid var(--edge);border-radius:6px;padding:0 8px;font-weight:800;font-size:.72rem;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--on)}
+.strook.m{top:22px;background:var(--accent);color:#fff}
+.strook.s{top:45px;background:var(--c-blauw)}
+.clip{--c:var(--c-geel);position:absolute;height:46px;display:flex;align-items:center;gap:6px;padding:4px 32px 4px 4px;background:var(--c);color:var(--on);border:2.5px solid var(--edge);border-radius:10px;box-shadow:2px 2px 0 var(--edge);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;z-index:2;transition:box-shadow .1s,transform .1s}
+.clip .gezicht{width:34px;flex:none;border-width:2px;border-radius:7px;box-shadow:none}
+.clip .naam{font-weight:900;font-size:.85rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clip .kruis{position:absolute;top:50%;right:4px;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:2px solid var(--edge);background:var(--paper);color:var(--ink);font-weight:900;font-size:.72rem;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.clip .kruis:hover{background:#C0321A;color:#fff}
+.clip.sleept{cursor:grabbing;box-shadow:5px 5px 0 var(--edge);transform:translateY(-3px);z-index:4;transition:none}
+.clip.tik{transform:translateY(2px);box-shadow:none}
+.clip.spook{position:fixed;width:170px;transform:translate(-50%,-50%) rotate(-3deg);pointer-events:none;z-index:50;box-shadow:5px 5px 0 var(--edge)}
+.golf .kop{position:absolute;top:0;bottom:0;width:3px;background:var(--accent);z-index:5;pointer-events:none}
+body.neemt-op .clip{cursor:default}
+.daarna{align-items:stretch}
+.daarna .knop{display:flex;flex-direction:column;align-items:center;justify-content:center}

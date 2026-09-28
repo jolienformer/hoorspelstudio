@@ -35,7 +35,7 @@ function svg(uitdr){
 function html(sleutel, uitdr){
   const bestanden = window.GEZICHTEN || {};
   const bestand = bestanden[sleutel];
-  if(bestand) return '<img src="' + bestand + '" alt="" loading="lazy" decoding="async">';
+  if(bestand) return '<img src="' + bestand + '" alt="" decoding="async">';
   return svg(uitdr);
 }
 /* gezichtjes voor zelfgemaakte geluiden */
@@ -49,7 +49,7 @@ function htmlGeluid(g){
   if(extra.length){
     const i = g.sleutel && g.sleutel.startsWith('geluid:') ? +g.sleutel.slice(7) : LIJST.indexOf(g.uitdr);
     const b = extra[Math.max(0, i) % extra.length];
-    return '<img src="' + b + '" alt="" loading="lazy" decoding="async">';
+    return '<img src="' + b + '" alt="" decoding="async">';
   }
   return svg(g.uitdr);
 }
