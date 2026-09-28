@@ -427,3 +427,9 @@ body.compact #o-lijst .tegel{min-height:0}
 .alles-opnieuw.gevaar{color:#C0321A}
 #s-opnemen.heeft .alles-opnieuw{order:5}
 #lk-titel:focus{outline:none}
+
+/* nieuw hoorspel beginnen, in het groepsnaam-venster */
+.nieuw-hoorspel{margin-top:6px;padding-top:14px;border-top:2px dashed var(--muted);display:flex;flex-direction:column;gap:8px}
+.nieuw-hoorspel .deel-tekst{font-size:.92rem;color:var(--soft)}
+.nieuw-hoorspel .knop{align-self:flex-start}
+.fijndruk{margin:0;font-size:.8rem;color:var(--muted)}
