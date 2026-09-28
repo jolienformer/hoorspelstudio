@@ -224,7 +224,6 @@ body.compact .stappen,
 body.compact #s-opnemen h1,
 body.compact #s-opnemen .lead,
 body.compact #o-gekozen,
-body.compact #o-voor,
 body.compact .toetsen,
 body.compact .voet,
 body.compact .dok{display:none}
@@ -236,10 +235,6 @@ body.compact #o-lijst{order:2}
 body.compact #tijdlijn{order:3;margin-top:22px}
 body.compact #o-lijst .tegel{min-height:120px}
 body.compact .klok{color:var(--accent)}
-body.oefent #o-voor{display:flex;margin-bottom:10px}
-body.oefent #o-deel2{display:none}
-body.oefent #o-deel1{border:0;background:none;box-shadow:none;padding:0}
-body.oefent #o-deel1 > :not(.oefen){display:none}
 
 /* ---------- stap 03: voorbereiding, meeklinken, verbeteren ---------- */
 .voorbereiding{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
@@ -402,7 +397,6 @@ body.compact #o-lijst .tegel{min-height:0}
 #s-opnemen.heeft #o-geluiden-uitleg{order:3}
 #s-opnemen.heeft #o-lijst{order:3;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:12px 10px;margin-bottom:10px}
 #s-opnemen.heeft #o-lijst .naam{font-size:.78rem}
-#s-opnemen.heeft #o-tip{order:4;margin-top:6px}
 #s-opnemen.heeft #o-afzetten{order:5}
 #s-opnemen.heeft #o-daarna{order:5}
 #s-opnemen.heeft .toetsen{display:none}
@@ -443,3 +437,26 @@ body.compact #o-lijst .tegel{min-height:0}
 #s-geluiden{display:flex;flex-direction:column}
 #s-geluiden.heeft .opnamevak{order:2;padding-top:22px}
 #s-geluiden.heeft #g-lijst-kop{margin-top:0}
+
+/* stap 03 vereenvoudigd: één grote knop, met oefenen en koptelefoon eronder */
+.bediening{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 18px;margin-top:4px}
+.bediening .oefen{align-self:auto;font-size:.95rem;padding:.55rem 1rem}
+.schakel{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:.92rem;cursor:pointer;user-select:none;-webkit-user-select:none}
+.schakel input{position:absolute;opacity:0;width:1px;height:1px}
+.schuif{position:relative;width:46px;height:26px;border-radius:13px;border:2.5px solid var(--edge);background:var(--paper);transition:background .15s}
+.schuif::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:var(--ink);transition:transform .15s}
+.schakel input:checked + .schuif{background:var(--ok)}
+.schakel input:checked + .schuif::after{transform:translateX(20px)}
+.schakel input:focus-visible + .schuif{outline:3px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){ .schuif,.schuif::after{transition:none} }
+
+/* na de eerste opname: eerst de balk, dan pas de knop om nog een stuk in te spreken (net als stap 02) */
+#s-opnemen.heeft #o-afzetten{order:1}
+#s-opnemen.heeft #tijdlijn{order:2}
+#s-opnemen.heeft #o-daarna{order:3}
+#s-opnemen.heeft .alles-opnieuw{order:3}
+#s-opnemen.heeft #o-geluiden-kop,
+#s-opnemen.heeft #o-geluiden-uitleg,
+#s-opnemen.heeft #o-lijst{order:4}
+#s-opnemen.heeft .podium{order:5;margin-top:18px}
+#s-opnemen .klok:empty{display:none}
