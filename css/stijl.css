@@ -590,3 +590,9 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
   .sporen-namen span{font-size:.66rem;padding:8px 6px 0}
   .wb{height:40px;padding:0 12px;font-size:.86rem}
 }
+
+/* stap 03: dezelfde ronde opnameknop als in stap 02 */
+#s-opnemen .werkbalk{position:static;align-items:center;gap:10px 12px;padding:4px 0 14px}
+#s-opnemen #o-knop{width:124px;height:124px;margin-right:6px;flex:none;font-size:1rem}
+#s-opnemen #o-knop .tekst{margin:0}
+@media (max-width:640px){ #s-opnemen #o-knop{width:92px;height:92px;font-size:.95rem} }

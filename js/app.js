@@ -351,7 +351,8 @@ function renderOpnemen(){
   const heeft = !!S.opname, bezig = !!oRec;
   document.body.classList.toggle('neemt-op-tl', bezig);
   $('#o-kop').checked = !!S.koptelefoon;
-  knopInhoud($('#o-knop'), bezig ? 'stop' : 'opnemen', bezig ? 'Stop' : 'Opnemen');
+  $('#o-knop').querySelector('.tekst').textContent = bezig ? 'Stop' : 'Opnemen';
+  $('#o-knop').setAttribute('aria-label', bezig ? 'Stop opname' : 'Opnemen');
   $('#o-knop').classList.toggle('aan', bezig);
   $('#o-knop').hidden = oefent;
   $('#o-luister').hidden = !heeft || bezig || oefent;
