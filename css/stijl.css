@@ -1,5 +1,6 @@
 /* Hoorspelstudio, in de stijl van de GevoelsAtlas */
 :root{
+  --zacht:rgba(17,17,17,.14);
   --bg:#F7F5EE; --paper:#FFFCF5; --ink:#111111; --soft:#555555; --muted:#8A8780;
   --edge:#111111; --accent:#FF5C35; --yellow:#FFD93D; --on:#111111; --tint:#FFF1D6;
   --bar:#111111; --bar-ink:#F7F5EE; --ok:#72C27A;
@@ -13,12 +14,12 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#191815; --paper:#24221E; --ink:#F7F5EE; --soft:#C9C5BB; --muted:#8F8B82;
-    --edge:#000000; --tint:#3A2E1C; --bar:#000000; --accent:#FF6A45; color-scheme:dark;
+    --edge:#000000; --tint:#3A2E1C; --bar:#000000; --accent:#FF6A45; --zacht:rgba(255,255,255,.14); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#191815; --paper:#24221E; --ink:#F7F5EE; --soft:#C9C5BB; --muted:#8F8B82;
-  --edge:#000000; --tint:#3A2E1C; --bar:#000000; --accent:#FF6A45; color-scheme:dark;
+  --edge:#000000; --tint:#3A2E1C; --bar:#000000; --accent:#FF6A45; --zacht:rgba(255,255,255,.14); color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -517,4 +518,75 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
   .opneemknop.klein{width:66px;height:66px;font-size:.7rem}
   .werkbalk .status{order:9;flex-basis:100%}
   .werkbalk .vul{display:none}
+}
+
+/* ================= stap 03: rustiger en minimalistischer ================= */
+#s-opnemen h1{margin-bottom:14px}
+
+/* knoppenbalk: één stijl, geen kader */
+#s-opnemen .werkbalk{border:0;box-shadow:none;border-radius:0;background:var(--bg);padding:8px 0;margin:0 0 8px;gap:8px}
+.wb{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border:2px solid var(--edge);border-radius:21px;background:var(--paper);color:var(--ink);font-weight:800;font-size:.92rem;cursor:pointer;white-space:nowrap}
+.wb svg{width:13px;height:13px;fill:currentColor;flex:none}
+.wb:hover{background:var(--tint)}
+.wb:disabled{opacity:.5;cursor:default}
+.wb.opnemen{background:var(--accent);color:#fff;border-color:var(--edge)}
+.wb.opnemen svg{transform:scale(calc(1 + var(--niveau,0) * .5));transition:transform .08s linear}
+.wb.opnemen.aan{background:var(--ink);color:var(--bg)}
+.wb.schakel{gap:10px;font-weight:800}
+.wb.schakel .schuif{width:34px;height:20px;border-width:2px}
+.wb.schakel .schuif::after{top:2px;left:2px;width:12px;height:12px}
+.wb.schakel input:checked + .schuif::after{transform:translateX(14px)}
+#s-opnemen .status{font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;min-width:0}
+#s-opnemen .status:empty{display:none}
+.afzetten{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;margin:0 0 8px!important;text-align:left!important;font-size:.95rem!important;color:var(--accent)!important}
+
+/* kader met spoornamen links en de tijdlijn rechts */
+.montage{display:grid;grid-template-columns:70px 1fr;border:2px solid var(--edge);border-radius:12px;background:var(--paper);overflow:hidden}
+.sporen-namen{display:flex;flex-direction:column;border-right:1px solid var(--zacht);background:var(--bg)}
+.sporen-namen span{display:block;box-sizing:border-box;padding:8px 10px 0;font-size:.74rem;font-weight:800;color:var(--soft);border-bottom:1px solid var(--zacht)}
+.sporen-namen span:last-child{border-bottom:0}
+.sporen-namen .lin{padding:0}
+#s-opnemen .tijdlijn{border:0;border-radius:0;box-shadow:none;margin:0;padding:0;background:none}
+#s-opnemen .liniaal{height:22px;border-bottom:1px solid var(--zacht)}
+#s-opnemen .liniaal span{border-left:1px solid var(--zacht);font-weight:700;color:var(--muted)}
+#s-opnemen .spoor{border-bottom:1px solid var(--zacht);background:none}
+#s-opnemen .spoor:last-of-type{border-bottom:0}
+#s-opnemen .spoor.stem,#s-opnemen .spoor.fx{min-height:76px}
+#s-opnemen .spoor.bed{height:62px;min-height:62px}
+
+/* blokjes en stroken: geen schaduw, dunne rand */
+#s-opnemen .clip{box-shadow:none;border-width:2px;border-radius:8px}
+#s-opnemen .clip.sleept{box-shadow:0 4px 10px rgba(0,0,0,.18)}
+#s-opnemen .clip:not(.stemclip){padding-right:26px}
+#s-opnemen .strook{top:9px;height:42px;box-shadow:none;border-width:2px;border-radius:8px;padding-right:44px}
+#s-opnemen .strook.sleept{box-shadow:0 4px 10px rgba(0,0,0,.18)}
+
+/* kruisje altijd binnen het blokje, rustig tot je eroverheen gaat */
+#s-opnemen .clip .kruis,#s-opnemen .strook .kruis{position:absolute;top:5px;right:5px;bottom:auto;transform:none;width:20px;height:20px;border:0;border-radius:50%;background:rgba(255,255,255,.55);color:var(--on);font-size:.66rem;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;opacity:.75}
+#s-opnemen .strook .kruis{top:50%;right:16px;transform:translateY(-50%)}
+#s-opnemen .clip .kruis:hover,#s-opnemen .strook .kruis:hover{background:#C0321A;color:#fff;opacity:1}
+#s-opnemen .clip .kruis.zeker{width:auto;padding:0 7px;border-radius:10px;background:#C0321A;color:#fff;opacity:1}
+
+/* handvat aan het einde van een strook: effen, zonder strepen */
+#s-opnemen .strook .rand{width:8px;border:0;background:rgba(0,0,0,.18);border-radius:0 6px 6px 0}
+#s-opnemen .strook .rand::after{content:none}
+#s-opnemen .strook.auto .rand{background:rgba(0,0,0,.18)}
+#s-opnemen .strook .terug{border-width:1.5px;font-size:.72rem}
+
+/* lege sporen */
+#s-opnemen .spoor-leeg{left:12px;top:18px;font-size:.8rem;font-weight:700;text-decoration:none;color:var(--muted)}
+#s-opnemen .spoor-leeg.hint{margin:26px 0 0 12px}
+
+/* geluiden: compacte rij gezichtjes onder de tijdlijn */
+.tegels.mini{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.tegels.mini .tegel{width:auto;min-height:0;padding:0;gap:0}
+.tegels.mini .tegel .gezicht{width:56px;box-shadow:none;border-width:2px}
+.tegels.mini .naam,.tegels.mini .meta,.tegels.mini .toets{display:none}
+.tegels.mini .leeg-vak{display:none}
+
+.alles-opnieuw{align-self:flex-start;margin:4px 0 0!important}
+@media (max-width:640px){
+  .montage{grid-template-columns:56px 1fr}
+  .sporen-namen span{font-size:.66rem;padding:8px 6px 0}
+  .wb{height:40px;padding:0 12px;font-size:.86rem}
 }
