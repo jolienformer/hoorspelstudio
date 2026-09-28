@@ -147,7 +147,7 @@ function renderSpeelknoppen(){
     const badge = b.querySelector('.badge'); if(badge) badge.textContent = laadt ? '…' : aan ? '■' : '▶';
   });
   const samenAan = speelt && speelt.wat === 'samen';
-  document.querySelectorAll('.vak').forEach(el => el.classList.toggle('samen', !!samenAan));
+  document.querySelectorAll('.vak').forEach(el => el.classList.toggle('samen-speelt', !!samenAan));
   const samen = $('#samen');
   samen.textContent = samenAan ? '■ Stoppen' : '▶ Samen luisteren';
 }
