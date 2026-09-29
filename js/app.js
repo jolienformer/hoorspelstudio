@@ -705,43 +705,65 @@ function verwijderStem(i){
   bewaar(); render();
   toast('Het stuk is weggehaald.');
 }
-/* met de muis een geluid uit de rij de tijdlijn in slepen */
+/* een geluid uit de rij de tijdlijn in slepen: met de muis meteen, met de vinger na even vasthouden */
 function sleepUitRij(tegelEl, g){
-  let start = null, spook = null;
-  const binnen = e => { const r = $('#tijdlijn').getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; };
-  tegelEl.addEventListener('pointerdown', e => {
-    if(e.pointerType === 'touch' || !S.opname || oRec) return;
-    start = {x: e.clientX, y: e.clientY}; try{ tegelEl.setPointerCapture(e.pointerId); }catch(err){}
-  });
-  tegelEl.addEventListener('pointermove', e => {
-    if(!start) return;
-    if(!spook && Math.hypot(e.clientX - start.x, e.clientY - start.y) > 8){
-      spook = document.createElement('div'); spook.className = 'clip spook';
-      spook.style.setProperty('--c', 'var(--c-' + g.kleur + ')');
-      spook.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span class="naam"></span>';
-      spook.querySelector('.naam').textContent = g.naam;
-      document.body.append(spook); tegelEl.dataset.gesleept = '1';
-    }
-    if(!spook) return;
-    spook.style.left = e.clientX + 'px'; spook.style.top = e.clientY + 'px';
-    $('#tijdlijn').classList.toggle('doel', binnen(e));
-    if(e.clientY < 70) window.scrollBy(0, -14); else if(e.clientY > innerHeight - 110) window.scrollBy(0, 14);
-  });
-  const eind = e => {
-    if(!start) return; start = null;
+  let start = null, spook = null, wacht = 0;
+  const binnen = (x, y) => { const r = $('#tijdlijn').getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; };
+  const pak = () => {
+    spook = document.createElement('div'); spook.className = 'clip spook';
+    spook.style.setProperty('--c', 'var(--c-' + g.kleur + ')');
+    spook.innerHTML = '<span class="gezicht">' + Gezichten.htmlGeluid(g.gez) + '</span><span class="naam"></span>';
+    spook.querySelector('.naam').textContent = g.naam;
+    document.body.append(spook); tegelEl.dataset.gesleept = '1';
+  };
+  const beweeg = (x, y) => {
+    spook.style.left = x + 'px'; spook.style.top = y + 'px';
+    $('#tijdlijn').classList.toggle('doel', binnen(x, y));
+    if(y < 70) window.scrollBy(0, -14); else if(y > innerHeight - 110) window.scrollBy(0, 14);
+    const tl = $('#tijdlijn'), r = tl.getBoundingClientRect();
+    if(binnen(x, y)){ if(x > r.right - 40) tl.scrollLeft += 12; else if(x < r.left + 40) tl.scrollLeft -= 12; }
+  };
+  const laat = (x, y, erin) => {
+    start = null; clearTimeout(wacht); wacht = 0;
     $('#tijdlijn').classList.remove('doel');
     if(!spook) return;
     spook.remove(); spook = null;
-    if(e.type !== 'pointerup' || !binnen(e)) return;
+    if(!erin || !binnen(x, y)) return;
     const gr = $('#golf').getBoundingClientRect();
-    const t = Math.max(0, Math.min(totaal(), xNaarT(e.clientX - gr.left)));
+    const t = Math.max(0, Math.min(totaal(), xNaarT(x - gr.left)));
     S.opname.tikken.push({g: g.id, t}); bewaar();
     if(speelt && speelt.wat === 'mix') stopAlles();
     tekenTijdlijn();
     toast('"' + g.naam + '" staat erbij.');
   };
-  tegelEl.addEventListener('pointerup', eind);
-  tegelEl.addEventListener('pointercancel', eind);
+  /* muis */
+  tegelEl.addEventListener('pointerdown', e => {
+    if(e.pointerType === 'touch' || !S.opname || oRec) return;
+    start = {x: e.clientX, y: e.clientY}; try{ tegelEl.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  tegelEl.addEventListener('pointermove', e => {
+    if(e.pointerType === 'touch' || !start) return;
+    if(!spook && Math.hypot(e.clientX - start.x, e.clientY - start.y) > 8) pak();
+    if(spook) beweeg(e.clientX, e.clientY);
+  });
+  tegelEl.addEventListener('pointerup', e => { if(e.pointerType !== 'touch' && start) laat(e.clientX, e.clientY, true); });
+  tegelEl.addEventListener('pointercancel', e => { if(e.pointerType !== 'touch' && start) laat(0, 0, false); });
+  /* vinger: even vasthouden (0,3 s), dan slepen; eerder bewegen = gewoon scrollen */
+  tegelEl.addEventListener('touchstart', e => {
+    if(!S.opname || oRec || e.touches.length > 1) return;
+    const v = e.touches[0]; start = {x: v.clientX, y: v.clientY};
+    wacht = setTimeout(() => { wacht = 0; if(!start) return; pak(); beweeg(start.x, start.y); if(navigator.vibrate) try{ navigator.vibrate(15); }catch(err){} }, 300);
+  }, {passive: true});
+  tegelEl.addEventListener('touchmove', e => {
+    if(!start) return;
+    const v = e.touches[0];
+    if(!spook){ if(Math.hypot(v.clientX - start.x, v.clientY - start.y) > 10){ clearTimeout(wacht); wacht = 0; start = null; } return; }
+    e.preventDefault();   /* niet scrollen tijdens het slepen */
+    beweeg(v.clientX, v.clientY);
+  }, {passive: false});
+  tegelEl.addEventListener('touchend', e => { if(!start) return; const v = e.changedTouches[0]; laat(v.clientX, v.clientY, true); });
+  tegelEl.addEventListener('touchcancel', () => { if(start) laat(0, 0, false); });
+  tegelEl.addEventListener('contextmenu', e => { if(S.opname) e.preventDefault(); });   /* geen menu bij lang drukken */
 }
 /* tik op de tijdlijn: afspelen of pauze */
 let geenKlik = false;
