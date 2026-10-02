@@ -336,9 +336,9 @@ body.neemt-op .clip{cursor:default}
 .samen{display:block;margin:4px auto 8px}
 .hint{text-align:center;font-weight:700;font-size:.88rem;color:var(--soft);margin:4px 0 14px}
 
-.kiesraster{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px 16px}
+.kiesraster{display:flex;flex-direction:column;gap:20px}
 .rgroep{display:flex;flex-direction:column;gap:6px}
-.rrij{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rrij{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:14px 12px}
 .rkop{margin:0;font-family:var(--f-head);font-size:1.7rem;line-height:1}
 .rtegel{display:flex;flex-direction:column;align-items:stretch;gap:6px;border:0;background:none;padding:0;text-align:center}
 .rgezicht{position:relative;display:block}
@@ -353,8 +353,8 @@ body.neemt-op .clip{cursor:default}
 .rspook{position:fixed;width:72px;transform:translate(-50%,-50%) rotate(-4deg);pointer-events:none;z-index:50}
 .rspook .gezicht{width:72px;box-shadow:4px 4px 0 var(--edge)}
 @media (max-width:440px){
-  .kiesraster{grid-template-columns:1fr 1fr;gap:16px 12px}
-  .rrij{gap:8px}
+  .kiesraster{gap:16px}
+  .rrij{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:10px 8px}
   .rkop{font-size:1.45rem}
   .rtegel .naam{font-size:.74rem}
   .vak-tab{min-height:0;padding:.4rem .5rem .55rem}

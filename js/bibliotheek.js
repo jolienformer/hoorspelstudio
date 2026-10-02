@@ -1,9 +1,8 @@
 /* De bibliotheek met muziek (op gevoel) en sfeergeluid (op plek).
 
-   Voorlopig worden alle stukjes in de browser gemaakt ("synth").
-   Later komen hier echte, rechtenvrije bestanden bij. Zet dan bij een stukje:
+   Elk stukje heeft een rechtenvrij bestand:
      bestand: 'audio/muziek/spannend-1.mp3', bron: 'Naam maker, licentie CC0'
-   Een stukje met een bestand gebruikt dat bestand, anders de synth.
+   Een stukje zonder bestand wordt in de browser gemaakt ("synth").
    Alles wordt bij het laden op dezelfde sterkte gebracht (muziek 0,15 en plek 0,1 rms). */
 (() => {
 const M = (id, naam, kleur, uitdr, stukken) => ({id, naam, kleur, uitdr, stukken});
@@ -13,41 +12,74 @@ const GEVOEL = [
     {titel:'Sluipen', synth:'spannend', v:0, bestand:'audio/muziek/spannend-1.mp3', bron:'"Sneaky Snitch" Kevin MacLeod (incompetech.com), CC BY 4.0'},
     {titel:'Wie is daar?', synth:'spannend', v:1, bestand:'audio/muziek/spannend-2.mp3', bron:'"Crypto" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('eng', 'Eng', 'paars', 'schrik', [
-    {titel:'Spookhuis', synth:'eng', v:0},
-    {titel:'Iets onder het bed', synth:'eng', v:1}]),
+    {titel:'Spookbelletjes', bestand:'audio/muziek/eng-1.mp3', bron:'"Darkest Child" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Niet wat het lijkt', bestand:'audio/muziek/eng-2.mp3', bron:'"Not As It Seems" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Zware stappen', bestand:'audio/muziek/eng-3.mp3', bron:'"Oppressive Gloom" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Spookradio', bestand:'audio/muziek/eng-4.mp3', bron:'"Supernatural Radio A" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Het verlaten huis', bestand:'audio/muziek/eng-5.mp3', bron:'"Decline" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('vrolijk', 'Vrolijk', 'geel', 'blij', [
-    {titel:'Zonnige ochtend', synth:'vrolijk', v:0},
-    {titel:'Huppelpas', synth:'vrolijk', v:1}]),
+    {titel:'Berenwals', bestand:'audio/muziek/vrolijk-1.mp3', bron:'"Teddy Bear Waltz" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Feest op het eiland', bestand:'audio/muziek/vrolijk-2.mp3', bron:'"Island Meet and Greet" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Vrolijke maandag', bestand:'audio/muziek/vrolijk-3.mp3', bron:'"Cheery Monday" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Zorgeloos', bestand:'audio/muziek/vrolijk-4.mp3', bron:'"Carefree" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Apenstreken', bestand:'audio/muziek/vrolijk-5.mp3', bron:'"Monkeys Spinning Monkeys" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('droevig', 'Droevig', 'blauw', 'verdrietig', [
-    {titel:'Regen op het raam', synth:'droevig', v:0},
-    {titel:'Afscheid', synth:'droevig', v:1}]),
+    {titel:'Verloren tijd', bestand:'audio/muziek/droevig-1.mp3', bron:'"Lost Time" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Zwaar hart', bestand:'audio/muziek/droevig-2.mp3', bron:'"Heavy Heart" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Regen op het raam', bestand:'audio/muziek/droevig-3.mp3', bron:'"Plaint" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Afscheid aan zee', bestand:'audio/muziek/droevig-4.mp3', bron:'"On the Shore" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Helemaal alleen', bestand:'audio/muziek/droevig-5.mp3', bron:'"Colorless Aura" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('geheimzinnig', 'Geheimzinnig', 'groen', 'sluw', [
-    {titel:'De verborgen kamer', synth:'geheimzinnig', v:0},
-    {titel:'Het oude boek', synth:'geheimzinnig', v:1}]),
+    {titel:'Het aquarium', bestand:'audio/muziek/geheimzinnig-1.mp3', bron:'"Aquarium" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De maanzaal', bestand:'audio/muziek/geheimzinnig-2.mp3', bron:'"Moonlight Hall" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De sneeuwkoningin', bestand:'audio/muziek/geheimzinnig-3.mp3', bron:'"The Snow Queen" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Op zolder', bestand:'audio/muziek/geheimzinnig-4.mp3', bron:'"Almost New" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('magisch', 'Magisch', 'roze', 'verwonderd', [
-    {titel:'Sterrenstof', synth:'magisch', v:0},
-    {titel:'De toverspreuk', synth:'magisch', v:1}]),
+    {titel:'De toverschool', bestand:'audio/muziek/magisch-1.mp3', bron:'"Magistar" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'IJswals', bestand:'audio/muziek/magisch-2.mp3', bron:'"Frost Waltz" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De suikerfee', bestand:'audio/muziek/magisch-3.mp3', bron:'"Dance of the Sugar Plum Fairy" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Sterrenstof', bestand:'audio/muziek/magisch-4.mp3', bron:'"Dreamy Flashback" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De toverdeur', bestand:'audio/muziek/magisch-5.mp3', bron:'"The Other Side of the Door" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('achtervolging', 'Achtervolging', 'oranje', 'schrik', [
-    {titel:'Op de vlucht', synth:'achtervolging', v:0},
-    {titel:'Race tegen de klok', synth:'achtervolging', v:1}]),
+    {titel:'Op de vlucht', bestand:'audio/muziek/achtervolging-1.mp3', bron:'"Hot Pursuit" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De grote achtervolging', bestand:'audio/muziek/achtervolging-2.mp3', bron:'"Le Grand Chase" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Alles loopt uit de hand', bestand:'audio/muziek/achtervolging-3.mp3', bron:'"Run Amok" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De ontsnapping', bestand:'audio/muziek/achtervolging-4.mp3', bron:'"Mistake the Getaway" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Race tegen de klok', bestand:'audio/muziek/achtervolging-5.mp3', bron:'"Prelude and Action" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('stoer', 'Stoer', 'rood', 'boos', [
-    {titel:'De held komt eraan', synth:'stoer', v:0},
-    {titel:'Het grote gevecht', synth:'stoer', v:1}]),
+    {titel:'De held komt eraan', bestand:'audio/muziek/stoer-1.mp3', bron:'"Heroic Age" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Het avontuur begint', bestand:'audio/muziek/stoer-2.mp3', bron:'"Our Story Begins" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Steeds sterker', bestand:'audio/muziek/stoer-3.mp3', bron:'"Rynos Theme" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De fanfare', bestand:'audio/muziek/stoer-4.mp3', bron:'"Mighty and Meek" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('grappig', 'Grappig', 'geel', 'lachen', [
-    {titel:'Oeps!', synth:'grappig', v:0},
-    {titel:'Het rare dier', synth:'grappig', v:1}]),
+    {titel:'Oeps!', bestand:'audio/muziek/grappig-1.mp3', bron:'"Fluffing a Duck" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De kabouters', bestand:'audio/muziek/grappig-2.mp3', bron:'"Goblin Tinker Soldier Spy" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Mars van de lepels', bestand:'audio/muziek/grappig-3.mp3', bron:'"March of the Spoons" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Huppelpiano', bestand:'audio/muziek/grappig-4.mp3', bron:'"Merry Go" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De gekke vuilnisbak', bestand:'audio/muziek/grappig-5.mp3', bron:'"Sergio\'s Magic Dustbin" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('dromerig', 'Dromerig', 'paars', 'slaperig', [
-    {titel:'Wolken kijken', synth:'dromerig', v:0},
-    {titel:'In een droom', synth:'dromerig', v:1}]),
+    {titel:'In een droom', bestand:'audio/muziek/dromerig-1.mp3', bron:'"Enchanted Journey" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'De nachtgrot', bestand:'audio/muziek/dromerig-2.mp3', bron:'"Night Cave" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Wolken kijken', bestand:'audio/muziek/dromerig-3.mp3', bron:'"Frozen Star" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Het speeldoosje', bestand:'audio/muziek/dromerig-4.mp3', bron:'"Melodie Victoria" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Langzame tijd', bestand:'audio/muziek/dromerig-5.mp3', bron:'"On the Passing of Time" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('feestelijk', 'Feestelijk', 'oranje', 'lachen', [
-    {titel:'Hoera!', synth:'feestelijk', v:0},
-    {titel:'Het grote feest', synth:'feestelijk', v:1}]),
+    {titel:'Hoera!', bestand:'audio/muziek/feestelijk-1.mp3', bron:'"Winner Winner!" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Het feestmaal', bestand:'audio/muziek/feestelijk-2.mp3', bron:'"Master of the Feast" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Strandfeest', bestand:'audio/muziek/feestelijk-3.mp3', bron:'"Beachfront Celebration" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Het grote feest', bestand:'audio/muziek/feestelijk-4.mp3', bron:'"Happy Alley" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Dansje', bestand:'audio/muziek/feestelijk-5.mp3', bron:'"Brightly Fancy" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('rustig', 'Rustig', 'groen', 'tevreden', [
-    {titel:'Theetijd', synth:'rustig', v:0},
-    {titel:'Lezen in de zon', synth:'rustig', v:1}]),
+    {titel:'Ochtend', bestand:'audio/muziek/rustig-1.mp3', bron:'"Morning" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Theetijd', bestand:'audio/muziek/rustig-2.mp3', bron:'"Easy Lemon" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Schommelen', bestand:'audio/muziek/rustig-3.mp3', bron:'"Porch Swing Days (slower)" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Lezen in de zon', bestand:'audio/muziek/rustig-4.mp3', bron:'"Clear Air" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Stille piano', bestand:'audio/muziek/rustig-5.mp3', bron:'"Gymnopedie No. 1" Kevin MacLeod (incompetech.com), CC BY 4.0'}]),
   M('hoopvol', 'Hoopvol', 'roze', 'tevreden', [
-    {titel:'Een nieuw begin', synth:'hoopvol', v:0},
-    {titel:'Toch weer vrienden', synth:'hoopvol', v:1}])
+    {titel:'Daar is de zon', bestand:'audio/muziek/hoopvol-1.mp3', bron:'"Adding the Sun" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Alles komt goed', bestand:'audio/muziek/hoopvol-2.mp3', bron:'"Life of Riley" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Een nieuw begin', bestand:'audio/muziek/hoopvol-3.mp3', bron:'"Reawakening" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Toch weer vrienden', bestand:'audio/muziek/hoopvol-4.mp3', bron:'"Reunited" Kevin MacLeod (incompetech.com), CC BY 4.0'}])
 ];
 
 const PLEK = [
@@ -55,38 +87,60 @@ const PLEK = [
     {titel:'Vogels in het bos', synth:'bos', v:0, bestand:'audio/plek/bos-1.mp3', bron:'GammaGool (freesound.org/s/850507), CC0'},
     {titel:'Bos bij nacht', synth:'bos', v:1, bestand:'audio/plek/bos-2.mp3', bron:'fribergmusic2024 (freesound.org/s/719558), CC0'}]),
   M('zee', 'Zee', 'blauw', 'verwonderd', [
-    {titel:'Golven op het strand', synth:'zee', v:0},
-    {titel:'Storm op zee', synth:'zee', v:1}]),
+    {titel:'Golven op het strand', bestand:'audio/plek/zee-1.mp3', bron:'Artem_Zaitsev (freesound.org/s/854630), CC0'},
+    {titel:'Harde wind aan zee', bestand:'audio/plek/zee-2.mp3', bron:'squashy555 (freesound.org/s/341368), CC0'}]),
   M('stad', 'Stad', 'bruin', 'sluw', [
-    {titel:'Drukke straat', synth:'stad', v:0},
-    {titel:'Stad bij nacht', synth:'stad', v:1}]),
+    {titel:'Bussen en auto\'s', bestand:'audio/plek/stad-1.mp3', bron:'VizAion (freesound.org/s/802498), CC0'},
+    {titel:'Drukke straat', bestand:'audio/plek/stad-2.mp3', bron:'khenshom (freesound.org/s/851332), CC0'}]),
   M('kasteel', 'Kasteel', 'paars', 'bang', [
-    {titel:'De grote zaal', synth:'kasteel', v:0},
-    {titel:'De kerker', synth:'kasteel', v:1}]),
+    {titel:'Rondleiding in het kasteel', bestand:'audio/plek/kasteel-1.mp3', bron:'hz37 (freesound.org/s/372609), CC0'},
+    {titel:'De grote zaal', bestand:'audio/plek/kasteel-2.mp3', bron:'Dani_S.T. (freesound.org/s/811903), CC0'},
+    {titel:'De herberg', bestand:'audio/plek/kasteel-3.mp3', bron:'brunoboselli (freesound.org/s/695295), CC0'},
+    {titel:'Middeleeuws dorp', bestand:'audio/plek/kasteel-4.mp3', bron:'ramonmineiro (freesound.org/s/578072), CC0'},
+    {titel:'De binnenplaats', bestand:'audio/plek/kasteel-5.mp3', bron:'blaukreuz (freesound.org/s/240582), CC0'},
+    {titel:'De kerker', bestand:'audio/plek/kasteel-6.mp3', bron:'Flamiffer (freesound.org/s/530161), CC0'},
+    {titel:'Donkere kelder', bestand:'audio/plek/kasteel-7.mp3', bron:'fawkes027 (freesound.org/s/192207), CC0'}]),
   M('ruimte', 'Ruimte', 'blauw', 'verwonderd', [
-    {titel:'In het ruimteschip', synth:'ruimte', v:0},
-    {titel:'Zweven tussen de sterren', synth:'ruimte', v:1}]),
+    {titel:'Het laboratorium', bestand:'audio/plek/ruimte-1.mp3', bron:'saangosu (freesound.org/s/688249), CC0'},
+    {titel:'In het ruimteschip', bestand:'audio/plek/ruimte-2.mp3', bron:'BurghRecords (freesound.org/s/456101), CC0'},
+    {titel:'Zweven tussen de sterren', bestand:'audio/plek/ruimte-3.mp3', bron:'kanaizo (freesound.org/s/699276), CC0'},
+    {titel:'Belletjes in de ruimte', bestand:'audio/plek/ruimte-4.mp3', bron:'Jim-Bretherick (freesound.org/s/614097), CC0'},
+    {titel:'Diep in de ruimte', bestand:'audio/plek/ruimte-5.mp3', bron:'Romeo_Kaleikau (freesound.org/s/588248), CC0'}]),
   M('onderwater', 'Onder water', 'groen', 'verwonderd', [
-    {titel:'Bubbels', synth:'onderwater', v:0},
-    {titel:'Diepe zee', synth:'onderwater', v:1}]),
+    {titel:'Bubbels', bestand:'audio/plek/onderwater-1.mp3', bron:'KolbyRFX (freesound.org/s/852478), CC0'},
+    {titel:'Duiken', bestand:'audio/plek/onderwater-2.mp3', bron:'felix.blume (freesound.org/s/384218), CC0'},
+    {titel:'Golven onder water', bestand:'audio/plek/onderwater-3.mp3', bron:'felix.blume (freesound.org/s/705058), CC0'},
+    {titel:'Diepe zee', bestand:'audio/plek/onderwater-4.mp3', bron:'SamsterBirdies (freesound.org/s/612175), CC0'},
+    {titel:'Onder water', bestand:'audio/plek/onderwater-5.mp3', bron:'Fission9 (freesound.org/s/504641), CC0'},
+    {titel:'Op de bodem', bestand:'audio/plek/onderwater-6.mp3', bron:'Oldome (freesound.org/s/862788), CC0'}]),
   M('weer', 'Regen en onweer', 'blauw', 'verdrietig', [
-    {titel:'Regen', synth:'weer', v:0},
-    {titel:'Onweer', synth:'weer', v:1}]),
+    {titel:'Regen', bestand:'audio/plek/weer-1.mp3', bron:'exuberate (freesound.org/s/580542), CC0'},
+    {titel:'Onweer', bestand:'audio/plek/weer-2.mp3', bron:'chrscrwfrd18 (freesound.org/s/157002), CC0'},
+    {titel:'Zware bui', bestand:'audio/plek/weer-3.mp3', bron:'Audeption (freesound.org/s/698811), CC0'}]),
   M('nacht', 'Nacht', 'paars', 'slaperig', [
-    {titel:'Krekels', synth:'nacht', v:0},
-    {titel:'Uil in de nacht', synth:'nacht', v:1}]),
+    {titel:'Krekels', bestand:'audio/plek/nacht-1.mp3', bron:'Defelozedd94 (freesound.org/s/522299), CC0'},
+    {titel:'Krekels dichtbij', bestand:'audio/plek/nacht-2.mp3', bron:'MrFossy (freesound.org/s/521844), CC0'},
+    {titel:'Heel veel krekels', bestand:'audio/plek/nacht-3.mp3', bron:'kyles (freesound.org/s/177687), CC0'},
+    {titel:'Uil in de nacht', bestand:'audio/plek/nacht-4.mp3', bron:'thom_cookes (freesound.org/s/475376), CC0'},
+    {titel:'Spookuilen', bestand:'audio/plek/nacht-5.mp3', bron:'DreamSavvyr (freesound.org/s/758441), CC0'}]),
   M('school', 'School', 'oranje', 'blij', [
-    {titel:'Klas vol kinderen', synth:'school', v:0},
-    {titel:'De lege gang', synth:'school', v:1}]),
+    {titel:'Klas vol kinderen', bestand:'audio/plek/school-1.mp3', bron:'rucisko (freesound.org/s/469489), CC0'},
+    {titel:'De lege gang', bestand:'audio/plek/school-2.mp3', bron:'kyles (freesound.org/s/455782), CC0'},
+    {titel:'Gang met galm', bestand:'audio/plek/school-3.mp3', bron:'kyles (freesound.org/s/453941), CC0'}]),
   M('kermis', 'Kermis', 'rood', 'lachen', [
-    {titel:'Druk op de kermis', synth:'kermis', v:0},
-    {titel:'Botsauto\'s', synth:'kermis', v:1}]),
+    {titel:'Carnaval', bestand:'audio/plek/kermis-1.mp3', bron:'klankbeeld (freesound.org/s/171478), CC0'},
+    {titel:'Druk op de kermis', bestand:'audio/plek/kermis-2.mp3', bron:'Garuda1982 (freesound.org/s/535909), CC0'},
+    {titel:'De draaimolen', bestand:'audio/plek/kermis-3.mp3', bron:'SergioJbs (freesound.org/s/579801), CC0'}]),
   M('boerderij', 'Boerderij', 'bruin', 'blij', [
-    {titel:'Koeien en kippen', synth:'boerderij', v:0},
-    {titel:'Kippenhok', synth:'boerderij', v:1}]),
+    {titel:'Op het erf', bestand:'audio/plek/boerderij-1.mp3', bron:'BenDrain (freesound.org/s/488050), CC0'},
+    {titel:'Loeiende koeien', bestand:'audio/plek/boerderij-2.mp3', bron:'qubodup (freesound.org/s/181955), CC0'},
+    {titel:'Koeien in de wei', bestand:'audio/plek/boerderij-3.mp3', bron:'bruno.auzet (freesound.org/s/692841), CC0'},
+    {titel:'Kippenhok', bestand:'audio/plek/boerderij-4.mp3', bron:'elkinjn (freesound.org/s/500637), CC0'},
+    {titel:'Kippen en een haan', bestand:'audio/plek/boerderij-5.mp3', bron:'SethAuldsAudio (freesound.org/s/810242), CC0'}]),
   M('oerwoud', 'Oerwoud', 'groen', 'schrik', [
-    {titel:'Apen en vogels', synth:'oerwoud', v:0},
-    {titel:'Kikkers in de regen', synth:'oerwoud', v:1}])
+    {titel:'Het oerwoud', bestand:'audio/plek/oerwoud-1.mp3', bron:'craigsmith (freesound.org/s/479573), CC0'},
+    {titel:'Brulapen', bestand:'audio/plek/oerwoud-2.mp3', bron:'cabinadevuelo (freesound.org/s/814851), CC0'},
+    {titel:'Kikkers in de regen', bestand:'audio/plek/oerwoud-3.mp3', bron:'titi2 (freesound.org/s/571243), CC0'}])
 ];
 
 [['gevoel', GEVOEL], ['plek', PLEK]].forEach(([soort, lijst]) => lijst.forEach(g => g.stukken.forEach((s, i) => {
