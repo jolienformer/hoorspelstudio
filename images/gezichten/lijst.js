@@ -8,18 +8,21 @@ window.GEZICHTEN = {
   'spannend': 'images/gezichten/spannend.jpg', // 1566_paars_gespannen.jpg
   'spannend-1': 'images/gezichten/spannend-1.jpg', // 1149_groen_gespannen.jpg
   'spannend-2': 'images/gezichten/spannend-2.jpg', // 474_geel_gespannen.jpg
+  'spannend-3': 'images/gezichten/spannend-3.jpg', // 454_groen_zenuwachtig.jpg
   'eng': 'images/gezichten/eng.jpg', // 1087_grijs_griezelig.jpg
   'eng-1': 'images/gezichten/eng-1.jpg', // 201_roze_griezelig.jpg
   'eng-2': 'images/gezichten/eng-2.jpg', // 325_blauw_griezelig.jpg
   'eng-3': 'images/gezichten/eng-3.jpg', // 291_blauw_griezelig.jpg
   'eng-4': 'images/gezichten/eng-4.jpg', // 1505_roze_monsterlijk.jpg
   'eng-5': 'images/gezichten/eng-5.jpg', // 1662_blauw_griezelig.jpg
+  'eng-6': 'images/gezichten/eng-6.jpg', // 424_groen_monsterlijk.jpg
   'vrolijk': 'images/gezichten/vrolijk.jpg', // 1470_oranje_opgewekt.jpg
   'vrolijk-1': 'images/gezichten/vrolijk-1.jpg', // 1410_blauw_vrolijk.jpg
   'vrolijk-2': 'images/gezichten/vrolijk-2.jpg', // 1335_blauw_opgewekt.jpg
   'vrolijk-3': 'images/gezichten/vrolijk-3.jpg', // 1273_groen_blij.jpg
   'vrolijk-4': 'images/gezichten/vrolijk-4.jpg', // 1160_groen_blij.jpg
   'vrolijk-5': 'images/gezichten/vrolijk-5.jpg', // 768_groen_opgetogen.jpg
+  'vrolijk-6': 'images/gezichten/vrolijk-6.jpg', // 954_bruin_blij.jpg
   'droevig': 'images/gezichten/droevig.jpg', // 681_wit_droevig.jpg
   'droevig-1': 'images/gezichten/droevig-1.jpg', // 1036_groen_verdrietig.jpg
   'droevig-2': 'images/gezichten/droevig-2.jpg', // 188_roze_verdrietig.jpg
@@ -31,41 +34,50 @@ window.GEZICHTEN = {
   'geheimzinnig-2': 'images/gezichten/geheimzinnig-2.jpg', // 991_paars_mysterieus.jpg
   'geheimzinnig-3': 'images/gezichten/geheimzinnig-3.jpg', // 456_groen_stiekem.jpg
   'geheimzinnig-4': 'images/gezichten/geheimzinnig-4.jpg', // 1019_blauw_mysterieus.jpg
+  'geheimzinnig-5': 'images/gezichten/geheimzinnig-5.jpg', // 1630_blauw_mysterieus.jpg
+  'geheimzinnig-6': 'images/gezichten/geheimzinnig-6.jpg', // 1829_bruin_verborgen.jpg
   'magisch': 'images/gezichten/magisch.jpg', // 638_roze_magisch.jpg
   'magisch-1': 'images/gezichten/magisch-1.jpg', // 1817_oranje_magisch.jpg
   'magisch-2': 'images/gezichten/magisch-2.jpg', // 318_blauw_magisch.jpg
   'magisch-3': 'images/gezichten/magisch-3.jpg', // 423_groen_hypnotisch.jpg
   'magisch-4': 'images/gezichten/magisch-4.jpg', // 1501_paars_magisch.jpg
   'magisch-5': 'images/gezichten/magisch-5.jpg', // 1301_blauw_behekst.jpg
+  'magisch-6': 'images/gezichten/magisch-6.jpg', // 347_blauw_magisch.jpg
   'achtervolging': 'images/gezichten/achtervolging.jpg', // 133_roze_snel.jpg
   'achtervolging-1': 'images/gezichten/achtervolging-1.jpg', // 1510_paars_geschrokken.jpg
   'achtervolging-2': 'images/gezichten/achtervolging-2.jpg', // 524_grijs_gehaast.jpg
   'achtervolging-3': 'images/gezichten/achtervolging-3.jpg', // 1267_groen_geschrokken.jpg
   'achtervolging-4': 'images/gezichten/achtervolging-4.jpg', // 640_roze_geschrokken.jpg
   'achtervolging-5': 'images/gezichten/achtervolging-5.jpg', // 726_blauw_geschrokken.jpg
+  'achtervolging-6': 'images/gezichten/achtervolging-6.jpg', // 296_blauw_geschrokken.jpg
+  'achtervolging-7': 'images/gezichten/achtervolging-7.jpg', // 979_roze_geschrokken.jpg
   'stoer': 'images/gezichten/stoer.jpg', // 1395_blauw_stoer.jpg
   'stoer-1': 'images/gezichten/stoer-1.jpg', // 1797_oranje_stoer.jpg
   'stoer-2': 'images/gezichten/stoer-2.jpg', // 1866_rood_stoer.jpg
   'stoer-3': 'images/gezichten/stoer-3.jpg', // 1045_groen_strijdbaar.jpg
   'stoer-4': 'images/gezichten/stoer-4.jpg', // 1616_blauw_heldhaftig.jpg
+  'stoer-5': 'images/gezichten/stoer-5.jpg', // 442_groen_stoer.jpg
   'grappig': 'images/gezichten/grappig.jpg', // 123_wit_grappig.jpg
   'grappig-1': 'images/gezichten/grappig-1.jpg', // 1826_geel_melig.jpg
   'grappig-2': 'images/gezichten/grappig-2.jpg', // 1186_bruin_melig.jpg
   'grappig-3': 'images/gezichten/grappig-3.jpg', // 1142_blauw_onnozel.jpg
   'grappig-4': 'images/gezichten/grappig-4.jpg', // 438_groen_onnozel.jpg
   'grappig-5': 'images/gezichten/grappig-5.jpg', // 1025_blauw_guitig.jpg
+  'grappig-6': 'images/gezichten/grappig-6.jpg', // 1280_groen_lollig.jpg
   'dromerig': 'images/gezichten/dromerig.jpg', // 542_groen_slaperig.jpg
   'dromerig-1': 'images/gezichten/dromerig-1.jpg', // 1293_blauw_slaperig.jpg
   'dromerig-2': 'images/gezichten/dromerig-2.jpg', // 743_blauw_afwezig.jpg
   'dromerig-3': 'images/gezichten/dromerig-3.jpg', // 1798_oranje_afwezig.jpg
   'dromerig-4': 'images/gezichten/dromerig-4.jpg', // 16_roze_sloom.jpg
   'dromerig-5': 'images/gezichten/dromerig-5.jpg', // 1091_wit_afwezig.jpg
+  'dromerig-6': 'images/gezichten/dromerig-6.jpg', // 13_groen_vermoeid.jpg
   'feestelijk': 'images/gezichten/feestelijk.jpg', // 1528_geel_feestelijk.jpg
   'feestelijk-1': 'images/gezichten/feestelijk-1.jpg', // 1348_groen_feestelijk.jpg
   'feestelijk-2': 'images/gezichten/feestelijk-2.jpg', // 1694_groen_feestelijk.jpg
   'feestelijk-3': 'images/gezichten/feestelijk-3.jpg', // 684_paars_uitgelaten.jpg
   'feestelijk-4': 'images/gezichten/feestelijk-4.jpg', // 240_paars_opgetogen.jpg
   'feestelijk-5': 'images/gezichten/feestelijk-5.jpg', // 1228_blauw_enthousiast.jpg
+  'feestelijk-6': 'images/gezichten/feestelijk-6.jpg', // 418_groen_euforisch.jpg
   'rustig': 'images/gezichten/rustig.jpg', // 246_paars_zen.jpg
   'rustig-1': 'images/gezichten/rustig-1.jpg', // 1294_blauw_sereen.jpg
   'rustig-2': 'images/gezichten/rustig-2.jpg', // 146_roze_vredig.jpg
@@ -121,10 +133,12 @@ window.GEZICHTEN = {
   'school-1': 'images/gezichten/school-1.jpg', // 585_bruin_slim.jpg
   'school-2': 'images/gezichten/school-2.jpg', // 1143_blauw_geleerd.jpg
   'school-3': 'images/gezichten/school-3.jpg', // 482_geel_slim.jpg
+  'school-4': 'images/gezichten/school-4.jpg', // 293_blauw_nieuwsgierig.jpg
   'kermis': 'images/gezichten/kermis.jpg', // 1107_roze_uitgelaten.jpg
   'kermis-1': 'images/gezichten/kermis-1.jpg', // 1315_blauw_uitgelaten.jpg
   'kermis-2': 'images/gezichten/kermis-2.jpg', // 665_roze_uitgelaten.jpg
   'kermis-3': 'images/gezichten/kermis-3.jpg', // 1426_paars_enthousiast.jpg
+  'kermis-4': 'images/gezichten/kermis-4.jpg', // 1580_roze_enthousiast.jpg
   'boerderij': 'images/gezichten/boerderij.jpg', // 759_groen_dierlijk.jpg
   'boerderij-1': 'images/gezichten/boerderij-1.jpg', // 1772_bruin_dierlijk.jpg
   'boerderij-2': 'images/gezichten/boerderij-2.jpg', // 1119_oranje_dierlijk.jpg
