@@ -694,3 +694,12 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 .knop.naar-klein b{color:var(--accent);margin-left:.25em}
 .dlg .knop.naar-klein{margin-top:12px;align-self:stretch;box-shadow:none;border-width:2px}
 .voet a{color:var(--ink);font-weight:800;text-underline-offset:3px}
+
+/* balans: muziek en plek zachter of voller ten opzichte van de stemmen */
+.balans{display:flex;align-items:center;gap:12px;width:min(360px,100%);margin:0 auto}
+.balans svg{width:30px;height:30px;flex:none;color:var(--ink)}
+.balans input{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:14px;border:2.5px solid var(--edge);border-radius:8px;background:var(--paper);margin:0;cursor:pointer}
+.balans input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:34px;height:34px;border-radius:50%;border:2.5px solid var(--edge);background:var(--accent);box-shadow:2px 2px 0 var(--edge)}
+.balans input::-moz-range-thumb{width:30px;height:30px;border-radius:50%;border:2.5px solid var(--edge);background:var(--accent);box-shadow:2px 2px 0 var(--edge)}
+.balans input:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.montage + .balans{margin-top:22px}

@@ -364,6 +364,8 @@ function renderOpnemen(){
   if(!luister && !$('#o-luister').disabled) luisterKnop('speel');
   $('#o-kop').closest('.schakel').hidden = bezig;
   $('#o-bewaar').hidden = !heeft || bezig;
+  $('#o-balans').hidden = !heeft || bezig || !(S.muziek || S.sfeer);
+  $('#o-balans-schuif').value = S.balans || 0;
   $('#o-alles-opnieuw').hidden = !heeft || bezig;
   if(!bezig){ $('#o-klok').textContent = ''; tekenTijdlijn(); }
 
@@ -376,6 +378,10 @@ function renderOpnemen(){
   });
 }
 $('#o-kop').onchange = e => { S.koptelefoon = e.target.checked; bewaar(); };
+$('#o-balans-schuif').onchange = e => {
+  S.balans = +e.target.value; bewaar(); mixCache = null;
+  if(speelt && speelt.wat === 'mix'){ stopAlles(); luisterVanaf(cursor); }   /* meteen horen hoe het nu klinkt */
+};
 
 /* groot kaartje: dit geluid klinkt nu */
 let nuT = 0;
@@ -652,6 +658,9 @@ function maakVersleepbaar(c, g){
 }
 /* ---- zacht / normaal / hard per blokje ---- */
 const VOL = {zacht: 0.5, hard: 1.8};
+/* balans aan het eind: muziek en plek zachter (stemmen duidelijker) of voller */
+const BALANS = {'-2': 1.6, '-1': 1.25, '0': 1, '1': 0.6, '2': 0.35};
+const balansF = () => BALANS[S.balans || 0] || 1;
 const volMerk = v => v ? '<span class="volmerk">' + v + '</span>' : '';
 function sluitVolume(){ const o = $('.volkeuze'); if(o) o.remove(); document.removeEventListener('pointerdown', buitenVolume, true); }
 function buitenVolume(e){ if(!e.target.closest('.volkeuze')) sluitVolume(); }
@@ -898,7 +907,7 @@ async function stemBuffer(id){
 }
 async function maakMix(){
   const o = S.opname;
-  const sleutel = [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(o), JSON.stringify(S.bedden || {})].join('|');
+  const sleutel = [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(o), JSON.stringify(S.bedden || {}), S.balans || 0].join('|');
   if(mixCache && mixCache.sleutel === sleutel) return mixCache.buf;
   const stemLijst = [];
   for(const s of o.stemmen){ try{ stemLijst.push({buf: await stemBuffer(s.id), t: s.t, vol: VOL[s.vol] || 1}); }catch(e){} }
@@ -911,7 +920,7 @@ async function maakMix(){
     sfeer: bedActief('sfeer') ? await Bibliotheek.laad(S.sfeer) : null,
     muziekVan: bed('muziek').van, muziekTot: bed('muziek').tot,
     sfeerVan: bed('sfeer').van, sfeerTot: bed('sfeer').tot,
-    muziekVol: VOL[bed('muziek').vol] || 1, sfeerVol: VOL[bed('sfeer').vol] || 1,
+    muziekVol: (VOL[bed('muziek').vol] || 1) * balansF(), sfeerVol: (VOL[bed('sfeer').vol] || 1) * balansF(),
     tikken
   });
   mixCache = {sleutel, buf};

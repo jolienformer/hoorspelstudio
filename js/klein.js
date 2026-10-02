@@ -126,6 +126,8 @@ function renderKnoppen(){
   });
   const samen = speelt && speelt.wat === 'samen';
   $('#samen').innerHTML = samen ? IK.stop : IK.speel; $('#samen').classList.toggle('aan', !!samen);
+  /* samen luisteren: beide vakken geel, want ze klinken allebei */
+  document.querySelectorAll('.k-vak').forEach(v => v.classList.toggle('beide', !!samen));
   if(S.stap === 'opnemen') renderLuisterKnop();
 }
 function tikStuk(s){
@@ -161,7 +163,9 @@ function micProbleem(el){ schud(el); spreek('De microfoon doet het niet. Vraag h
 
 /* ================= 2 opnemen ================= */
 /* S.verhaal = {id, duur, pieken:[0..1, PER_SEC per seconde]} */
-let vRec = null, mixCache = null, balkRaf = 0;
+let vRec = null, mixCache = null, balkRaf = 0, speelPos = null;   /* speelPos: {start, vanaf} tijdens luisteren */
+/* balans: muziek en plek zachter (stemmen duidelijker) of voller */
+const BALANS = {'-2': 1.6, '-1': 1.25, '0': 1, '1': 0.6, '2': 0.35};
 const stemBufs = new Map();
 
 /* ---- tijdbalk: het golfje van de opname; vol bij een halve minuut, daarna schuift alles in elkaar ---- */
@@ -191,6 +195,8 @@ function renderOpnemen(){
   $('#v-knop').classList.toggle('aan', bezig);
   $('#v-knop').setAttribute('aria-label', bezig ? 'Stop' : 'Opnemen');
   $('#v-opnieuw').innerHTML = IK.opnieuw; $('#v-bewaar').innerHTML = IK.bewaar;
+  $('#v-balans').hidden = !(S.muziek || S.sfeer);
+  $('#v-balans-schuif').value = S.balans || 0;
   $('#tijdbalk').classList.toggle('leeg', !heeft && !bezig);
   if(!bezig){
     tekenGolf(heeft ? S.verhaal.pieken || [] : [], heeft ? S.verhaal.duur : 0);
@@ -267,30 +273,36 @@ async function stemBuffer(id){
 }
 async function maakMix(){
   const v = S.verhaal;
-  const sleutel = [S.muziek, S.sfeer, v.id].join('|');
+  const sleutel = [S.muziek, S.sfeer, v.id, S.balans || 0].join('|');
+  const f = BALANS[S.balans || 0] || 1;
   if(mixCache && mixCache.sleutel === sleutel) return mixCache.buf;
   const buf = await Geluid.mix({
     stemmen: [{buf: await stemBuffer(v.id), t: 0}],
     muziek: S.muziek ? await Bibliotheek.laad(S.muziek) : null,
     sfeer: S.sfeer ? await Bibliotheek.laad(S.sfeer) : null,
-    tikken: []
+    tikken: [], muziekVol: f, sfeerVol: f
   });
   mixCache = {sleutel, buf};
   return buf;
 }
-async function luister(){
+async function luister(vanaf = 0){
   if(speelt && speelt.wat === 'mix'){ stopAlles(); zetKop(0, S.verhaal.duur); return; }
   stopAlles(); speelt = {wat:'mixen'}; renderLuisterKnop();
   let buf;
   try{ buf = await maakMix(); }catch(e){ speelt = null; renderLuisterKnop(); schud($('#v-luister')); return; }
   if(!speelt || speelt.wat !== 'mixen') return;
   const c = Geluid.context(), duur = S.verhaal.duur;
-  const start = Geluid.speel([{buf}], () => { speelt = null; cancelAnimationFrame(balkRaf); zetKop(0, duur); renderLuisterKnop(); });
-  speelt = {wat:'mix'}; renderLuisterKnop();
-  const loop = () => { zetKop(Math.max(0, c.currentTime - start), duur); balkRaf = requestAnimationFrame(loop); };
+  const start = Geluid.speel([{buf}], () => { speelt = null; speelPos = null; cancelAnimationFrame(balkRaf); zetKop(0, duur); renderLuisterKnop(); }, vanaf);
+  speelt = {wat:'mix'}; speelPos = {start, vanaf}; renderLuisterKnop();
+  const loop = () => { zetKop(Math.max(0, c.currentTime - start + vanaf), duur); balkRaf = requestAnimationFrame(loop); };
   loop();
 }
-$('#v-luister').onclick = luister;
+$('#v-luister').onclick = () => luister();
+$('#v-balans-schuif').onchange = e => {
+  S.balans = +e.target.value; bewaar(); mixCache = null;
+  /* speelt het al? dan meteen verder op dezelfde plek, met de nieuwe balans */
+  if(speelt && speelt.wat === 'mix' && speelPos){ const pos = Geluid.context().currentTime - speelPos.start + speelPos.vanaf; stopAlles(); luister(pos); }
+};
 let opnieuwZeker = 0;
 $('#v-opnieuw').onclick = () => {
   const b = $('#v-opnieuw');
