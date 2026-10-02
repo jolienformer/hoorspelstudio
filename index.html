@@ -7,10 +7,8 @@
 <meta name="description" content="Maak met je groepje een hoorspel: kies muziek, maak geluiden en neem jullie verhaal op.">
 <meta name="theme-color" content="#111111">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='5' y='5' width='90' height='90' rx='16' fill='%23FFD93D' stroke='%23111' stroke-width='8'/%3E%3Ccircle cx='35' cy='42' r='7' fill='%23111'/%3E%3Ccircle cx='65' cy='42' r='7' fill='%23111'/%3E%3Cellipse cx='50' cy='70' rx='9' ry='11' fill='%23111'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/stijl.css?v=20261002n">
+<link rel="stylesheet" href="css/fonten.css?v=20261002s">
+<link rel="stylesheet" href="css/stijl.css?v=20261002s">
 </head>
 <body>
 
@@ -99,6 +97,7 @@
     <button type="button" class="linkknop" id="leerkracht-knop">Voor de leerkracht</button>
     <a class="knop naar-klein" href="klein/">Groep 1 t/m 4? Naar Hoorspelstudio <b>Klein</b></a>
     <span>Hoorspelstudio hoort bij de lessenserie <i>De samenstelling</i> van Jolien Former.</span>
+    <p class="privacy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.6"/></svg><span>Jullie opnames blijven op dit apparaat. Er gaat niets naar internet.</span></p>
   </footer>
 </main>
 
@@ -117,6 +116,7 @@
     <p class="boven">Welkom in de</p>
     <h2 id="w-titel" class="logo-groot">Hoorspel<em>studio</em></h2>
     <p>Kies muziek, maak geluiden en spreek jullie verhaal in. Zo maken jullie een hoorspel!</p>
+    <p class="privacy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.6"/></svg><span>Jullie opnames blijven op dit apparaat. Er gaat niets naar internet.</span></p>
     <label for="w-naam">Hoe heet jullie groepje?</label>
     <input type="text" id="w-naam" maxlength="30" autocomplete="off" enterkeyhint="go" placeholder="bijvoorbeeld: De Mobielmakers">
     <p class="melding" id="w-melding" role="status"></p>
@@ -135,7 +135,7 @@
       <button type="submit" class="knop hoofd">Bewaren</button>
     </div>
     <div class="nieuw-hoorspel">
-      <p class="deel-tekst">Klaar met dit hoorspel en wil een ander groepje dit apparaat gebruiken?</p>
+      <p class="deel-tekst">Is jullie hoorspel klaar en wil een ander groepje dit apparaat gebruiken?</p>
       <button type="button" class="knop gevaar" id="wis-alles">Nieuw hoorspel beginnen</button>
       <button type="button" class="linkknop alles-opnieuw" id="o-alles-opnieuw" hidden>Alleen de opname wissen</button>
       <p class="fijndruk">Wist de groepsnaam, de muziek, de geluiden en de opname op dit apparaat. Bewaar jullie hoorspel eerst met Bewaren.</p>
@@ -148,6 +148,14 @@
   <div class="dlg lang">
     <h2 id="lk-titel" tabindex="-1">Voor de leerkracht</h2>
     <p>Met de Hoorspelstudio maakt een groepje van 3 of 4 kinderen samen een hoorspel bij hun verhaal. Het groepje werkt op één apparaat: een Chromebook, laptop of tablet.</p>
+    <h3>Privacy: veilig voor school</h3>
+    <ul class="vinkjes">
+      <li>Geen account en geen inlog nodig.</li>
+      <li>Opnames, groepsnamen en geluiden blijven op dit apparaat, in deze browser. Er gaat niets naar een server.</li>
+      <li>De app laadt niets van andere bedrijven: geen advertenties en geen volgsoftware. Ook de lettertypes staan op de eigen website.</li>
+      <li>Alleen met Bewaren komt er een bestand op het apparaat, in de map Downloads.</li>
+    </ul>
+    <p class="fijndruk">Zoals bij elke website ziet de server waar de pagina staat (GitHub) wel het internetadres van het apparaat dat de pagina opent.</p>
 
     <h3>Zo werkt het</h3>
     <ol class="genummerd">
@@ -158,12 +166,16 @@
       <li><b>Bewaren.</b> Het hoorspel komt als mp3 in de map Downloads. Dat bestand speelt op elke telefoon of mp3-speler, bijvoorbeeld bij het storyboard.</li>
     </ol>
 
+    <h3>Na de les: bewaren en verzamelen</h3>
+    <p>Schoolchromebooks wissen bij het uitloggen vaak alles wat in de browser staat, en soms ook de map Downloads. Een hoorspel dat niet bewaard is, is dan weg. Laat elk groepje aan het eind op <b>Bewaren als mp3</b> tikken: zolang dat nog niet gebeurd is, staat er <i>nog niet bewaard!</i> op de knop.</p>
+    <p>Verzamel direct na de les alle mp3's, bijvoorbeeld op een usb-stick of in de schooldrive. Elk bestand heeft de naam van het groepje, zodat je het makkelijk bij het juiste storyboard zet. Probeer dit vóór de eerste les één keer uit op een chromebook van school.</p>
+
     <h3>Rollen in het groepje</h3>
     <p>De <b>acteurs</b> spreken de tekst in. De <b>geluidstechnicus</b> drukt tijdens het inspreken op de geluiden. Spreek de rollen af voordat het groepje gaat oefenen.</p>
 
     <h3>Koptelefoon</h3>
     <p>Kiezen, geluiden maken en oefenen doet het groepje samen, <b>zonder koptelefoon</b>. Een Chromebook stuurt al het geluid naar de koptelefoon zodra die is aangesloten.</p>
-    <p>Pas bij het inspreken zet de geluidstechnicus de koptelefoon op en zet het schakelaar <b>Koptelefoon</b> aan. Die hoort dan de muziek en de geluiden, en de microfoon neemt alleen de stemmen op. Na de opname gaat de koptelefoon af en luistert het groepje samen.</p>
+    <p>Pas bij het inspreken zet de geluidstechnicus de koptelefoon op en zet de schakelaar <b>Koptelefoon</b> aan. Die hoort dan de muziek en de geluiden, en de microfoon neemt alleen de stemmen op. Na de opname gaat de koptelefoon af en luistert het groepje samen.</p>
     <p>Geen koptelefoon? Dan is het stil tijdens het inspreken, anders neemt de microfoon de muziek mee op. De app laat wel zien welk geluid er klinkt. Na de opname voegt de app alles samen, met de muziek zachter onder de stemmen.</p>
 
     <h3>Tips</h3>
@@ -173,8 +185,6 @@
     <p><b>Chromebook of Chrome:</b> tik links van het webadres op het icoontje en zet Microfoon op Toestaan. Laad de pagina daarna opnieuw.<br>
     <b>iPad of iPhone:</b> ga naar Instellingen › Safari › Microfoon en kies Toestaan.<br>
     Op sommige Chromebooks van school staat de microfoon uit. Vraag dan de ICT-beheerder om hem aan te zetten.</p>
-    <h3>Privacy</h3>
-    <p>Alle opnames blijven op dit apparaat, in deze browser. Er gaat niets naar internet. Alleen met Bewaren komt er een bestand in Downloads.</p>
     <h3>Nieuw groepje op dit apparaat</h3>
     <p>Tik rechtsboven op de groepsnaam en kies <b>Nieuw hoorspel beginnen</b>. Bewaar het hoorspel eerst met Bewaren.</p>
     <h3>Muziek en geluiden</h3>
@@ -189,11 +199,11 @@
 <div class="aftellen" id="aftellen" hidden aria-live="assertive"><span id="aftel-getal">3</span></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="images/gezichten/lijst.js?v=20261002n"></script>
-<script src="js/opslag.js?v=20261002n"></script>
-<script src="js/audio.js?v=20261002n"></script>
-<script src="js/gezichten.js?v=20261002n"></script>
-<script src="js/bibliotheek.js?v=20261002n"></script>
-<script src="js/app.js?v=20261002n"></script>
+<script src="images/gezichten/lijst.js?v=20261002s"></script>
+<script src="js/opslag.js?v=20261002s"></script>
+<script src="js/audio.js?v=20261002s"></script>
+<script src="js/gezichten.js?v=20261002s"></script>
+<script src="js/bibliotheek.js?v=20261002s"></script>
+<script src="js/app.js?v=20261002s"></script>
 </body>
 </html>

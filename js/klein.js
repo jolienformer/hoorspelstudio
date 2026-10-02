@@ -41,8 +41,9 @@ function spreek(tekst){
   ss.speak(u);
 }
 
-let S = {stap:'muziek', soort:'gevoel', muziek:null, sfeer:null, verhaal:null};
-const bewaar = () => Opslag.bewaarStaat(S);
+let S = {stap:'muziek', soort:'gevoel', muziek:null, sfeer:null, verhaal:null, groep:''};
+/* bij elke wijziging ook de bewaarknop bijwerken: zo klopt de herinnering altijd */
+const bewaar = () => { Opslag.bewaarStaat(S); if(S.stap === 'opnemen') renderBewaarKnop(); };
 
 /* ---------- afspelen: één ding tegelijk ---------- */
 let speelt = null;   // {wat, id}
@@ -194,7 +195,7 @@ function renderOpnemen(){
   $('#v-klaar').hidden = !heeft || bezig;
   $('#v-knop').classList.toggle('aan', bezig);
   $('#v-knop').setAttribute('aria-label', bezig ? 'Stop' : 'Opnemen');
-  $('#v-opnieuw').innerHTML = IK.opnieuw; $('#v-bewaar').innerHTML = IK.bewaar;
+  $('#v-opnieuw').innerHTML = IK.opnieuw; renderBewaarKnop();
   $('#v-balans').hidden = !(S.muziek || S.sfeer);
   $('#v-balans-schuif').value = S.balans || 0;
   $('#tijdbalk').classList.toggle('leeg', !heeft && !bezig);
@@ -271,9 +272,20 @@ async function stemBuffer(id){
   const blob = await Opslag.leesAudio(id); if(!blob) throw new Error('weg');
   const b = await Geluid.blobNaarBuffer(blob); stemBufs.set(id, b); return b;
 }
+/* alles wat de mix bepaalt; gelijk aan S.bewaard = deze versie is als mp3 bewaard */
+const mixSleutel = () => [S.muziek, S.sfeer, S.verhaal && S.verhaal.id, S.balans || 0].join('|');
+const nietBewaard = () => !!S.verhaal && S.bewaard !== mixSleutel();
+/* bewaarknop: pulseert zolang het nog niet bewaard is, daarna groen met een vinkje */
+function renderBewaarKnop(){
+  const knop = $('#v-bewaar'); if(knop.disabled) return;
+  const nog = nietBewaard();
+  knop.innerHTML = nog ? IK.bewaar : IK.vink;
+  knop.classList.toggle('herinner', nog); knop.classList.toggle('gelukt', !nog);
+  knop.setAttribute('aria-label', nog ? 'Bewaren als mp3 (nog niet bewaard)' : 'Bewaard. Nog een keer bewaren');
+}
 async function maakMix(){
   const v = S.verhaal;
-  const sleutel = [S.muziek, S.sfeer, v.id, S.balans || 0].join('|');
+  const sleutel = mixSleutel();
   const f = BALANS[S.balans || 0] || 1;
   if(mixCache && mixCache.sleutel === sleutel) return mixCache.buf;
   const buf = await Geluid.mix({
@@ -314,8 +326,10 @@ $('#v-opnieuw').onclick = () => {
   render();
 };
 $('#v-bewaar').onclick = async () => {
-  const knop = $('#v-bewaar'); knop.disabled = true; knop.innerHTML = '<span class="k-draai" aria-hidden="true"></span>';
-  const d = new Date(), naam = 'Hoorspel ' + d.getDate() + '-' + (d.getMonth() + 1) + ' ' + String(d.getHours()).padStart(2, '0') + '.' + String(d.getMinutes()).padStart(2, '0');
+  const knop = $('#v-bewaar'); knop.disabled = true; knop.classList.remove('herinner'); knop.innerHTML = '<span class="k-draai" aria-hidden="true"></span>';
+  /* bestandsnaam: de groepsnaam die de leerkracht heeft getypt, anders datum en tijd */
+  const d = new Date(), groep = (S.groep || '').replace(/[\\/:*?"<>|]+/g, '').trim();
+  const naam = 'Hoorspel ' + (groep || d.getDate() + '-' + (d.getMonth() + 1) + ' ' + String(d.getHours()).padStart(2, '0') + '.' + String(d.getMinutes()).padStart(2, '0'));
   try{
     const buf = await maakMix();
     let blob, ext = 'mp3';
@@ -324,27 +338,28 @@ $('#v-bewaar').onclick = async () => {
     const a = document.createElement('a'); a.href = url; a.download = naam + '.' + ext;
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 60000);
-    knop.innerHTML = IK.vink; knop.classList.add('gelukt');
-    setTimeout(() => { knop.innerHTML = IK.bewaar; knop.classList.remove('gelukt'); }, 2500);
-  }catch(e){ knop.innerHTML = IK.bewaar; schud(knop); }
-  knop.disabled = false;
+    S.bewaard = mixSleutel(); bewaar();
+  }catch(e){ schud(knop); }
+  knop.disabled = false; renderBewaarKnop();
 };
 
 /* ================= leerkracht ================= */
 $('#bronnen').innerHTML = [...Bibliotheek.GEVOEL, ...Bibliotheek.PLEK].flatMap(m => m.stukken.filter(x => x.bron).map(x => '<li><b>' + esc(x.titel) + '</b> · ' + esc(x.bron) + '</li>')).join('');
-$('#leerkracht-knop').onclick = () => { const d = $('#leerkracht'); d.showModal(); d.scrollTop = 0; $('#lk-titel').focus(); };
+$('#leerkracht-knop').onclick = () => { const d = $('#leerkracht'); $('#lk-groep').value = S.groep || ''; d.showModal(); d.scrollTop = 0; $('#lk-titel').focus(); };
+$('#lk-groep').addEventListener('input', e => { S.groep = e.target.value.trim(); bewaar(); });
 $('#lk-sluit').onclick = () => $('#leerkracht').close();
 let wisZeker = 0;
 $('#wis-alles').onclick = async () => {
   const b = $('#wis-alles');
-  if(!wisZeker){ b.textContent = 'Zeker weten? Tik nog een keer'; wisZeker = setTimeout(() => { wisZeker = 0; b.textContent = 'Nieuw hoorspel beginnen'; }, 4000); return; }
+  if(!wisZeker){ b.textContent = nietBewaard() ? 'Nog niet bewaard! Toch wissen? Tik nog een keer' : 'Zeker weten? Tik nog een keer'; wisZeker = setTimeout(() => { wisZeker = 0; b.textContent = 'Nieuw hoorspel beginnen'; }, 4000); return; }
   clearTimeout(wisZeker);
   stopAlles(); await Opslag.wisAlles(); location.reload();
 };
 
 /* geluid mag pas na een tik starten (iPad) */
 document.addEventListener('pointerdown', () => Geluid.context(), {once:true, capture:true});
-window.addEventListener('beforeunload', e => { if(vRec){ e.preventDefault(); e.returnValue = ''; } });
+/* niet zomaar weg: tijdens opnemen, of als het hoorspel nog niet bewaard is */
+window.addEventListener('beforeunload', e => { if(vRec || nietBewaard()){ e.preventDefault(); e.returnValue = ''; } });
 if(window.speechSynthesis) speechSynthesis.getVoices();   /* stemmen alvast laden */
 
 (async function start(){

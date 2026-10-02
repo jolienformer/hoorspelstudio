@@ -19,7 +19,8 @@ const ICOON = {
 };
 
 let S = {groep:'', stap:'muziek', soort:'gevoel', muziek:null, sfeer:null, geluiden:[], opname:null, koptelefoon:false};
-const bewaar = () => Opslag.bewaarStaat(S);
+/* bij elke wijziging ook de bewaarknop bijwerken: zo klopt 'nog niet bewaard' altijd */
+const bewaar = () => { Opslag.bewaarStaat(S); if(S.stap === 'opnemen') renderBewaarKnop(); };
 
 /* ---------- meldingen ---------- */
 let toastT = 0;
@@ -361,6 +362,7 @@ function renderOpnemen(){
   if(!luister && !$('#o-luister').disabled) luisterKnop('speel');
   $('#o-kop').closest('.schakel').hidden = bezig;
   $('#o-bewaar').hidden = !heeft || bezig;
+  renderBewaarKnop();
   $('#o-balans').hidden = !heeft || bezig || !(S.muziek || S.sfeer);
   $('#o-balans-schuif').value = S.balans || 0;
   $('#o-alles-opnieuw').hidden = !heeft || bezig;
@@ -897,9 +899,18 @@ async function stemBuffer(id){
   const blob = await Opslag.leesAudio(id); if(!blob) throw new Error('weg');
   const b = await Geluid.blobNaarBuffer(blob); stemBufs.set(id, b); return b;
 }
+/* alles wat de mix bepaalt; gelijk aan S.bewaard = deze versie is als mp3 bewaard */
+const mixSleutel = () => [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(S.opname), JSON.stringify(S.bedden || {}), S.balans || 0].join('|');
+const nietBewaard = () => !!(S.opname && S.opname.stemmen && S.opname.stemmen.length) && S.bewaard !== mixSleutel();
+function renderBewaarKnop(){
+  const knop = $('#o-bewaar'); if(knop.disabled) return;
+  const nog = nietBewaard();
+  knop.classList.toggle('nog', nog); knop.classList.toggle('bewaard', !nog);
+  knop.innerHTML = nog ? 'Bewaren als mp3<span class="nog-label">nog niet bewaard!</span>' : ICOON.vink + ' Bewaard';
+}
 async function maakMix(){
   const o = S.opname;
-  const sleutel = [S.muziek, S.sfeer, S.geluiden.map(g => g.id).join(), JSON.stringify(o), JSON.stringify(S.bedden || {}), S.balans || 0].join('|');
+  const sleutel = mixSleutel();
   if(mixCache && mixCache.sleutel === sleutel) return mixCache.buf;
   const stemLijst = [];
   for(const s of o.stemmen){ try{ stemLijst.push({buf: await stemBuffer(s.id), t: s.t, vol: VOL[s.vol] || 1}); }catch(e){} }
@@ -955,7 +966,7 @@ $('#o-luister').onclick = () => { (speelt && speelt.wat === 'mix') ? stopAlles()
 let opnieuwZeker = 0;
 $('#o-alles-opnieuw').onclick = () => {
   const b = $('#o-alles-opnieuw');
-  if(!opnieuwZeker){ b.textContent = 'Alles weggooien? Tik nog een keer'; b.classList.add('gevaar'); opnieuwZeker = setTimeout(() => { opnieuwZeker = 0; b.textContent = 'Alleen de opname wissen'; b.classList.remove('gevaar'); }, 3500); return; }
+  if(!opnieuwZeker){ b.textContent = nietBewaard() ? 'Nog niet bewaard! Toch weggooien? Tik nog een keer' : 'Alles weggooien? Tik nog een keer'; b.classList.add('gevaar'); opnieuwZeker = setTimeout(() => { opnieuwZeker = 0; b.textContent = 'Alleen de opname wissen'; b.classList.remove('gevaar'); }, 3500); return; }
   clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Alleen de opname wissen'; b.classList.remove('gevaar');
   stopAlles();
   stemmen().forEach(s => { Opslag.wisAudio(s.id); stemBufs.delete(s.id); });
@@ -965,7 +976,7 @@ $('#o-alles-opnieuw').onclick = () => {
   toast('Spreek het verhaal opnieuw in.');
 };
 $('#o-bewaar').onclick = async () => {
-  const knop = $('#o-bewaar'); knop.disabled = true; knop.textContent = 'Bezig…';
+  const knop = $('#o-bewaar'); knop.disabled = true; knop.classList.remove('nog'); knop.textContent = 'Bezig…';
   const naam = 'Hoorspel ' + (S.groep || 'groepje').replace(/[\\/:*?"<>|]+/g, '').trim();
   try{
     const buf = await maakMix();
@@ -976,9 +987,10 @@ $('#o-bewaar').onclick = async () => {
     const a = document.createElement('a'); a.href = url; a.download = naam + '.' + ext;
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 60000);
+    S.bewaard = mixSleutel(); bewaar();
     toast(ext === 'mp3' ? 'Bewaard! Je vindt "' + naam + '.mp3" in de map Downloads.' : 'Bewaard als "' + naam + '.wav" in Downloads. (mp3 lukte niet zonder internet.)', 6000);
   }catch(e){ toast('Bewaren lukte niet. Probeer het nog een keer.'); }
-  knop.disabled = false; knop.textContent = 'Bewaren als mp3';
+  knop.disabled = false; renderBewaarKnop();
 };
 
 /* toetsen 1 tot 9 bij opnemen */
@@ -1017,14 +1029,15 @@ $('#lk-sluit').onclick = () => $('#leerkracht').close();
 let wisZeker = 0;
 $('#wis-alles').onclick = async () => {
   const b = $('#wis-alles');
-  if(!wisZeker){ b.textContent = 'Zeker weten? Tik nog een keer'; wisZeker = setTimeout(() => { wisZeker = 0; b.textContent = 'Alles wissen'; }, 4000); return; }
+  if(!wisZeker){ b.textContent = nietBewaard() ? 'Nog niet bewaard! Toch wissen? Tik nog een keer' : 'Zeker weten? Tik nog een keer'; wisZeker = setTimeout(() => { wisZeker = 0; b.textContent = 'Nieuw hoorspel beginnen'; }, 4000); return; }
   clearTimeout(wisZeker);
   stopAlles(); await Opslag.wisAlles(); location.reload();
 };
 
 /* geluid mag pas na een tik starten (iPad) */
 document.addEventListener('pointerdown', () => Geluid.context(), {once:true, capture:true});
-window.addEventListener('beforeunload', e => { if(gRec || oRec){ e.preventDefault(); e.returnValue = ''; } });
+/* niet zomaar weg: tijdens opnemen, of als het hoorspel nog niet bewaard is */
+window.addEventListener('beforeunload', e => { if(gRec || oRec || nietBewaard()){ e.preventDefault(); e.returnValue = ''; } });
 
 /* ================= start ================= */
 (async function start(){

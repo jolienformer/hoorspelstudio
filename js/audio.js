@@ -314,7 +314,7 @@ function laadLame(){
   if(lame) return lame;
   lame = new Promise((res, rej) => {
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js';
+    s.src = 'js/lame.min.js';   /* lamejs 1.2.1 (LGPL), op de eigen website: geen contact met andere servers */
     s.onload = () => window.lamejs ? res() : rej(new Error('lame'));
     s.onerror = () => rej(new Error('lame'));
     document.head.append(s);

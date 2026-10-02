@@ -25,6 +25,8 @@
 .k-rond.groot.aan{background:var(--ink);color:var(--bg)}
 .k-rond.zeker{background:#C0321A;color:#fff;border-color:#C0321A;animation:wiebel .15s ease-in-out infinite alternate}
 .k-rond.gelukt{background:var(--ok);color:#111}
+/* bewaarknop: zachtjes pulseren zolang het hoorspel nog niet bewaard is */
+.k-rond.herinner{background:var(--accent);color:#fff;animation:herinner 1.6s ease-in-out infinite}
 .k-rond:disabled{opacity:.6;cursor:default}
 
 /* ---------- 1 muziek en plek ---------- */
@@ -103,5 +105,5 @@ body.neemt-op .k-stappen,body.neemt-op .k-dok,body.neemt-op .voet{visibility:hid
   .k-badge svg{width:14px;height:14px}
 }
 @media (prefers-reduced-motion:reduce){
-  .k-tegel.speelt .gezicht,.k-rond.zeker{animation:none}
+  .k-tegel.speelt .gezicht,.k-rond.zeker,.k-rond.herinner{animation:none}
 }

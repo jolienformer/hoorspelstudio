@@ -637,3 +637,20 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 .balans input::-moz-range-thumb{width:30px;height:30px;border-radius:50%;border:2.5px solid var(--edge);background:var(--accent);box-shadow:2px 2px 0 var(--edge)}
 .balans input:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 .montage + .balans{margin-top:22px}
+
+/* bewaren: herinnering zolang de nieuwste versie nog niet als mp3 bewaard is */
+#o-bewaar{position:relative}
+#o-bewaar.nog{animation:herinner 1.6s ease-in-out infinite}
+#o-bewaar .nog-label{position:absolute;top:-13px;right:10px;background:#C0321A;color:#fff;border:2px solid var(--edge);border-radius:10px;padding:0 .5rem;font-size:.66rem;font-weight:900;letter-spacing:.03em;line-height:1.5;white-space:nowrap}
+#o-bewaar.bewaard{background:var(--ok);color:#111}
+#o-bewaar svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em;margin-right:.2em}
+@keyframes herinner{0%,100%{box-shadow:var(--shadow)}50%{box-shadow:var(--shadow),0 0 0 6px color-mix(in srgb,var(--accent) 35%,transparent)}}
+@media (prefers-reduced-motion:reduce){ #o-bewaar.nog{animation:none} }
+
+/* privacy: slotje met één zin, en een lijst met vinkjes in de handleiding */
+.privacy{display:flex;align-items:center;gap:8px;margin:0;font-weight:800;font-size:.88rem;color:var(--ink)}
+.privacy svg{width:20px;height:20px;flex:none;color:var(--ok)}
+.dlg .privacy{justify-content:center;text-align:left;background:var(--tint);border-radius:var(--radius);padding:.5rem .75rem}
+.vinkjes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.vinkjes li{position:relative;padding-left:1.7rem}
+.vinkjes li::before{content:"";position:absolute;left:.15rem;top:.32em;width:.75rem;height:.4rem;border-left:3px solid var(--ok);border-bottom:3px solid var(--ok);transform:rotate(-45deg)}

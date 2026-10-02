@@ -14,6 +14,8 @@ Een gratis webapp waarmee kinderen een hoorspel maken. Hoort bij de lessenserie 
 
 Opnames blijven in de browser op het apparaat (IndexedDB). Er gaat niets naar een server. Alleen *Bewaren* maakt een bestand, en dat komt in Downloads. De grote en de kleine versie bewaren apart van elkaar.
 
+De app laadt niets van andere servers: de lettertypes (`fonts/`, SIL Open Font License) en de mp3-maker (`js/lame.min.js`, lamejs 1.2.1, LGPL-3.0) staan op de eigen website. Houd dat zo: geen Google Fonts, cdn's of trackers toevoegen.
+
 ## Mappen
 
 | Map | Wat staat erin |
@@ -22,9 +24,11 @@ Opnames blijven in de browser op het apparaat (IndexedDB). Er gaat niets naar ee
 | `klein/index.html` | De kleine versie (gebruikt `<base href="../">`, dus dezelfde paden als de grote) |
 | `css/stijl.css` | De stijl, in de huisstijl van de GevoelsAtlas |
 | `css/klein.css` | Extra stijl voor de kleine versie |
+| `css/fonten.css`, `fonts/` | De lettertypes Nunito en Amatic SC, met licenties |
 | `js/app.js` | De schermen en de flow van de grote versie |
 | `js/klein.js` | De schermen en de flow van de kleine versie |
 | `js/audio.js` | Opnemen, afspelen, samenvoegen en mp3 (gedeeld) |
+| `js/lame.min.js` | De mp3-maker (lamejs) |
 | `js/bibliotheek.js` | Alle gevoelens, plekken en stukjes muziek (gedeeld) |
 | `js/opslag.js` | Bewaren in de browser (gedeeld) |
 | `js/gezichten.js` | Gezichtjes tonen (gedeeld) |
@@ -40,7 +44,7 @@ Opnames blijven in de browser op het apparaat (IndexedDB). Er gaat niets naar ee
    node hulpmiddelen/maak-lus.js tussen.wav website/audio/plek/zee-3.mp3 plek 3 60 lame.min.js
    ```
    Voor muziek: `muziek 3 0` (hele stuk), voor plekgeluid: `plek 3 60` (hooguit een minuut).
-   `lame.min.js` komt van https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js.
+   `lame.min.js` staat in `website/js/`.
 3. Zet het stukje **achteraan** de juiste groep in `js/bibliotheek.js`:
    ```js
    {titel:'Golven bij nacht', bestand:'audio/plek/zee-3.mp3', bron:'Maker (freesound.org/s/12345), CC0'}
