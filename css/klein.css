@@ -1,0 +1,107 @@
+/* Hoorspelstudio Klein: bovenop stijl.css. Grote knoppen, gezichtjes, geen tekst. */
+.logo small{font-family:var(--f-body);font-weight:900;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);vertical-align:.35em}
+.k-hulp{width:46px;height:46px;border-radius:50%;border:2px solid var(--bar-ink);background:transparent;color:var(--bar-ink);display:grid;place-items:center;padding:0}
+.k-hulp svg{width:26px;height:26px}
+.k-hulp:active{transform:scale(.92)}
+
+/* ---------- stappen: drie rondjes met een lijntje ---------- */
+.k-stappen{display:flex;align-items:center;justify-content:center;gap:0;margin:4px 0 24px}
+.k-lijn{flex:0 1 48px;height:3px;background:var(--edge);opacity:.35}
+.k-stap{position:relative;width:64px;height:64px;border-radius:50%;border:var(--line);background:var(--paper);color:var(--ink);box-shadow:var(--shadow);display:grid;place-items:center;padding:0}
+.k-stap > svg{width:30px;height:30px}
+.k-stap[aria-current="step"]{background:var(--accent);color:#fff;transform:translate(3px,3px);box-shadow:none;width:76px;height:76px}
+.k-stap[aria-current="step"] > svg{width:36px;height:36px}
+.k-ok{display:none;position:absolute;right:-6px;top:-6px;width:26px;height:26px;border-radius:50%;background:var(--ok);color:#111;border:2px solid var(--edge);place-items:center}
+.k-ok svg{width:15px;height:15px}
+.k-stap.klaar .k-ok{display:grid}
+
+/* ---------- ronde knoppen ---------- */
+.k-rond{width:72px;height:72px;border-radius:50%;border:var(--line);background:var(--paper);color:var(--ink);box-shadow:var(--shadow);display:grid;place-items:center;padding:0;transition:transform .08s ease,box-shadow .08s ease}
+.k-rond svg{width:34px;height:34px}
+.k-rond:active{transform:translate(3px,3px);box-shadow:none}
+.k-rond.aan{background:var(--ink);color:var(--bg)}
+.k-rond.groot{width:112px;height:112px;background:var(--accent);color:#fff}
+.k-rond.groot svg{width:54px;height:54px}
+.k-rond.groot.aan{background:var(--ink);color:var(--bg)}
+.k-rond.zeker{background:#C0321A;color:#fff;border-color:#C0321A;animation:wiebel .15s ease-in-out infinite alternate}
+.k-rond.gelukt{background:var(--ok);color:#111}
+.k-rond:disabled{opacity:.6;cursor:default}
+
+/* ---------- 1 muziek en plek ---------- */
+.k-vakken{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.k-vak{display:flex;align-items:center;justify-content:center;gap:14px;border:var(--line);border-radius:14px;background:var(--paper);box-shadow:var(--shadow);padding:12px;min-height:108px;color:var(--ink)}
+.k-vak.open{background:var(--yellow);color:#111;transform:translate(3px,3px);box-shadow:none}
+.k-vak-ik svg{width:42px;height:42px;display:block}
+.k-vak-naam{font-family:var(--f-head);font-weight:700;font-size:2rem;line-height:1}
+.k-vak-kop{display:flex;flex-direction:column;align-items:center;gap:4px}
+.k-vak-keus{width:72px;flex:none}
+.k-vak-keus .gezicht{width:72px;border-width:2px;box-shadow:2px 2px 0 var(--edge)}
+.k-leeg{display:block;width:72px;aspect-ratio:1;border:2.5px dashed currentColor;border-radius:12px;opacity:.45}
+.k-samen{margin:16px auto 0;display:grid}
+.k-raster{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.k-groepblok{display:flex;flex-direction:column;gap:8px;padding-bottom:22px;border-bottom:2px dashed var(--zacht)}
+.k-groepblok:last-child{border-bottom:0}
+.k-groepnaam{align-self:flex-start;display:flex;align-items:center;gap:8px;border:0;background:none;padding:2px 0;color:var(--ink)}
+.k-groepnaam span{font-family:var(--f-head);font-weight:700;font-size:2.1rem;line-height:1}
+.k-groepnaam svg{width:22px;height:22px;opacity:.5}
+.k-groepnaam:active svg{opacity:1;color:var(--accent)}
+.k-groep{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:14px 12px}
+
+/* ---------- tegel: een gezichtje met een rond knopje ---------- */
+.k-tegel{position:relative;display:block;border:0;background:none;padding:0;width:100%;-webkit-touch-callout:none}
+.k-tegel .gezicht{width:100%}
+.k-tegel:active .gezicht,.k-tegel.tik .gezicht{transform:translate(3px,3px);box-shadow:none}
+.k-tegel.tik .gezicht{animation:sprong .35s ease-out}
+.k-badge{position:absolute;right:-6px;bottom:-6px;width:34px;height:34px;border-radius:50%;border:2.5px solid var(--edge);background:var(--paper);color:var(--ink);display:grid;place-items:center}
+.k-badge svg{width:17px;height:17px}
+.k-tegel.gekozen .gezicht{outline:4px solid var(--accent);outline-offset:3px}
+.k-tegel.gekozen .k-badge{background:var(--ok);color:#111}
+.k-tegel.speelt .k-badge{background:var(--accent);color:#fff}
+.k-tegel.speelt .gezicht{animation:wiebel .6s ease-in-out infinite alternate}
+.k-tegel.laadt .k-badge{animation:draai .8s linear infinite}
+@keyframes sprong{0%{transform:scale(1)}40%{transform:scale(1.12) rotate(-4deg)}100%{transform:scale(1)}}
+
+/* ---------- grote opneemknop ---------- */
+.k-midden{display:flex;justify-content:center;margin:18px 0 26px}
+.k-opneem{--niveau:0;position:relative;width:140px;height:140px;border-radius:50%;border:3px solid var(--edge);background:var(--accent);box-shadow:5px 5px 0 var(--edge);display:grid;place-items:center;padding:0;transition:transform .08s ease,box-shadow .08s ease}
+.k-opneem.groot{width:168px;height:168px}
+.k-opneem:active{transform:translate(4px,4px);box-shadow:none}
+.k-opneem:disabled{opacity:.45;cursor:default}
+.k-opneem::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:7px solid var(--accent);opacity:0;transform:scale(calc(1 + var(--niveau) * .35));transition:transform .08s linear}
+.k-stip{width:44px;height:44px;border-radius:50%;background:#fff;transition:border-radius .15s ease}
+.k-opneem.groot .k-stip{width:54px;height:54px}
+.k-opneem.aan{background:var(--ink)}
+.k-opneem.aan::before{opacity:.55}
+.k-opneem.aan .k-stip{border-radius:8px;background:var(--bg)}
+
+/* ---------- 2 opnemen: tijdbalk met het golfje ---------- */
+.k-tijdbalk{position:relative;height:96px;margin:6px 0 4px;border:var(--line);border-radius:14px;background:var(--paper);box-shadow:var(--shadow);padding:0 12px;color:var(--accent)}
+.k-tijdbalk.leeg{border-style:dashed;box-shadow:none;background:transparent}
+.k-tijdbalk canvas{display:block;width:100%;height:100%;color:var(--accent)}
+.k-kop{position:absolute;top:-8px;bottom:-8px;width:4px;border-radius:2px;background:var(--ink);transform:translateX(-2px)}
+.k-kop::before{content:"";position:absolute;top:-6px;left:50%;width:14px;height:14px;border-radius:50%;background:var(--ink);transform:translateX(-50%)}
+.k-klaar{display:flex;flex-direction:column;align-items:center;gap:22px;margin:26px 0 10px}
+.k-rij{display:flex;gap:22px}
+body.neemt-op .k-stappen,body.neemt-op .k-dok,body.neemt-op .voet{visibility:hidden}
+.k-draai{width:30px;height:30px;border-radius:50%;border:4px solid currentColor;border-right-color:transparent;animation:draai .8s linear infinite}
+
+/* ---------- onderbalk: alleen pijlen ---------- */
+.k-dok .knop{display:grid;place-items:center;min-height:60px}
+.k-dok .knop svg{width:34px;height:34px}
+.k-dok .k-terug{flex:0 0 84px}
+
+.schud{animation:schud .45s ease-in-out}
+@keyframes schud{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+
+@media (max-width:440px){
+  .k-vak{flex-direction:column;gap:8px;min-height:0;padding:10px}
+  .k-vak-ik svg{width:30px;height:30px}
+  .k-vak-kop{flex-direction:row;gap:8px}
+  .k-vak-naam{font-size:1.7rem}
+  .k-groep{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:12px 10px}
+  .k-badge{width:28px;height:28px}
+  .k-badge svg{width:14px;height:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .k-tegel.speelt .gezicht,.k-rond.zeker{animation:none}
+}

@@ -7,7 +7,7 @@ let db = null;
 function open(){
   return new Promise(res => {
     try{
-      const r = indexedDB.open('hoorspelstudio-v2', 1);
+      const r = indexedDB.open(window.HS_OPSLAG || 'hoorspelstudio-v2', 1);
       r.onupgradeneeded = () => { r.result.createObjectStore('kv'); r.result.createObjectStore('audio'); };
       r.onsuccess = () => res(r.result);
       r.onerror = () => res(null);

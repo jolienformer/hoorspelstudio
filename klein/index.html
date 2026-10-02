@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>Hoorspelstudio Klein</title>
+<meta name="description" content="Hoorspelstudio voor groep 1 tot en met 4: kies muziek, maak een geluid en vertel je verhaal.">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='5' y='5' width='90' height='90' rx='16' fill='%23FFD93D' stroke='%23111' stroke-width='8'/%3E%3Ccircle cx='35' cy='42' r='7' fill='%23111'/%3E%3Ccircle cx='65' cy='42' r='7' fill='%23111'/%3E%3Cellipse cx='50' cy='70' rx='9' ry='11' fill='%23111'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/stijl.css?v=20261002i">
+<link rel="stylesheet" href="css/klein.css?v=20261002i">
+</head>
+<body class="klein">
+
+<header class="topbar">
+  <div class="in">
+    <span class="logo">Hoorspel<em>studio</em> <small>klein</small></span>
+    <button type="button" class="k-hulp" id="hulp" aria-label="Wat moet ik doen?"></button>
+  </div>
+</header>
+
+<main class="app">
+  <nav class="k-stappen" aria-label="Stappen">
+    <button type="button" class="k-stap" data-stap="muziek" aria-label="Muziek kiezen"></button>
+    <span class="k-lijn" aria-hidden="true"></span>
+    <button type="button" class="k-stap" data-stap="opnemen" aria-label="Verhaal opnemen"></button>
+  </nav>
+
+  <!-- 1 muziek en plek -->
+  <section class="scherm" id="s-muziek" hidden>
+    <div class="k-vakken">
+      <button type="button" class="k-vak" data-soort="gevoel" aria-label="Muziek"><span class="k-vak-kop"><span class="k-vak-ik" data-ik="noot"></span><span class="k-vak-naam">Muziek</span></span><span class="k-vak-keus" id="vak-gevoel"></span></button>
+      <button type="button" class="k-vak" data-soort="plek" aria-label="Plek"><span class="k-vak-kop"><span class="k-vak-ik" data-ik="plek"></span><span class="k-vak-naam">Plek</span></span><span class="k-vak-keus" id="vak-plek"></span></button>
+    </div>
+    <button type="button" class="k-rond k-samen" id="samen" aria-label="Samen luisteren" hidden></button>
+    <div class="k-raster" id="raster"></div>
+  </section>
+
+  <!-- 2 opnemen: verhaal en geluiden tegelijk, de computer zet muziek en plek eronder -->
+  <section class="scherm" id="s-opnemen" hidden>
+    <div class="k-tijdbalk" id="tijdbalk" aria-hidden="true">
+      <canvas id="golf"></canvas>
+      <i class="k-kop" id="kop"></i>
+    </div>
+    <div class="k-midden" id="v-opneem">
+      <button type="button" class="k-opneem groot" id="v-knop" aria-label="Opnemen"><span class="k-stip" aria-hidden="true"></span></button>
+    </div>
+    <div class="k-klaar" id="v-klaar" hidden>
+      <button type="button" class="k-rond groot" id="v-luister" aria-label="Luisteren"></button>
+      <div class="k-rij">
+        <button type="button" class="k-rond" id="v-opnieuw" aria-label="Opnieuw opnemen"></button>
+        <button type="button" class="k-rond" id="v-bewaar" aria-label="Bewaren als mp3"></button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="voet">
+    <button type="button" class="linkknop" id="leerkracht-knop">Voor de leerkracht</button>
+    <span>Hoorspelstudio Klein is voor groep 1 tot en met 4. Voor groep 5 tot en met 8: <a href="./">de grote Hoorspelstudio</a>.</span>
+  </footer>
+</main>
+
+<div class="dok k-dok">
+  <div class="in">
+    <button type="button" class="knop k-terug" id="terug" aria-label="Terug"></button>
+    <button type="button" class="knop verder k-verder" id="verder" aria-label="Volgende"></button>
+  </div>
+</div>
+
+<dialog id="leerkracht" aria-labelledby="lk-titel">
+  <div class="dlg lang">
+    <h2 id="lk-titel" tabindex="-1">Voor de leerkracht</h2>
+    <p>Hoorspelstudio Klein is een eenvoudige versie voor groep 1 tot en met 4. Er staat geen tekst in: kinderen werken met gezichtjes en grote knoppen. Met de luidspreker rechtsboven vertelt de app wat ze moeten doen. Een koptelefoon is niet nodig.</p>
+    <h3>Zo werkt het</h3>
+    <ol class="genummerd">
+      <li><b>Muziek en plek kiezen.</b> Bovenaan staan twee vakken: de muzieknoot (hoe voelt het?) en de speld (waar is het?). Eén tik op een gezichtje laat het horen en kiest het meteen.</li>
+      <li><b>Opnemen.</b> Tik op de grote rode knop. Na 3, 2, 1 vertellen de kinderen hun verhaal en maken ze er tegelijk geluiden bij, met hun stem of met spullen uit de klas. In de tijdbalk zien ze hun geluid meegroeien. Tijdens het opnemen is het stil: anders neemt de microfoon de muziek mee op. Tik op het vierkantje om te stoppen.</li>
+      <li><b>Luisteren.</b> Daarna zet de computer de muziek en de plek onder het verhaal, en klinkt alles samen. Met de pijl in een rondje begin je opnieuw (twee keer tikken), met de pijl naar beneden komt het hoorspel als mp3 in Downloads.</li>
+    </ol>
+    <h3>Nieuw groepje op dit apparaat</h3>
+    <p>Bewaar het hoorspel eerst. Tik dan hieronder op Nieuw hoorspel beginnen.</p>
+    <p><button type="button" class="knop gevaar" id="wis-alles">Nieuw hoorspel beginnen</button></p>
+    <h3>Doet de microfoon het niet?</h3>
+    <p><b>Chromebook of Chrome:</b> tik links van het webadres op het icoontje en zet Microfoon op Toestaan. Laad de pagina daarna opnieuw.<br>
+    <b>iPad of iPhone:</b> ga naar Instellingen › Safari › Microfoon en kies Toestaan.</p>
+    <h3>Privacy</h3>
+    <p>Alle opnames blijven op dit apparaat, in deze browser. Er gaat niets naar internet.</p>
+    <h3>Muziek en geluiden</h3>
+    <p>Deze stukken zijn van andere makers en gratis te gebruiken. Alle andere muziek en geluiden maakt de app zelf.</p>
+    <ul class="bronnen" id="bronnen"></ul>
+    <div class="rij eind">
+      <button type="button" class="knop hoofd" id="lk-sluit">Sluiten</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="aftellen" id="aftellen" hidden aria-live="assertive"><span id="aftel-getal">3</span></div>
+
+<script>window.HS_OPSLAG = 'hoorspelstudio-klein';</script>
+<script src="images/gezichten/lijst.js?v=20261002i"></script>
+<script src="js/opslag.js?v=20261002i"></script>
+<script src="js/audio.js?v=20261002i"></script>
+<script src="js/gezichten.js?v=20261002i"></script>
+<script src="js/bibliotheek.js?v=20261002i"></script>
+<script src="js/klein.js?v=20261002i"></script>
+</body>
+</html>

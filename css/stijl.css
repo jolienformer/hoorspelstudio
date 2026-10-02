@@ -688,3 +688,9 @@ body.neemt-op-tl .werkbalk .status{color:var(--accent)}
 .strook .volmerk{left:auto;right:40px;bottom:auto;top:50%;transform:translateY(-50%)}
 .bronnen{margin:6px 0 0;padding-left:1.1rem;font-size:.85rem;color:var(--soft)} .bronnen li{margin:3px 0}
 .tegels.mini .tegel{-webkit-touch-callout:none}
+
+/* knop naar de versie voor groep 1 t/m 4 */
+.knop.naar-klein{display:block;text-align:center;line-height:1.3;text-decoration:none;color:var(--ink);font-size:.9rem;align-self:flex-start}
+.knop.naar-klein b{color:var(--accent);margin-left:.25em}
+.dlg .knop.naar-klein{margin-top:12px;align-self:stretch;box-shadow:none;border-width:2px}
+.voet a{color:var(--ink);font-weight:800;text-underline-offset:3px}
