@@ -32,6 +32,7 @@ De app laadt niets van andere servers: de lettertypes (`fonts/`, SIL Open Font L
 | `js/bibliotheek.js` | Alle gevoelens, plekken en stukjes muziek (gedeeld) |
 | `js/opslag.js` | Bewaren in de browser (gedeeld) |
 | `js/gezichten.js` | Gezichtjes tonen (gedeeld) |
+| `stappenkaart/` | Printbare stappenkaarten (A4) voor groot en klein |
 | `images/gezichten/` | De gezichtjes (240 × 240 px) en `lijst.js` |
 | `audio/muziek/`, `audio/plek/` | De muziek en plekgeluiden als naadloze lussen |
 
