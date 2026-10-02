@@ -33,7 +33,7 @@ function micFout(e){
 
 /* ---------- afspelen (één ding tegelijk) ---------- */
 let speelt = null;   // {wat, id}
-function stopAlles(){ Geluid.stop(); speelt = null; stopKop(); renderSpeelknoppen(); if(oefent){ oefent = false; if(S.stap === 'opnemen') renderOpnemen(); } }
+function stopAlles(){ Geluid.stop(); speelt = null; stopKop(); renderSpeelknoppen(); }
 
 /* ================= navigatie ================= */
 function mag(){
@@ -328,9 +328,8 @@ async function bewaarGeluid(){
 /* Stap 3 is één montagescherm: een knoppenbalk en een tijdlijn met sporen.
    S.opname = {stemmen:[{id, t, duur, pieken, perSec}], tikken:[{g, t}]}
    S.bedden = {muziek:{van, tot, uit}, sfeer:{van, tot, uit}}; tot = null: loopt mee met de stemmen */
-let oRec = null, mixCache = null, oefent = false;
+let oRec = null, mixCache = null;
 let luister = null;       // {start, vanaf} tijdens het terugluisteren
-let afzetten = false;     // na opname met koptelefoon: eerst afzetten, dan samen luisteren
 const stemBufs = new Map();
 const stemmen = () => (S.opname && S.opname.stemmen) || [];
 function totaal(){ let d = 1; stemmen().forEach(s => { d = Math.max(d, s.t + s.duur); }); return d; }
@@ -350,7 +349,6 @@ function tijdlijnDuur(){
 
 /* afspeelknop in de hoek van de tijdlijn: alleen een icoon */
 function luisterKnop(stand){ const k = $('#o-luister'); k.innerHTML = stand === 'bezig' ? '<span class="bezig" aria-hidden="true"></span>' : ICOON[stand]; k.setAttribute('aria-label', stand === 'pauze' ? 'Pauze' : stand === 'bezig' ? 'Samenvoegen' : 'Luisteren'); }
-const knopInhoud = (el, icoon, tekst) => { el.innerHTML = (icoon ? ICOON[icoon] : '') + '<span class="tekst">' + tekst + '</span>'; };
 
 function renderOpnemen(){
   const heeft = !!S.opname, bezig = !!oRec;
@@ -359,8 +357,7 @@ function renderOpnemen(){
   $('#o-knop').querySelector('.tekst').textContent = bezig ? 'Stop' : 'Opnemen';
   $('#o-knop').setAttribute('aria-label', bezig ? 'Stop opname' : 'Opnemen');
   $('#o-knop').classList.toggle('aan', bezig);
-  $('#o-knop').hidden = oefent;
-  $('#o-luister').hidden = !heeft || bezig || oefent;
+  $('#o-luister').hidden = !heeft || bezig;
   if(!luister && !$('#o-luister').disabled) luisterKnop('speel');
   $('#o-kop').closest('.schakel').hidden = bezig;
   $('#o-bewaar').hidden = !heeft || bezig;
@@ -373,7 +370,7 @@ function renderOpnemen(){
   S.geluiden.forEach(g => {
     const t = tegel(g, ''); t.title = g.naam; t.setAttribute('aria-label', g.naam);
     t.onclick = () => { if(t.dataset.gesleept){ delete t.dataset.gesleept; return; } tikGeluid(g, t); };
-    if(heeft && !bezig && !oefent) sleepUitRij(t, g);
+    if(heeft && !bezig) sleepUitRij(t, g);
     el.append(t);
   });
 }
@@ -414,15 +411,10 @@ async function tikGeluid(g, el){
     try{ Geluid.los(await geluidBuffer(g.id)); }catch(e){}
     return;
   }
-  if(oefent){
-    nuKaart(g);
-    try{ Geluid.los(await geluidBuffer(g.id)); }catch(e){ toast('Dit geluid is niet meer op dit apparaat.'); }
-    return;
-  }
   speelGeluid(g, null);
 }
 
-/* ---- muziek en plek live laten klinken (oefenen, koptelefoon) vanaf moment 'vanaf' ---- */
+/* ---- muziek en plek live laten klinken (koptelefoon) vanaf moment 'vanaf' ---- */
 async function bedLagen(vanaf = 0){
   const lagen = [];
   for(const [slot, vol] of [['muziek', 0.55], ['sfeer', 0.45]]){
@@ -491,7 +483,7 @@ function tekenBedden(bewerkbaar = true){
     spoor.append(d);
   });
 }
-function bedGewijzigd(){ bewaar(); mixCache = null; if(speelt && (speelt.wat === 'mix' || speelt.wat === 'oefen')) stopAlles(); render(); }
+function bedGewijzigd(){ bewaar(); mixCache = null; if(speelt && speelt.wat === 'mix') stopAlles(); render(); }
 function maakStrookVersleepbaar(d, slot){
   const tl = $('#tijdlijn'), b = bed(slot);
   let x0 = null, s0 = 0, soortSleep = null, van0 = 0, tot0 = 0, geschoven = false;
@@ -711,7 +703,7 @@ function verwijderStem(i){
   if(speelt && speelt.wat === 'mix') stopAlles();
   S.opname.stemmen.splice(i, 1);
   Opslag.wisAudio(st.id); stemBufs.delete(st.id); mixCache = null;
-  if(!S.opname.stemmen.length){ S.opname = null; cursor = 0; afzetten = false; }
+  if(!S.opname.stemmen.length){ S.opname = null; cursor = 0; }
   else cursor = Math.min(cursor, totaal());
   bewaar(); render();
   toast('Het stuk is weggehaald.');
@@ -822,7 +814,7 @@ function aftellen(){
   });
 }
 async function startOpname(){
-  oefent = false; stopAlles(); melding($('#o-melding'), ''); afzetten = false;
+  stopAlles(); melding($('#o-melding'), '');
   const startT = S.opname ? totaal() : 0;   /* een nieuw stuk komt achteraan */
   const knop = $('#o-knop'); knop.disabled = true;
   let rec, lagen = [];
@@ -963,11 +955,11 @@ $('#o-luister').onclick = () => { (speelt && speelt.wat === 'mix') ? stopAlles()
 let opnieuwZeker = 0;
 $('#o-alles-opnieuw').onclick = () => {
   const b = $('#o-alles-opnieuw');
-  if(!opnieuwZeker){ b.textContent = 'Alles weggooien? Tik nog een keer'; b.classList.add('gevaar'); opnieuwZeker = setTimeout(() => { opnieuwZeker = 0; b.textContent = 'Alles opnieuw'; b.classList.remove('gevaar'); }, 3500); return; }
-  clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Alles opnieuw'; b.classList.remove('gevaar');
+  if(!opnieuwZeker){ b.textContent = 'Alles weggooien? Tik nog een keer'; b.classList.add('gevaar'); opnieuwZeker = setTimeout(() => { opnieuwZeker = 0; b.textContent = 'Alleen de opname wissen'; b.classList.remove('gevaar'); }, 3500); return; }
+  clearTimeout(opnieuwZeker); opnieuwZeker = 0; b.textContent = 'Alleen de opname wissen'; b.classList.remove('gevaar');
   stopAlles();
   stemmen().forEach(s => { Opslag.wisAudio(s.id); stemBufs.delete(s.id); });
-  S.opname = null; S.bedden = {}; mixCache = null; cursor = 0; afzetten = false; bewaar();
+  S.opname = null; S.bedden = {}; mixCache = null; cursor = 0; bewaar();
   if($('#groep-dlg').open) $('#groep-dlg').close();
   render();
   toast('Spreek het verhaal opnieuw in.');

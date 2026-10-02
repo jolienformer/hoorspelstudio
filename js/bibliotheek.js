@@ -1,16 +1,18 @@
 /* De bibliotheek met muziek (op gevoel) en sfeergeluid (op plek).
 
-   Elk stukje heeft een rechtenvrij bestand:
-     bestand: 'audio/muziek/spannend-1.mp3', bron: 'Naam maker, licentie CC0'
-   Een stukje zonder bestand wordt in de browser gemaakt ("synth").
+   Twee soorten stukjes:
+     {titel:'Sluipen', bestand:'audio/muziek/spannend-1.mp3', bron:'"Titel" Maker (site), licentie'}
+     {titel:'Spookhuis', synth:'eng', v:0}   gemaakt in de browser (recepten onder "synth", v = 0 of 1)
+   Het id (zoals 'eng-3') volgt uit de volgorde; het gezichtje met dat id staat in images/gezichten/lijst.js.
+   Voeg nieuwe stukjes dus achteraan een groep toe, anders schuiven de gezichtjes en de bestandsnamen.
    Alles wordt bij het laden op dezelfde sterkte gebracht (muziek 0,15 en plek 0,1 rms). */
 (() => {
 const M = (id, naam, kleur, uitdr, stukken) => ({id, naam, kleur, uitdr, stukken});
 
 const GEVOEL = [
   M('spannend', 'Spannend', 'blauw', 'bang', [
-    {titel:'Sluipen', synth:'spannend', v:0, bestand:'audio/muziek/spannend-1.mp3', bron:'"Sneaky Snitch" Kevin MacLeod (incompetech.com), CC BY 4.0'},
-    {titel:'Wie is daar?', synth:'spannend', v:1, bestand:'audio/muziek/spannend-2.mp3', bron:'"Crypto" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Sluipen', bestand:'audio/muziek/spannend-1.mp3', bron:'"Sneaky Snitch" Kevin MacLeod (incompetech.com), CC BY 4.0'},
+    {titel:'Wie is daar?', bestand:'audio/muziek/spannend-2.mp3', bron:'"Crypto" Kevin MacLeod (incompetech.com), CC BY 4.0'},
     {titel:'Op je tenen', synth:'spannend', v:0}]),
   M('eng', 'Eng', 'paars', 'schrik', [
     {titel:'Spookbelletjes', bestand:'audio/muziek/eng-1.mp3', bron:'"Darkest Child" Kevin MacLeod (incompetech.com), CC BY 4.0'},
@@ -96,8 +98,8 @@ const GEVOEL = [
 
 const PLEK = [
   M('bos', 'Bos', 'groen', 'tevreden', [
-    {titel:'Vogels in het bos', synth:'bos', v:0, bestand:'audio/plek/bos-1.mp3', bron:'GammaGool (freesound.org/s/850507), CC0'},
-    {titel:'Bos bij nacht', synth:'bos', v:1, bestand:'audio/plek/bos-2.mp3', bron:'fribergmusic2024 (freesound.org/s/719558), CC0'}]),
+    {titel:'Vogels in het bos', bestand:'audio/plek/bos-1.mp3', bron:'GammaGool (freesound.org/s/850507), CC0'},
+    {titel:'Bos bij nacht', bestand:'audio/plek/bos-2.mp3', bron:'fribergmusic2024 (freesound.org/s/719558), CC0'}]),
   M('zee', 'Zee', 'blauw', 'verwonderd', [
     {titel:'Golven op het strand', bestand:'audio/plek/zee-1.mp3', bron:'Artem_Zaitsev (freesound.org/s/854630), CC0'},
     {titel:'Harde wind aan zee', bestand:'audio/plek/zee-2.mp3', bron:'squashy555 (freesound.org/s/341368), CC0'}]),
