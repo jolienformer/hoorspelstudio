@@ -90,6 +90,10 @@ h2{font-family:var(--f-head);font-weight:700;font-size:2.2rem;line-height:1;marg
 .groepen{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px;margin-bottom:8px}
 .gtegel{display:flex;flex-direction:column;align-items:stretch;border:0;background:none;padding:0;text-align:center;gap:6px}
 .gezicht{display:block;aspect-ratio:1;max-width:100%;border:var(--line);border-radius:12px;background:var(--c,var(--c-geel));box-shadow:var(--shadow);overflow:hidden;transition:transform .08s ease,box-shadow .08s ease}
+.badge svg{width:42%;height:42%;fill:currentColor}
+.badge svg.lijn{width:50%;height:50%;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.badge svg path[d^="M4"]{transform:translateX(1px)}
+.knop > svg{width:.9em;height:.9em;fill:currentColor;vertical-align:-.08em;margin-right:.15em}
 .gezicht svg,.gezicht img{display:block;width:100%;height:100%;object-fit:cover}
 .gtegel .naam{font-weight:900;font-size:.85rem;line-height:1.15}
 .gtegel:active .gezicht{transform:translate(3px,3px);box-shadow:none}

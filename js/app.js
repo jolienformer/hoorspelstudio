@@ -9,6 +9,15 @@ const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(
 const fmtKort = s => s < 60 ? Math.max(1, Math.round(s)) + ' sec' : fmt(s);
 const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+/* strakke silhouet-icoontjes (geen tekens als ▶: die tekent iOS als emoji) */
+const ICOON = {
+  opnemen: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>',
+  speel: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z"/></svg>',
+  pauze: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>',
+  stop: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1.5"/></svg>',
+  vink: '<svg viewBox="0 0 16 16" aria-hidden="true" class="lijn"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>'
+};
+
 let S = {groep:'', stap:'muziek', soort:'gevoel', muziek:null, sfeer:null, geluiden:[], opname:null, koptelefoon:false};
 const bewaar = () => Opslag.bewaarStaat(S);
 
@@ -137,7 +146,7 @@ function renderSpeelknoppen(){
     const laadt = speelt && speelt.wat === 'laden' && speelt.id === b.dataset.speel;
     const gekozen = s && S[slotVan(s.soort)] === s.id;
     b.classList.toggle('speelt', !!aan); b.classList.toggle('gekozen', !!gekozen);
-    const badge = b.querySelector('.badge'); if(badge) badge.textContent = laadt ? '…' : aan ? '■' : gekozen ? '✓' : '▶';
+    const badge = b.querySelector('.badge'); if(badge) badge.innerHTML = laadt ? '…' : aan ? ICOON.stop : gekozen ? ICOON.vink : ICOON.speel;
     b.setAttribute('aria-pressed', String(!!gekozen));
     b.setAttribute('aria-label', (s ? s.titel : '') + (aan ? ', speelt. Tik om te stoppen.' : gekozen ? ', gekozen' : ', luisteren en kiezen'));
   });
@@ -145,12 +154,12 @@ function renderSpeelknoppen(){
     const aan = speelt && (speelt.wat === 'stuk' || speelt.wat === 'samen') && (speelt.id === b.dataset.speel || speelt.wat === 'samen');
     const laadt = speelt && speelt.wat === 'laden' && speelt.id === b.dataset.speel;
     b.classList.toggle('speelt', !!aan);
-    const badge = b.querySelector('.badge'); if(badge) badge.textContent = laadt ? '…' : aan ? '■' : '▶';
+    const badge = b.querySelector('.badge'); if(badge) badge.innerHTML = laadt ? '…' : aan ? ICOON.stop : ICOON.speel;
   });
   const samenAan = speelt && speelt.wat === 'samen';
   document.querySelectorAll('.vak').forEach(el => el.classList.toggle('samen-speelt', !!samenAan));
   const samen = $('#samen');
-  samen.textContent = samenAan ? '■ Stoppen' : '▶ Samen luisteren';
+  samen.innerHTML = samenAan ? ICOON.stop + ' Stoppen' : ICOON.speel + ' Samen luisteren';
 }
 /* één tik: luisteren én kiezen; nog een tik: stil */
 function tikStuk(s){
@@ -339,13 +348,6 @@ function tijdlijnDuur(){
   return d;
 }
 
-/* strakke silhouet-icoontjes voor de knoppenbalk */
-const ICOON = {
-  opnemen: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>',
-  speel: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9.5-5.5z"/></svg>',
-  pauze: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>',
-  stop: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1.5"/></svg>'
-};
 /* afspeelknop in de hoek van de tijdlijn: alleen een icoon */
 function luisterKnop(stand){ const k = $('#o-luister'); k.innerHTML = stand === 'bezig' ? '<span class="bezig" aria-hidden="true"></span>' : ICOON[stand]; k.setAttribute('aria-label', stand === 'pauze' ? 'Pauze' : stand === 'bezig' ? 'Samenvoegen' : 'Luisteren'); }
 const knopInhoud = (el, icoon, tekst) => { el.innerHTML = (icoon ? ICOON[icoon] : '') + '<span class="tekst">' + tekst + '</span>'; };
